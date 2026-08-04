@@ -197,97 +197,149 @@ Room은 한 기기 안에 데이터를 저장하는 로컬 데이터베이스입
 
 6. 전체 패키지 구조
 
-com.team.packmate
-├── app
-│   ├── PackMateApplication.java
-│   ├── AppContainer.java
-│   └── BaseActivity.java
-├── common
-│   ├── AppResult.java
-│   ├── AppError.java
-│   └── Constants.java
-├── model
-│   ├── User.java
-│   ├── Trip.java
-│   ├── TripMember.java
-│   ├── Itinerary.java
-│   ├── PackingItem.java
-│   ├── AnalysisResult.java
-│   └── Weather.java
-├── data
-│   ├── repository
-│   │   ├── AuthRepository.java
-│   │   ├── AuthRepositoryImpl.java
-│   │   ├── TripRepository.java
-│   │   ├── TripRepositoryImpl.java
-│   │   ├── PackingRepository.java
-│   │   ├── PackingRepositoryImpl.java
-│   │   ├── AnalysisRepository.java
-│   │   ├── AnalysisRepositoryImpl.java
-│   │   ├── WeatherRepository.java
-│   │   └── WeatherRepositoryImpl.java
-│   ├── remote
-│   │   ├── firebase
-│   │   │   ├── FirebaseAuthDataSource.java
-│   │   │   └── FirestoreTripDataSource.java
-│   │   ├── backend
-│   │   │   ├── BackendApi.java
-│   │   │   ├── AnalysisDto.java
-│   │   │   └── KakaoTokenDto.java
-│   │   └── weather
-│   │       ├── OpenMeteoApi.java
-│   │       └── WeatherDto.java
-│   └── mapper
-│       ├── TripMapper.java
-│       ├── AnalysisMapper.java
-│       └── WeatherMapper.java
-├── feature
-│   ├── auth
-│   │   ├── LoginContract.java
-│   │   ├── LoginActivity.java
-│   │   └── LoginPresenter.java
-│   ├── home
-│   │   ├── HomeContract.java
-│   │   ├── HomeActivity.java
-│   │   └── HomePresenter.java
-│   ├── trip
-│   │   ├── TripRoomContract.java
-│   │   ├── TripRoomActivity.java
-│   │   ├── TripRoomPresenter.java
-│   │   └── CreateTripDialog.java
-│   ├── itinerary
-│   │   ├── ItineraryContract.java
-│   │   ├── ItineraryUploadActivity.java
-│   │   ├── ItineraryReviewActivity.java
-│   │   ├── ItineraryPresenter.java
-│   │   └── ItineraryAdapter.java
-│   ├── weather
-│   │   ├── WeatherContract.java
-│   │   ├── WeatherFragment.java
-│   │   └── WeatherPresenter.java
-│   ├── baggage
-│   │   ├── BaggageContract.java
-│   │   ├── BaggageUploadActivity.java
-│   │   ├── BaggageResultActivity.java
-│   │   ├── BaggagePresenter.java
-│   │   └── BaggageItemAdapter.java
-│   ├── checklist
-│   │   ├── ChecklistContract.java
-│   │   ├── ChecklistFragment.java
-│   │   ├── ChecklistPresenter.java
-│   │   └── PackingItemAdapter.java
-│   ├── profile
-│   │   ├── ProfileContract.java
-│   │   ├── ProfileFragment.java
-│   │   └── ProfilePresenter.java
-│   └── archive
-│       ├── ArchiveContract.java
-│       ├── ArchiveFragment.java
-│       └── ArchivePresenter.java
-└── util
-    ├── ImageCompressor.java
-    ├── DateUtils.java
-    └── ReminderScheduler.java
+기본 패키지는 `com.team.packmate`입니다. 아래처럼 패키지마다 제목을 나누고 클래스는 한 줄에 하나씩 작성합니다.
+
+app
+앱 실행과 공용 객체 생성을 담당합니다.
+
+- PackMateApplication.java
+- AppContainer.java
+- BaseActivity.java
+
+common
+여러 기능에서 함께 사용하는 결과, 오류, 상수를 관리합니다.
+
+- AppResult.java
+- AppError.java
+- Constants.java
+
+model
+앱에서 사용하는 데이터 형태를 정의합니다.
+
+- User.java
+- Trip.java
+- TripMember.java
+- Itinerary.java
+- PackingItem.java
+- AnalysisResult.java
+- Weather.java
+
+data.repository
+Presenter가 사용할 데이터 접근 규칙과 실제 구현체입니다.
+
+- AuthRepository.java
+- AuthRepositoryImpl.java
+- TripRepository.java
+- TripRepositoryImpl.java
+- PackingRepository.java
+- PackingRepositoryImpl.java
+- AnalysisRepository.java
+- AnalysisRepositoryImpl.java
+- WeatherRepository.java
+- WeatherRepositoryImpl.java
+
+data.remote.firebase
+Firebase Authentication과 Firestore 통신을 담당합니다.
+
+- FirebaseAuthDataSource.java
+- FirestoreTripDataSource.java
+
+data.remote.backend
+OpenAI API Key를 보관한 서버와 통신합니다.
+
+- BackendApi.java
+- AnalysisDto.java
+- KakaoTokenDto.java
+
+data.remote.weather
+Open-Meteo API를 호출하고 날씨 응답을 받습니다.
+
+- OpenMeteoApi.java
+- WeatherDto.java
+
+data.mapper
+외부 응답 데이터를 앱의 Model 객체로 변환합니다.
+
+- TripMapper.java
+- AnalysisMapper.java
+- WeatherMapper.java
+
+feature.auth
+로그인 화면 기능입니다.
+
+- LoginContract.java
+- LoginActivity.java
+- LoginPresenter.java
+
+feature.home
+여행방 목록을 표시하는 홈 기능입니다.
+
+- HomeContract.java
+- HomeActivity.java
+- HomePresenter.java
+
+feature.trip
+
+여행방 생성, 초대, 참여자 확인 기능입니다.
+
+- TripRoomContract.java
+- TripRoomActivity.java
+- TripRoomPresenter.java
+- CreateTripDialog.java
+
+feature.itinerary
+일정 캡처 업로드, AI 분석, 검토·수정 기능입니다.
+
+- ItineraryContract.java
+- ItineraryUploadActivity.java
+- ItineraryReviewActivity.java
+- ItineraryPresenter.java
+- ItineraryAdapter.java
+
+feature.weather
+여행지 날씨와 의식주 피드백 기능입니다.
+
+- WeatherContract.java
+- WeatherFragment.java
+- WeatherPresenter.java
+
+feature.baggage
+짐 사진 분석과 반입 제한·추천 물품 확인 기능입니다.
+
+- BaggageContract.java
+- BaggageUploadActivity.java
+- BaggageResultActivity.java
+- BaggagePresenter.java
+- BaggageItemAdapter.java
+
+feature.checklist
+공용·개인 체크리스트와 담당자 지정 기능입니다.
+
+- ChecklistContract.java
+- ChecklistFragment.java
+- ChecklistPresenter.java
+- PackingItemAdapter.java
+
+feature.profile
+개인 준비물 추가·수정·삭제 기능입니다.
+
+- ProfileContract.java
+- ProfileFragment.java
+- ProfilePresenter.java
+
+feature.archive
+참여했던 여행방 목록과 상세 이동 기능입니다.
+
+- ArchiveContract.java
+- ArchiveFragment.java
+- ArchivePresenter.java
+
+util
+이미지 압축, 날짜 변환, D-day 알림을 담당합니다.
+
+- ImageCompressor.java
+- DateUtils.java
+- ReminderScheduler.java
 
 7. Firestore 데이터 구조
 users/{uid}
