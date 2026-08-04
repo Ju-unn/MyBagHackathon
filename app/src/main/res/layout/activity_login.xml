@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S02 Login — copy centered in the upper 2/3, Kakao CTA + terms pinned
-     to the bottom via a percent guideline so proportions hold across
-     phone/tablet/fold widths and heights. -->
+<!-- S02 로그인 — 카피 문구는 상단 2/3 영역 가운데 정렬, 카카오 CTA + 약관 문구는
+     퍼센트 가이드라인으로 하단에 고정해서 폰/태블릿/폴드 등
+     화면 크기가 달라져도 비율이 유지되도록 함. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"

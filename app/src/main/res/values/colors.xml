@@ -2,8 +2,8 @@
 <resources>
 
     <!-- ============================================================
-         PRIMITIVES (29) — raw palette, do not use directly in layouts.
-         Reference via the Semantic tokens below instead.
+         PRIMITIVES (29종) — 원본 팔레트, 레이아웃에서 직접 쓰지 말 것.
+         아래 Semantic 토큰을 통해 참조해서 사용할 것.
     ============================================================ -->
     <color name="blue_700">#FF2B5F7F</color>
     <color name="blue_600">#FF2F6B90</color>
@@ -43,11 +43,11 @@
     <color name="white_primitive">#FFFFFFFF</color>
 
     <!-- ============================================================
-         SEMANTIC (30) — use these in layouts/styles/drawables.
-         Android naming mirrors BagColors.xxx from the design spec.
+         SEMANTIC (30종) — 레이아웃/스타일/드로어블에서는 이걸 사용할 것.
+         안드로이드 네이밍은 디자인 명세서의 BagColors.xxx를 그대로 따름.
     ============================================================ -->
 
-    <!-- Background -->
+    <!-- 배경 -->
     <color name="bag_bg_base">@color/sand_50</color>
     <color name="bag_bg_surface">@color/white_primitive</color>
     <color name="bag_bg_subtle">@color/sand_100</color>
@@ -55,56 +55,57 @@
     <color name="bag_bg_brand_subtle">@color/blue_100</color>
     <color name="bag_bg_track">@color/sand_150</color>
 
-    <!-- Brand -->
+    <!-- 브랜드 -->
     <color name="bag_brand_default">@color/blue_500</color>
     <color name="bag_brand_pressed">@color/blue_600</color>
 
-    <!-- Text -->
+    <!-- 텍스트 -->
     <color name="bag_text_primary">@color/ink_900</color>
     <color name="bag_text_secondary">@color/slate_500</color>
     <color name="bag_text_tertiary">@color/stone_500</color>
-    <!-- stone_500 on bg_base is 3.0:1 — fails 4.5:1. Use bag_text_tertiary_safe
-         (stone_600, 4.9:1) for any readable body/caption text instead. -->
+    <!-- stone_500를 bg_base 위에 쓰면 명암비 3.0:1 — 4.5:1 기준 미달.
+         읽어야 하는 본문/캡션 텍스트에는 bag_text_tertiary_safe
+         (stone_600, 4.9:1)를 대신 사용할 것. -->
     <color name="bag_text_tertiary_safe">@color/stone_600</color>
     <color name="bag_text_on_brand">@color/white_primitive</color>
     <color name="bag_text_on_inverse">@color/white_primitive</color>
     <color name="bag_text_brand">@color/blue_500</color>
 
-    <!-- Border -->
+    <!-- 테두리 -->
     <color name="bag_border_default">@color/sand_200</color>
     <color name="bag_border_strong">@color/stone_300</color>
     <color name="bag_border_divider">@color/sand_250</color>
 
-    <!-- Priority -->
+    <!-- 중요도 -->
     <color name="bag_priority_high">@color/blue_500</color>
     <color name="bag_priority_mid">@color/blue_300</color>
     <color name="bag_priority_low">@color/stone_300</color>
 
-    <!-- Status -->
+    <!-- 상태 -->
     <color name="bag_status_danger">@color/clay_500</color>
     <color name="bag_status_danger_bg">@color/clay_100</color>
-    <!-- status_warning (#E8A33D) text on white is 2.3:1 — fails. Use it only
-         for icons/backgrounds; pair with bag_text_tertiary_safe or
-         bag_status_danger for readable label text. -->
+    <!-- status_warning(#E8A33D)을 흰 배경 위 텍스트로 쓰면 명암비 2.3:1 — 미달.
+         아이콘/배경 용도로만 쓰고, 읽어야 하는 레이블 텍스트는
+         bag_text_tertiary_safe나 bag_status_danger와 짝지어 사용할 것. -->
     <color name="bag_status_warning">@color/amber_500</color>
     <color name="bag_status_warning_bg">#1FE8A33D</color>
 
-    <!-- Avatars -->
+    <!-- 아바타 -->
     <color name="bag_avatar_1">@color/amber_500</color>
     <color name="bag_avatar_2">@color/teal_500</color>
     <color name="bag_avatar_3">@color/gray_500</color>
     <color name="bag_avatar_4">@color/blue_300</color>
 
-    <!-- Weather -->
+    <!-- 날씨 -->
     <color name="bag_weather_sun">@color/amber_300</color>
     <color name="bag_weather_rain">@color/blue_200</color>
     <color name="bag_weather_cloud">@color/stone_300</color>
 
-    <!-- Kakao brand exception (login button only — not part of the palette) -->
+    <!-- 카카오 브랜드 예외 색상 (로그인 버튼 전용 — 팔레트에는 포함 안 됨) -->
     <color name="kakao_yellow">#FFFEE500</color>
     <color name="kakao_text">#D9000000</color>
 
-    <!-- Legacy template colors (kept for AppCompat defaults) -->
+    <!-- 템플릿 기본 색상 (AppCompat 기본값 유지용으로 남겨둠) -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

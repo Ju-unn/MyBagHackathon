@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- MainActivity — hosts S03 Home / S13 Archive / S14 Profile via BottomNavigationView -->
+<!-- MainActivity — BottomNavigationView로 S03 홈 / S13 공용여행 / S14 프로필을 표시 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"

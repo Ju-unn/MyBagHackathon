@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- M9 · DashedAddCard — Size = L / S. Dashed drawables need a software
-     layer to render (set in code: view.setLayerType(LAYER_TYPE_SOFTWARE, null)). -->
+<!-- M9 · DashedAddCard — 크기 = L / S. 점선 드로어블은 소프트웨어
+     레이어가 있어야 렌더링됨 (코드에서 설정: view.setLayerType(LAYER_TYPE_SOFTWARE, null)). -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dashedAddCardRoot"

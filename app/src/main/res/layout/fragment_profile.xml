@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S14 Profile — avatar/name header + my default items + settings list -->
+<!-- S14 프로필 — 아바타/이름 헤더 + 내 기본 물품 + 설정 목록 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
