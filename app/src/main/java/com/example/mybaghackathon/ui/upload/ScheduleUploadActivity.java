@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityScheduleUploadBinding;
+import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.analyzing.AnalyzingActivity;
 import com.google.android.material.button.MaterialButton;
 
@@ -29,6 +30,11 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityScheduleUploadBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
+
+        binding.uploadTopAppBar.topAppBarTitle.setText(R.string.upload_title);
+        binding.uploadTopAppBar.topAppBarDesc.setText(R.string.upload_desc);
+        binding.uploadTopAppBar.topAppBarDesc.setVisibility(View.VISIBLE);
 
         View scheduleCard = binding.uploadScheduleCard;
         ((TextView) scheduleCard.findViewById(R.id.uploadGuideTitle)).setText(R.string.upload_guide_schedule_title);

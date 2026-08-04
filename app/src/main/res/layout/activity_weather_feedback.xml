@@ -21,12 +21,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- O1 TopAppBar (LargeTitle) -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/feedback_title"
-                android:textAppearance="@style/TextAppearance.Bag.DisplayM" />
+            <include
+                android:id="@+id/feedbackTopAppBar"
+                layout="@layout/organism_top_app_bar_large" />
 
             <!-- 여행 지역 · 기간 요약 카드 -->
             <LinearLayout

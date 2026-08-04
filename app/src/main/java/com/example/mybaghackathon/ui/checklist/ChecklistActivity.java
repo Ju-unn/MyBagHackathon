@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityChecklistBinding;
+import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.google.android.material.tabs.TabLayout;
 
 /**
@@ -25,6 +26,7 @@ public class ChecklistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityChecklistBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
         TabLayout tabs = binding.checklistTabs;
 

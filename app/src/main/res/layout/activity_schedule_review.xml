@@ -21,19 +21,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- O1 TopAppBar (LargeTitle) -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/review_title"
-                android:textAppearance="@style/TextAppearance.Bag.DisplayM" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@string/review_desc"
-                android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+            <include
+                android:id="@+id/reviewTopAppBar"
+                layout="@layout/organism_top_app_bar_large" />
 
             <FrameLayout
                 android:id="@+id/reviewDestinationCard"

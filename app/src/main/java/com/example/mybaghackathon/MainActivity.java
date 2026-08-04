@@ -2,23 +2,25 @@ package com.example.mybaghackathon;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
+import com.example.mybaghackathon.ui.archive.TripArchiveFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        EdgeToEdgeUtil.applySystemBarPadding(this, findViewById(R.id.main));
+
+        // TODO(temp-test): 탭 전환 로직 붙기 전까지 임시로 Archive 탭을 바로 띄움
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mainFragmentContainer, new TripArchiveFragment())
+                    .commit();
+        }
     }
 }

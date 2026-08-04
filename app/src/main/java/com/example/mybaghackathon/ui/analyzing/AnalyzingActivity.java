@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityAnalyzingBinding;
+import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.review.ScheduleReviewActivity;
 
 /**
@@ -37,6 +38,7 @@ public class AnalyzingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityAnalyzingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
         LinearLayout list = binding.analyzingStepList;
         stepViews = new TextView[STEPS.length];

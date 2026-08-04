@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityRoomDetailBinding;
+import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.example.mybaghackathon.ui.overlay.InviteShareSheet;
 import com.google.android.material.button.MaterialButton;
@@ -32,6 +33,7 @@ public class RoomDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityRoomDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
         TextView title = binding.roomDetailTopBar.topAppBarCompactTitle;
         title.setText("제주 가족 여행");
