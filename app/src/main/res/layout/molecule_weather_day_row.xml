@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- M6 · WeatherDayRow — h24, date | icon | status+temp -->
+<!-- M6 · WeatherDayRow — 높이 24dp, 날짜 | 아이콘 | 날씨상태+기온 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"

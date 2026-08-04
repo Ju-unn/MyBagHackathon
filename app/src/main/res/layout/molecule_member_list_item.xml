@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- M7 · MemberListItem — h56, Avatar36 + name + optional Host badge -->
+<!-- M7 · MemberListItem — 높이 56dp, Avatar36 + 이름 + 방장 뱃지(선택) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

@@ -7,14 +7,6 @@
         <attr name="avatarStroke" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="BagBadgeView">
-        <attr name="badgeText" format="string" />
-        <attr name="badgeStyle" format="enum">
-            <enum name="brand" value="0" />
-            <enum name="neutral" value="1" />
-        </attr>
-    </declare-styleable>
-
     <declare-styleable name="BagChipView">
         <attr name="chipLabel" format="string" />
         <attr name="chipActive" format="boolean" />

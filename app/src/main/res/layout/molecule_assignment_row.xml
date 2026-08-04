@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- M13 · AssignmentRow — Owner = Unassigned/Me/Others, Confirm = None/Checked/Excluded -->
+<!-- M13 · AssignmentRow — 담당자 = 미지정/나/다른사람, 확정상태 = 없음/체크됨/제외됨 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

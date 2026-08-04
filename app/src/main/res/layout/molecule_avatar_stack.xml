@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- M3 · AvatarStack — overlap -8dp, 2dp stroke matching the surface it
-     sits on. Add/remove <AvatarView> children in code for Count 2/3/4/5+. -->
+<!-- M3 · AvatarStack — 겹침 -8dp, 배경 표면 색에 맞춘 2dp 테두리.
+     인원수(2/3/4/5+)에 따라 코드에서 <AvatarView> 자식을 추가/제거. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/avatarStackRoot"
     android:layout_width="wrap_content"

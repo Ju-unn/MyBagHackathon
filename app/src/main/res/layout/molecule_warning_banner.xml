@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- M8 · WarningBanner — Type = Danger / Info. Left 4dp accent bar + text. -->
+<!-- M8 · WarningBanner — 타입 = 위험 / 정보. 왼쪽 4dp 강조 바 + 텍스트. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/warningBannerRoot"

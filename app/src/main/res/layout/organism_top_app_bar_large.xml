@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- O1 · TopAppBar (LargeTitle) — title + optional description + optional
-     trailing action (IconButtonView), used at the top of a scroll body. -->
+<!-- O1 · TopAppBar (LargeTitle) — 제목 + 설명(선택) + 우측 액션 버튼(선택,
+     IconButtonView), 스크롤 영역 상단에 사용. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"

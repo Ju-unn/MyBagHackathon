@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S10-12 Checklist — compact top bar + 3-tab TabLayout, tabs swap fragments manually -->
+<!-- S10-12 체크리스트 — 컴팩트 상단 바 + 3탭 TabLayout, 탭 전환 시 프래그먼트를 직접 교체 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

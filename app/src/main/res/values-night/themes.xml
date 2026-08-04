@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Intentionally identical to values/themes.xml — dark mode is out of
-         scope for this design (README §1-2: Light mode only). This override
-         exists purely to stop the system dark theme from silently applying
-         Material3's default dark palette on top of an un-designed surface. -->
+    <!-- values/themes.xml과 의도적으로 동일하게 맞춤 — 다크 모드는 이번
+         디자인 범위 밖임 (README §1-2: 라이트 모드만 지원). 이 오버라이드는
+         시스템 다크 테마가 디자인되지 않은 화면 위에 Material3 기본 다크
+         팔레트를 조용히 적용해버리는 걸 막기 위한 용도임. -->
     <style name="Base.Theme.MyBagHackathon" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/bag_brand_default</item>
         <item name="colorOnPrimary">@color/bag_text_on_brand</item>

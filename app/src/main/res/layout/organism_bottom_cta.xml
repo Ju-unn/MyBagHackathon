@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- O5 · BottomCTA — Buttons = 1/2. Top 1dp divider only shows once the
-     screen content is scrolled (toggle programmatically via a scroll
-     listener: view.findViewById(R.id.bottomCtaDivider).setVisibility(...)). -->
+<!-- O5 · BottomCTA — 버튼 = 1개/2개. 상단 1dp 구분선은 화면 콘텐츠가
+     스크롤됐을 때만 보임 (스크롤 리스너에서 코드로 토글:
+     view.findViewById(R.id.bottomCtaDivider).setVisibility(...)). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
