@@ -2,15 +2,15 @@
 <resources>
 
     <!-- ============================================================
-         TYPOGRAPHY (14) — Noto Sans KR weight mapping:
-         Black -> sans-serif-black, Bold -> sans-serif (bold),
-         Medium -> sans-serif-medium, Regular -> sans-serif.
-         Korean glyphs render via the system's Noto Sans CJK KR fallback,
-         so no font files need to be bundled.
+         TYPOGRAPHY (14) — Pretendard weight mapping:
+         Black/Bold -> pretendard_bold, Medium -> pretendard_medium,
+         Regular -> pretendard_regular. Only 3 weights are bundled
+         (res/font), so "Black" styles fall back to Bold as the
+         heaviest available weight.
     ============================================================ -->
 
     <style name="TextAppearance.Bag.DisplayL" parent="TextAppearance.Material3.DisplaySmall">
-        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">30sp</item>
         <item name="android:lineHeight">38sp</item>
         <item name="android:letterSpacing">-0.02</item>
@@ -18,7 +18,7 @@
     </style>
 
     <style name="TextAppearance.Bag.DisplayM" parent="TextAppearance.Material3.DisplaySmall">
-        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">28sp</item>
         <item name="android:lineHeight">36sp</item>
         <item name="android:letterSpacing">-0.018</item>
@@ -26,8 +26,7 @@
     </style>
 
     <style name="TextAppearance.Bag.TitleL" parent="TextAppearance.Material3.TitleLarge">
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">20sp</item>
         <item name="android:lineHeight">28sp</item>
         <item name="android:letterSpacing">-0.015</item>
@@ -35,8 +34,7 @@
     </style>
 
     <style name="TextAppearance.Bag.TitleM" parent="TextAppearance.Material3.TitleMedium">
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">19sp</item>
         <item name="android:lineHeight">26sp</item>
         <item name="android:letterSpacing">-0.01</item>
@@ -44,8 +42,7 @@
     </style>
 
     <style name="TextAppearance.Bag.TitleS" parent="TextAppearance.Material3.TitleSmall">
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">16sp</item>
         <item name="android:lineHeight">22sp</item>
         <item name="android:letterSpacing">-0.006</item>
@@ -53,15 +50,14 @@
     </style>
 
     <style name="TextAppearance.Bag.ButtonL" parent="TextAppearance.Material3.LabelLarge">
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">16sp</item>
         <item name="android:lineHeight">22sp</item>
         <item name="android:letterSpacing">0</item>
     </style>
 
     <style name="TextAppearance.Bag.BodyL" parent="TextAppearance.Material3.BodyLarge">
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">15sp</item>
         <item name="android:lineHeight">22sp</item>
         <item name="android:letterSpacing">0</item>
@@ -69,11 +65,11 @@
     </style>
 
     <style name="TextAppearance.Bag.BodyLMedium" parent="TextAppearance.Bag.BodyL">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
 
     <style name="TextAppearance.Bag.BodyM" parent="TextAppearance.Material3.BodyMedium">
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">14sp</item>
         <item name="android:lineHeight">20sp</item>
         <item name="android:letterSpacing">0</item>
@@ -81,35 +77,33 @@
     </style>
 
     <style name="TextAppearance.Bag.BodyMMedium" parent="TextAppearance.Bag.BodyM">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
 
     <style name="TextAppearance.Bag.LabelL" parent="TextAppearance.Material3.LabelLarge">
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">13sp</item>
         <item name="android:lineHeight">18sp</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
 
     <style name="TextAppearance.Bag.LabelM" parent="TextAppearance.Material3.LabelMedium">
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">13sp</item>
         <item name="android:lineHeight">18sp</item>
         <item name="android:textColor">@color/bag_text_secondary</item>
     </style>
 
     <style name="TextAppearance.Bag.LabelS" parent="TextAppearance.Material3.LabelSmall">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">12sp</item>
         <item name="android:lineHeight">16sp</item>
         <item name="android:textColor">@color/bag_text_tertiary_safe</item>
     </style>
 
     <style name="TextAppearance.Bag.Eyebrow" parent="TextAppearance.Material3.LabelSmall">
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">11sp</item>
         <item name="android:lineHeight">14sp</item>
         <item name="android:letterSpacing">0.06</item>
