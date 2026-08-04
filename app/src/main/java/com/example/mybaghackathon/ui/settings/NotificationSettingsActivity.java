@@ -27,7 +27,5 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         TextView title = binding.notifTopBar.topAppBarCompactTitle;
         title.setText(R.string.notif_title);
         binding.notifTopBar.topAppBarBack.setOnClickListener(v -> finish());
-
-        binding.notifWarningBanner.warningBannerText.setText(R.string.notif_warning);
     }
 }
