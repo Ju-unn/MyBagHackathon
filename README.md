@@ -343,15 +343,17 @@ EC2는 이미 구축되어 있으므로 실제 월 비용은 팀 AWS 계정에�
 ## 8. Android 패키지 구조
 
 ```text
-com.team.packmate
+com.example.mybaghackathon
 ├── app
 │   ├── PackMateApplication.java
 │   ├── AppContainer.java
 │   └── BaseActivity.java
+│
 ├── common
 │   ├── AppResult.java
 │   ├── AppError.java
 │   └── Constants.java
+│
 ├── model
 │   ├── User.java
 │   ├── Trip.java
@@ -360,6 +362,7 @@ com.team.packmate
 │   ├── PackingItem.java
 │   ├── AnalysisResult.java
 │   └── Weather.java
+│
 ├── data
 │   ├── repository
 │   │   ├── AuthRepository.java
@@ -372,8 +375,9 @@ com.team.packmate
 │   │   ├── AnalysisRepositoryImpl.java
 │   │   ├── WeatherRepository.java
 │   │   └── WeatherRepositoryImpl.java
+│   │
 │   ├── remote
-│   │   └── server
+│   │   └── api
 │   │       ├── ApiClient.java
 │   │       ├── AuthApi.java
 │   │       ├── TripApi.java
@@ -381,6 +385,7 @@ com.team.packmate
 │   │       ├── PackingApi.java
 │   │       ├── WeatherApi.java
 │   │       └── ArchiveApi.java
+│   │
 │   ├── dto
 │   │   ├── LoginRequestDto.java
 │   │   ├── LoginResponseDto.java
@@ -389,6 +394,7 @@ com.team.packmate
 │   │   ├── PackingItemDto.java
 │   │   ├── AnalysisResponseDto.java
 │   │   └── WeatherDto.java
+│   │
 │   └── mapper
 │       ├── UserMapper.java
 │       ├── TripMapper.java
@@ -396,43 +402,73 @@ com.team.packmate
 │       ├── PackingItemMapper.java
 │       ├── AnalysisMapper.java
 │       └── WeatherMapper.java
-├── feature
-│   ├── auth
-│   │   ├── LoginContract.java
-│   │   ├── LoginActivity.java
-│   │   └── LoginPresenter.java
-│   ├── home
-│   │   ├── HomeContract.java
-│   │   ├── HomeActivity.java
-│   │   └── HomePresenter.java
-│   ├── trip
-│   │   ├── TripRoomContract.java
-│   │   ├── TripRoomActivity.java
-│   │   ├── TripRoomPresenter.java
-│   │   └── CreateTripDialog.java
-│   ├── itinerary
-│   │   ├── ItineraryContract.java
-│   │   ├── ItineraryUploadActivity.java
-│   │   ├── ItineraryReviewActivity.java
-│   │   ├── ItineraryPresenter.java
-│   │   └── ItineraryAdapter.java
-│   ├── weather
-│   │   ├── WeatherContract.java
-│   │   ├── WeatherFragment.java
-│   │   └── WeatherPresenter.java
+│
+├── ui
+│   ├── EdgeToEdgeUtil.java
+│   │
+│   ├── analyzing
+│   │   └── AnalyzingActivity.java
+│   │
+│   ├── archive
+│   │   └── TripArchiveFragment.java
+│   │
+│   ├── atoms
+│   │   ├── AvatarView.java
+│   │   ├── CheckboxView.java
+│   │   ├── ChipView.java
+│   │   ├── DDayBadgeView.java
+│   │   ├── IconButtonView.java
+│   │   ├── PriorityDotView.java
+│   │   ├── RestrictionTagView.java
+│   │   └── WeatherIconView.java
+│   │
 │   ├── checklist
-│   │   ├── ChecklistContract.java
-│   │   ├── ChecklistFragment.java
-│   │   ├── ChecklistPresenter.java
-│   │   └── PackingItemAdapter.java
+│   │   ├── ChecklistActivity.java
+│   │   ├── ChecklistAssignmentFragment.java
+│   │   ├── ChecklistCommonFragment.java
+│   │   └── ChecklistMineFragment.java
+│   │
+│   ├── createroom
+│   │   └── CreateRoomActivity.java
+│   │
+│   ├── feedback
+│   │   └── WeatherFeedbackActivity.java
+│   │
+│   ├── home
+│   │   └── HomeFragment.java
+│   │
+│   ├── login
+│   │   └── LoginActivity.java
+│   │
+│   ├── molecules
+│   │   └── AvatarStackHelper.java
+│   │
+│   ├── organisms
+│   │   └── TripRoomCardBinder.java
+│   │
+│   ├── overlay
+│   │   ├── AddItemSheet.java
+│   │   ├── EditItemSheet.java
+│   │   └── InviteShareSheet.java
+│   │
 │   ├── profile
-│   │   ├── ProfileContract.java
-│   │   ├── ProfileFragment.java
-│   │   └── ProfilePresenter.java
-│   └── archive
-│       ├── ArchiveContract.java
-│       ├── ArchiveFragment.java
-│       └── ArchivePresenter.java
+│   │   └── ProfileFragment.java
+│   │
+│   ├── review
+│   │   └── ScheduleReviewActivity.java
+│   │
+│   ├── roomdetail
+│   │   └── RoomDetailActivity.java
+│   │
+│   ├── settings
+│   │   └── NotificationSettingsActivity.java
+│   │
+│   ├── splash
+│   │   └── SplashActivity.java
+│   │
+│   └── upload
+│       └── ScheduleUploadActivity.java
+│
 └── util
     ├── ImageCompressor.java
     ├── DateUtils.java
