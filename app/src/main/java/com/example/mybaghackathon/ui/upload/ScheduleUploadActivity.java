@@ -6,11 +6,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityScheduleUploadBinding;
 import com.example.mybaghackathon.ui.analyzing.AnalyzingActivity;
-import com.example.mybaghackathon.ui.atoms.ChipView;
 import com.google.android.material.button.MaterialButton;
 
 /**
@@ -30,10 +30,6 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         binding = ActivityScheduleUploadBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        TextView title = binding.uploadTopBar.topAppBarCompactTitle;
-        title.setText(R.string.upload_title);
-        binding.uploadTopBar.topAppBarBack.setOnClickListener(v -> finish());
-
         View scheduleCard = binding.uploadScheduleCard;
         ((TextView) scheduleCard.findViewById(R.id.uploadGuideTitle)).setText(R.string.upload_guide_schedule_title);
         ((TextView) scheduleCard.findViewById(R.id.uploadGuideDesc)).setText(R.string.upload_guide_schedule_desc);
@@ -42,15 +38,15 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         ((TextView) hotelCard.findViewById(R.id.uploadGuideTitle)).setText(R.string.upload_guide_hotel_title);
         ((TextView) hotelCard.findViewById(R.id.uploadGuideDesc)).setText(R.string.upload_guide_hotel_desc);
 
-        ChipView domestic = binding.uploadSegmentDomestic;
-        ChipView intl = binding.uploadSegmentIntl;
+        TextView domestic = binding.uploadSegmentDomestic;
+        TextView intl = binding.uploadSegmentIntl;
         domestic.setOnClickListener(v -> {
-            domestic.setActive(true);
-            intl.setActive(false);
+            setSegmentSelected(domestic, true);
+            setSegmentSelected(intl, false);
         });
         intl.setOnClickListener(v -> {
-            intl.setActive(true);
-            domestic.setActive(false);
+            setSegmentSelected(intl, true);
+            setSegmentSelected(domestic, false);
         });
 
         MaterialButton startAnalysis = binding.uploadBottomCta.bottomCtaPrimary;
@@ -59,5 +55,16 @@ public class ScheduleUploadActivity extends AppCompatActivity {
             startActivity(new Intent(this, AnalyzingActivity.class));
             finish();
         });
+    }
+
+    private void setSegmentSelected(TextView segment, boolean selected) {
+        if (selected) {
+            segment.setBackgroundResource(R.drawable.bg_segment_selected);
+            segment.setTextAppearance(R.style.TextAppearance_Bag_TitleS);
+        } else {
+            segment.setBackground(null);
+            segment.setTextAppearance(R.style.TextAppearance_Bag_BodyM);
+            segment.setTextColor(ContextCompat.getColor(this, R.color.bag_text_tertiary_safe));
+        }
     }
 }

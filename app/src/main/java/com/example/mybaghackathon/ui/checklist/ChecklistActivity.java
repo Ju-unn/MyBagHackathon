@@ -1,7 +1,6 @@
 package com.example.mybaghackathon.ui.checklist;
 
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -26,10 +25,6 @@ public class ChecklistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityChecklistBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        TextView title = binding.checklistTopBar.topAppBarCompactTitle;
-        title.setText(R.string.checklist_title);
-        binding.checklistTopBar.topAppBarBack.setOnClickListener(v -> finish());
 
         TabLayout tabs = binding.checklistTabs;
 

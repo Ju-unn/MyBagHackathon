@@ -10,11 +10,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.FragmentArchiveBinding;
-import com.example.mybaghackathon.ui.atoms.ChipView;
 import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.example.mybaghackathon.ui.organisms.TripRoomCardBinder;
 
@@ -29,8 +29,8 @@ public class TripArchiveFragment extends Fragment {
 
     private FragmentArchiveBinding binding;
     private LinearLayout list;
-    private ChipView activeChip;
-    private ChipView pastChip;
+    private TextView activeChip;
+    private TextView pastChip;
 
     @Nullable
     @Override
@@ -38,10 +38,6 @@ public class TripArchiveFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         binding = FragmentArchiveBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        TextView title = root.findViewById(R.id.topAppBarTitle);
-        title.setText(R.string.archive_title);
-        root.findViewById(R.id.topAppBarAction).setVisibility(View.GONE);
 
         list = binding.archiveTripList;
         activeChip = binding.archiveSegmentActive;
@@ -61,8 +57,8 @@ public class TripArchiveFragment extends Fragment {
     }
 
     private void selectSegment(boolean active) {
-        activeChip.setActive(active);
-        pastChip.setActive(!active);
+        setSegmentSelected(activeChip, active);
+        setSegmentSelected(pastChip, !active);
         list.removeAllViews();
 
         if (active) {
@@ -71,6 +67,17 @@ public class TripArchiveFragment extends Fragment {
         } else {
             addCard("부산 여름 여행", false);
             addCard("강릉 워크숍", false);
+        }
+    }
+
+    private void setSegmentSelected(TextView segment, boolean selected) {
+        if (selected) {
+            segment.setBackgroundResource(R.drawable.bg_segment_selected);
+            segment.setTextAppearance(R.style.TextAppearance_Bag_TitleS);
+        } else {
+            segment.setBackground(null);
+            segment.setTextAppearance(R.style.TextAppearance_Bag_BodyM);
+            segment.setTextColor(ContextCompat.getColor(requireContext(), R.color.bag_text_tertiary_safe));
         }
     }
 

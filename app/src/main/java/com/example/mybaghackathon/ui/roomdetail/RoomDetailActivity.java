@@ -12,10 +12,8 @@ import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityRoomDetailBinding;
-import com.example.mybaghackathon.ui.atoms.IconButtonView;
 import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.example.mybaghackathon.ui.overlay.InviteShareSheet;
-import com.example.mybaghackathon.ui.upload.ScheduleUploadActivity;
 import com.google.android.material.button.MaterialButton;
 
 /**
@@ -39,8 +37,7 @@ public class RoomDetailActivity extends AppCompatActivity {
         title.setText("제주 가족 여행");
         binding.roomDetailTopBar.topAppBarBack.setOnClickListener(v -> finish());
 
-        IconButtonView inviteButton = binding.roomDetailInviteButton;
-        inviteButton.setIcon(R.drawable.ic_add);
+        MaterialButton inviteButton = binding.roomDetailInviteButton;
         inviteButton.setOnClickListener(v ->
                 InviteShareSheet.newInstance("https://mybag.app/invite/8f2c91")
                         .show(getSupportFragmentManager(), "invite_share"));
@@ -49,9 +46,6 @@ public class RoomDetailActivity extends AppCompatActivity {
         addMember(memberList, "나", true, R.color.bag_avatar_2);
         addMember(memberList, "민지", false, R.color.bag_avatar_1);
         addMember(memberList, "유진", false, R.color.bag_avatar_4);
-
-        binding.roomDetailReanalyzeButton.setOnClickListener(v ->
-                startActivity(new Intent(this, ScheduleUploadActivity.class)));
 
         MaterialButton viewChecklist = binding.roomDetailBottomCta.bottomCtaPrimary;
         viewChecklist.setText(R.string.room_detail_view_checklist);

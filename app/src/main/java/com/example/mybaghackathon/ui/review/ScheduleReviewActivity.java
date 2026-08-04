@@ -39,10 +39,6 @@ public class ScheduleReviewActivity extends AppCompatActivity {
         binding = ActivityScheduleReviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        TextView title = binding.reviewTopBar.topAppBarCompactTitle;
-        title.setText(R.string.review_title);
-        binding.reviewTopBar.topAppBarBack.setOnClickListener(v -> finish());
-
         bindReviewField(binding.reviewDestinationCard, R.string.review_destination_label, "도쿄, 일본");
         bindReviewField(binding.reviewDatesCard, R.string.review_dates_label, "3.15(일) — 3.19(목)");
 

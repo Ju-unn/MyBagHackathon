@@ -2,9 +2,6 @@ package com.example.mybaghackathon.ui.createroom;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,12 +31,6 @@ public class CreateRoomActivity extends AppCompatActivity {
         TextView title = binding.createRoomTopBar.topAppBarCompactTitle;
         title.setText(R.string.create_room_title);
         binding.createRoomTopBar.topAppBarBack.setOnClickListener(v -> finish());
-
-        LinearLayout memberList = binding.createRoomMemberList;
-        View me = LayoutInflater.from(this).inflate(R.layout.molecule_member_list_item, memberList, false);
-        ((TextView) me.findViewById(R.id.memberName)).setText("나");
-        me.findViewById(R.id.memberHostBadge).setVisibility(View.VISIBLE);
-        memberList.addView(me);
 
         MaterialButton submit = binding.createRoomBottomCta.bottomCtaPrimary;
         submit.setText(R.string.create_room_submit);
