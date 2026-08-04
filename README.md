@@ -199,6 +199,7 @@ Room은 한 기기 안에 데이터를 저장하는 로컬 데이터베이스입
 기본 패키지는 `com.team.packmate`입니다. 아래처럼 패키지마다 제목을 나누고 클래스는 한 줄에 하나씩 작성합니다.
 
 app
+
 앱 실행과 공용 객체 생성을 담당합니다.
 
 - PackMateApplication.java
@@ -206,6 +207,7 @@ app
 - BaseActivity.java
 
 common
+
 여러 기능에서 함께 사용하는 결과, 오류, 상수를 관리합니다.
 
 - AppResult.java
@@ -213,6 +215,7 @@ common
 - Constants.java
 
 model
+
 앱에서 사용하는 데이터 형태를 정의합니다.
 
 - User.java
@@ -224,6 +227,7 @@ model
 - Weather.java
 
 data.repository
+
 Presenter가 사용할 데이터 접근 규칙과 실제 구현체입니다.
 
 - AuthRepository.java
