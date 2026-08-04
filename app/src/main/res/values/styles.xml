@@ -7,11 +7,6 @@
          Regular -> pretendard_regular. Only 3 weights are bundled
          (res/font), so "Black" styles fall back to Bold as the
          heaviest available weight.
-         타이포그래피 (14종) — Noto Sans KR 굵기 매핑:
-         Black -> sans-serif-black, Bold -> sans-serif (bold),
-         Medium -> sans-serif-medium, Regular -> sans-serif.
-         한글 글리프는 시스템의 Noto Sans CJK KR 폴백으로 렌더링되므로
-         폰트 파일을 따로 넣을 필요 없음.
 
          android:lineHeight는 API 28(Android 9) 이상에서만 지원되는 속성이라
          여기(기본 values/)에는 넣지 않음. API 28 이상 기기에는
