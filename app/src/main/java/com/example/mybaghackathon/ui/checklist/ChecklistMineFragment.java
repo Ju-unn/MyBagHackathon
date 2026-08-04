@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.FragmentChecklistMineBinding;
 import com.example.mybaghackathon.ui.atoms.CheckboxView;
 
 import java.util.Arrays;
@@ -27,14 +28,17 @@ public class ChecklistMineFragment extends Fragment {
 
     private static final List<String> MY_ITEMS = Arrays.asList("여권", "카메라", "상비약");
 
+    private FragmentChecklistMineBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_checklist_mine, container, false);
+        binding = FragmentChecklistMineBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-        LinearLayout list = root.findViewById(R.id.checklistMineList);
-        View emptyState = root.findViewById(R.id.checklistMineEmptyState);
+        LinearLayout list = binding.checklistMineList;
+        View emptyState = binding.checklistMineEmptyState;
 
         if (MY_ITEMS.isEmpty()) {
             list.setVisibility(View.GONE);
@@ -50,5 +54,11 @@ public class ChecklistMineFragment extends Fragment {
         }
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

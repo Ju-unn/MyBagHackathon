@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.FragmentProfileBinding;
 import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 import com.example.mybaghackathon.ui.settings.NotificationSettingsActivity;
 
@@ -27,13 +28,16 @@ public class ProfileFragment extends Fragment {
 
     private static final String[] DEFAULT_ITEMS = {"여권", "충전기", "보조배터리", "우산"};
 
+    private FragmentProfileBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_profile, container, false);
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-        LinearLayout itemList = root.findViewById(R.id.profileItemList);
+        LinearLayout itemList = binding.profileItemList;
         for (String item : DEFAULT_ITEMS) {
             TextView row = new TextView(requireContext());
             row.setText(item);
@@ -60,7 +64,7 @@ public class ProfileFragment extends Fragment {
             itemList.addView(row);
         }
 
-        root.findViewById(R.id.profileAddItemWrapper).setOnClickListener(v -> {
+        binding.profileAddItemWrapper.setOnClickListener(v -> {
             com.example.mybaghackathon.ui.overlay.AddItemSheet sheet =
                     new com.example.mybaghackathon.ui.overlay.AddItemSheet();
             sheet.setOnItemAddedListener((label, priority) -> {
@@ -76,10 +80,16 @@ public class ProfileFragment extends Fragment {
             sheet.show(getParentFragmentManager(), "add_item");
         });
 
-        root.findViewById(R.id.profileNotifRow).setOnClickListener(v ->
+        binding.profileNotifRow.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), NotificationSettingsActivity.class)));
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private int dp(int value) {

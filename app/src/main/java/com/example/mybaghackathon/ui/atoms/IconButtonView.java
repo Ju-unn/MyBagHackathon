@@ -4,13 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ViewIconButtonBinding;
 
 /**
  * A8 · 아이콘 버튼 — 스타일 = Filled / Ghost. 실제 원은 36dp지만
@@ -21,8 +21,7 @@ import com.example.mybaghackathon.R;
  */
 public class IconButtonView extends FrameLayout {
 
-    private FrameLayout circle;
-    private ImageView icon;
+    private ViewIconButtonBinding binding;
 
     public IconButtonView(Context context) {
         super(context);
@@ -40,26 +39,24 @@ public class IconButtonView extends FrameLayout {
     }
 
     private void init(Context context) {
-        LayoutInflater.from(context).inflate(R.layout.view_icon_button, this, true);
-        circle = findViewById(R.id.iconButtonCircle);
-        icon = findViewById(R.id.iconButtonIcon);
+        binding = ViewIconButtonBinding.inflate(LayoutInflater.from(context), this, true);
         setFilled(true);
     }
 
     public void setIcon(@DrawableRes int resId) {
-        icon.setImageResource(resId);
+        binding.iconButtonIcon.setImageResource(resId);
     }
 
     public void setFilled(boolean filled) {
         if (filled) {
-            circle.setBackgroundResource(R.drawable.oval_solid);
-            circle.getBackground().mutate().setTint(ContextCompat.getColor(getContext(), R.color.bag_brand_default));
-            circle.setElevation(dp(4));
-            icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.bag_text_on_brand));
+            binding.iconButtonCircle.setBackgroundResource(R.drawable.oval_solid);
+            binding.iconButtonCircle.getBackground().mutate().setTint(ContextCompat.getColor(getContext(), R.color.bag_brand_default));
+            binding.iconButtonCircle.setElevation(dp(4));
+            binding.iconButtonIcon.setColorFilter(ContextCompat.getColor(getContext(), R.color.bag_text_on_brand));
         } else {
-            circle.setBackgroundResource(R.drawable.bg_pill_neutral);
-            circle.setElevation(0);
-            icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.bag_text_primary));
+            binding.iconButtonCircle.setBackgroundResource(R.drawable.bg_pill_neutral);
+            binding.iconButtonCircle.setElevation(0);
+            binding.iconButtonIcon.setColorFilter(ContextCompat.getColor(getContext(), R.color.bag_text_primary));
         }
     }
 

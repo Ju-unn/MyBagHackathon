@@ -1,12 +1,12 @@
 package com.example.mybaghackathon.ui.settings;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ActivityNotificationSettingsBinding;
 
 /**
  * S15 · 알림 설정 — D-7/D-3/D-1 토글 + 날짜 누락 경고.
@@ -16,16 +16,18 @@ import com.example.mybaghackathon.R;
  */
 public class NotificationSettingsActivity extends AppCompatActivity {
 
+    private ActivityNotificationSettingsBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification_settings);
+        binding = ActivityNotificationSettingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        TextView title = findViewById(R.id.topAppBarCompactTitle);
+        TextView title = binding.notifTopBar.topAppBarCompactTitle;
         title.setText(R.string.notif_title);
-        findViewById(R.id.topAppBarBack).setOnClickListener(v -> finish());
+        binding.notifTopBar.topAppBarBack.setOnClickListener(v -> finish());
 
-        View banner = findViewById(R.id.notifWarningBanner);
-        ((TextView) banner.findViewById(R.id.warningBannerText)).setText(R.string.notif_warning);
+        binding.notifWarningBanner.warningBannerText.setText(R.string.notif_warning);
     }
 }

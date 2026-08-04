@@ -5,12 +5,12 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ViewDdayBadgeBinding;
 
 /**
  * A2 · 배지/디데이 — 스타일 = 브랜드 / 뉴트럴.
@@ -22,7 +22,7 @@ import com.example.mybaghackathon.R;
  */
 public class DDayBadgeView extends FrameLayout {
 
-    private TextView label;
+    private ViewDdayBadgeBinding binding;
 
     public DDayBadgeView(Context context) {
         super(context);
@@ -40,8 +40,7 @@ public class DDayBadgeView extends FrameLayout {
     }
 
     private void init(Context context, @Nullable AttributeSet attrs) {
-        LayoutInflater.from(context).inflate(R.layout.view_dday_badge, this, true);
-        label = findViewById(R.id.ddayLabel);
+        binding = ViewDdayBadgeBinding.inflate(LayoutInflater.from(context), this);
 
         boolean brand = true;
         String text = "D-0";
@@ -52,21 +51,21 @@ public class DDayBadgeView extends FrameLayout {
             brand = a.getBoolean(R.styleable.BagDDayBadgeView_ddayBrand, true);
             a.recycle();
         }
-        label.setText(text);
+        binding.ddayLabel.setText(text);
         setBrand(brand);
     }
 
     public void setText(String text) {
-        label.setText(text);
+        binding.ddayLabel.setText(text);
     }
 
     public void setBrand(boolean brand) {
         if (brand) {
-            label.setBackgroundResource(R.drawable.bg_pill_brand);
-            label.setTextColor(ContextCompat.getColor(getContext(), R.color.bag_text_on_brand));
+            binding.ddayLabel.setBackgroundResource(R.drawable.bg_pill_brand);
+            binding.ddayLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.bag_text_on_brand));
         } else {
-            label.setBackgroundResource(R.drawable.bg_pill_neutral);
-            label.setTextColor(ContextCompat.getColor(getContext(), R.color.bag_text_tertiary_safe));
+            binding.ddayLabel.setBackgroundResource(R.drawable.bg_pill_neutral);
+            binding.ddayLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.bag_text_tertiary_safe));
         }
     }
 }

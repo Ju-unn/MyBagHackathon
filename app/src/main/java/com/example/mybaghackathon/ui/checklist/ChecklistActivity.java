@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ActivityChecklistBinding;
 import com.google.android.material.tabs.TabLayout;
 
 /**
@@ -18,16 +19,19 @@ import com.google.android.material.tabs.TabLayout;
  */
 public class ChecklistActivity extends AppCompatActivity {
 
+    private ActivityChecklistBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_checklist);
+        binding = ActivityChecklistBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        TextView title = findViewById(R.id.topAppBarCompactTitle);
+        TextView title = binding.checklistTopBar.topAppBarCompactTitle;
         title.setText(R.string.checklist_title);
-        findViewById(R.id.topAppBarBack).setOnClickListener(v -> finish());
+        binding.checklistTopBar.topAppBarBack.setOnClickListener(v -> finish());
 
-        TabLayout tabs = findViewById(R.id.checklistTabs);
+        TabLayout tabs = binding.checklistTabs;
 
         if (savedInstanceState == null) {
             showFragment(new ChecklistCommonFragment());

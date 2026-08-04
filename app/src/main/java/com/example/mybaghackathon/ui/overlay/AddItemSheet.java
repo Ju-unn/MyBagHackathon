@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.SheetAddItemBinding;
 import com.example.mybaghackathon.ui.atoms.ChipView;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
@@ -30,6 +31,8 @@ public class AddItemSheet extends BottomSheetDialogFragment {
     @Nullable
     private OnItemAddedListener listener;
 
+    private SheetAddItemBinding binding;
+
     public void setOnItemAddedListener(OnItemAddedListener listener) {
         this.listener = listener;
     }
@@ -38,18 +41,19 @@ public class AddItemSheet extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.sheet_add_item, container, false);
+        binding = SheetAddItemBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-        TextInputEditText nameInput = root.findViewById(R.id.addItemNameInput);
-        ChipView high = root.findViewById(R.id.addItemPriorityHigh);
-        ChipView mid = root.findViewById(R.id.addItemPriorityMid);
-        ChipView low = root.findViewById(R.id.addItemPriorityLow);
+        TextInputEditText nameInput = binding.addItemNameInput;
+        ChipView high = binding.addItemPriorityHigh;
+        ChipView mid = binding.addItemPriorityMid;
+        ChipView low = binding.addItemPriorityLow;
 
         high.setOnClickListener(v -> selectPriority(high, mid, low, high));
         mid.setOnClickListener(v -> selectPriority(high, mid, low, mid));
         low.setOnClickListener(v -> selectPriority(high, mid, low, low));
 
-        root.findViewById(R.id.addItemSaveButton).setOnClickListener(v -> {
+        binding.addItemSaveButton.setOnClickListener(v -> {
             String label = nameInput.getText() != null ? nameInput.getText().toString().trim() : "";
             if (TextUtils.isEmpty(label)) return;
 
@@ -59,6 +63,12 @@ public class AddItemSheet extends BottomSheetDialogFragment {
         });
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void selectPriority(ChipView high, ChipView mid, ChipView low, ChipView selected) {

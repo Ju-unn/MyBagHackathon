@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.FragmentArchiveBinding;
 import com.example.mybaghackathon.ui.atoms.ChipView;
 import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.example.mybaghackathon.ui.organisms.TripRoomCardBinder;
@@ -26,6 +27,7 @@ import com.example.mybaghackathon.ui.organisms.TripRoomCardBinder;
  */
 public class TripArchiveFragment extends Fragment {
 
+    private FragmentArchiveBinding binding;
     private LinearLayout list;
     private ChipView activeChip;
     private ChipView pastChip;
@@ -34,21 +36,28 @@ public class TripArchiveFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_archive, container, false);
+        binding = FragmentArchiveBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
         TextView title = root.findViewById(R.id.topAppBarTitle);
         title.setText(R.string.archive_title);
         root.findViewById(R.id.topAppBarAction).setVisibility(View.GONE);
 
-        list = root.findViewById(R.id.archiveTripList);
-        activeChip = root.findViewById(R.id.archiveSegmentActive);
-        pastChip = root.findViewById(R.id.archiveSegmentPast);
+        list = binding.archiveTripList;
+        activeChip = binding.archiveSegmentActive;
+        pastChip = binding.archiveSegmentPast;
 
         activeChip.setOnClickListener(v -> selectSegment(true));
         pastChip.setOnClickListener(v -> selectSegment(false));
 
         selectSegment(true);
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void selectSegment(boolean active) {

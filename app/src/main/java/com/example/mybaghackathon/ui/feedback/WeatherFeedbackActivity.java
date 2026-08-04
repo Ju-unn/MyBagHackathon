@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ActivityWeatherFeedbackBinding;
 import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.google.android.material.button.MaterialButton;
 
@@ -21,16 +22,19 @@ import com.google.android.material.button.MaterialButton;
  */
 public class WeatherFeedbackActivity extends AppCompatActivity {
 
+    private ActivityWeatherFeedbackBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather_feedback);
+        binding = ActivityWeatherFeedbackBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         TextView title = findViewById(R.id.topAppBarTitle);
         title.setText(R.string.feedback_title);
         findViewById(R.id.topAppBarAction).setVisibility(View.GONE);
 
-        LinearLayout list = findViewById(R.id.feedbackSectionList);
+        LinearLayout list = binding.feedbackSectionList;
         addSection(list, R.string.feedback_clothing_title,
                 "낮 최고 14°, 밤 최저 6°로 일교차가 커요. 얇은 니트에 걸칠 수 있는 바람막이를 챙기세요.");
         addSection(list, R.string.feedback_food_title,
@@ -38,7 +42,7 @@ public class WeatherFeedbackActivity extends AppCompatActivity {
         addSection(list, R.string.feedback_stay_title,
                 "숙소에 드라이어가 없을 수 있어요. 콘센트 규격이 다르니 멀티 어댑터를 준비하세요.");
 
-        MaterialButton viewChecklist = findViewById(R.id.bottomCtaPrimary);
+        MaterialButton viewChecklist = binding.feedbackBottomCta.bottomCtaPrimary;
         viewChecklist.setText(R.string.feedback_view_checklist);
         viewChecklist.setOnClickListener(v -> {
             startActivity(new Intent(this, ChecklistActivity.class));

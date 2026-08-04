@@ -5,14 +5,12 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ViewRestrictionTagBinding;
 
 /**
  * A10 · 제한 태그(RestrictionTag) — 타입 = 기내용만 / 위탁용만 / 반입금지.
@@ -30,9 +28,7 @@ public class RestrictionTagView extends FrameLayout {
     public static final int CHECKED_ONLY = 1;
     public static final int PROHIBITED = 2;
 
-    private LinearLayout row;
-    private ImageView icon;
-    private TextView label;
+    private ViewRestrictionTagBinding binding;
 
     public RestrictionTagView(Context context) {
         super(context);
@@ -50,10 +46,7 @@ public class RestrictionTagView extends FrameLayout {
     }
 
     private void init(Context context, @Nullable AttributeSet attrs) {
-        LayoutInflater.from(context).inflate(R.layout.view_restriction_tag, this, true);
-        row = findViewById(R.id.restrictionTagRow);
-        icon = findViewById(R.id.restrictionTagIcon);
-        label = findViewById(R.id.restrictionTagLabel);
+        binding = ViewRestrictionTagBinding.inflate(LayoutInflater.from(context), this);
 
         int type = PROHIBITED;
         if (attrs != null) {
@@ -68,24 +61,24 @@ public class RestrictionTagView extends FrameLayout {
         int textColorRes = R.color.bag_text_tertiary_safe;
         switch (type) {
             case CABIN_ONLY:
-                row.setBackgroundResource(R.drawable.bg_restriction_warning);
-                icon.setImageResource(R.drawable.ic_plane);
-                label.setText(R.string.restriction_cabin_only);
+                binding.restrictionTagRow.setBackgroundResource(R.drawable.bg_restriction_warning);
+                binding.restrictionTagIcon.setImageResource(R.drawable.ic_plane);
+                binding.restrictionTagLabel.setText(R.string.restriction_cabin_only);
                 break;
             case CHECKED_ONLY:
-                row.setBackgroundResource(R.drawable.bg_restriction_warning);
-                icon.setImageResource(R.drawable.ic_luggage);
-                label.setText(R.string.restriction_checked_only);
+                binding.restrictionTagRow.setBackgroundResource(R.drawable.bg_restriction_warning);
+                binding.restrictionTagIcon.setImageResource(R.drawable.ic_luggage);
+                binding.restrictionTagLabel.setText(R.string.restriction_checked_only);
                 break;
             default:
-                row.setBackgroundResource(R.drawable.bg_restriction_danger);
-                icon.setImageResource(R.drawable.ic_ban);
-                label.setText(R.string.restriction_prohibited);
+                binding.restrictionTagRow.setBackgroundResource(R.drawable.bg_restriction_danger);
+                binding.restrictionTagIcon.setImageResource(R.drawable.ic_ban);
+                binding.restrictionTagLabel.setText(R.string.restriction_prohibited);
                 textColorRes = R.color.bag_status_danger;
                 break;
         }
         int color = ContextCompat.getColor(getContext(), textColorRes);
-        label.setTextColor(color);
-        icon.setColorFilter(color);
+        binding.restrictionTagLabel.setTextColor(color);
+        binding.restrictionTagIcon.setColorFilter(color);
     }
 }

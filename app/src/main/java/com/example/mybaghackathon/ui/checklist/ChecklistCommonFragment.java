@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.data.ChecklistItem;
+import com.example.mybaghackathon.databinding.FragmentChecklistCommonBinding;
 import com.example.mybaghackathon.ui.atoms.AvatarView;
 import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.PriorityDotView;
@@ -32,13 +33,16 @@ import java.util.List;
  */
 public class ChecklistCommonFragment extends Fragment {
 
+    private FragmentChecklistCommonBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_checklist_common, container, false);
+        binding = FragmentChecklistCommonBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-        final LinearLayout sections = root.findViewById(R.id.checklistCommonSections);
+        final LinearLayout sections = binding.checklistCommonSections;
 
         ChecklistItem passport = new ChecklistItem("여권", 0);
         passport.assigneeInitial = "나";
@@ -53,9 +57,9 @@ public class ChecklistCommonFragment extends Fragment {
         addSection(sections, 2, getString(R.string.review_priority_low),
                 Arrays.asList(new ChecklistItem("선글라스", 2)));
 
-        TextView addLabel = root.findViewById(R.id.checklistCommonAddWrapper).findViewById(R.id.dashedAddCardLabel);
+        TextView addLabel = binding.checklistCommonAddWrapper.findViewById(R.id.dashedAddCardLabel);
         addLabel.setText(R.string.checklist_add_manual);
-        root.findViewById(R.id.checklistCommonAddWrapper).setOnClickListener(v -> {
+        binding.checklistCommonAddWrapper.setOnClickListener(v -> {
             AddItemSheet sheet = new AddItemSheet();
             sheet.setOnItemAddedListener((label, priority) -> {
                 String[] labels = {getString(R.string.review_priority_high),
@@ -66,6 +70,12 @@ public class ChecklistCommonFragment extends Fragment {
         });
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void addSection(LinearLayout sections, int level, String label, List<ChecklistItem> items) {

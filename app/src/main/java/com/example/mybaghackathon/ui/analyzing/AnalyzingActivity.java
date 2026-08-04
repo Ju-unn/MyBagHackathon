@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ActivityAnalyzingBinding;
 import com.example.mybaghackathon.ui.review.ScheduleReviewActivity;
 
 /**
@@ -27,15 +28,17 @@ public class AnalyzingActivity extends AppCompatActivity {
             R.string.analyzing_step3, R.string.analyzing_step4};
     private static final long STEP_DELAY_MS = 700L;
 
+    private ActivityAnalyzingBinding binding;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TextView[] stepViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_analyzing);
+        binding = ActivityAnalyzingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        LinearLayout list = findViewById(R.id.analyzingStepList);
+        LinearLayout list = binding.analyzingStepList;
         stepViews = new TextView[STEPS.length];
         for (int i = 0; i < STEPS.length; i++) {
             TextView tv = new TextView(this);

@@ -8,6 +8,7 @@ import android.os.Looper;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ActivitySplashBinding;
 import com.example.mybaghackathon.ui.login.LoginActivity;
 
 /**
@@ -20,10 +21,13 @@ public class SplashActivity extends AppCompatActivity {
 
     private static final long SPLASH_DELAY_MS = 1000L;
 
+    private ActivitySplashBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+        binding = ActivitySplashBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (isFinishing()) return;

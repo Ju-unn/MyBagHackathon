@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ActivityRoomDetailBinding;
 import com.example.mybaghackathon.ui.atoms.IconButtonView;
 import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.example.mybaghackathon.ui.overlay.InviteShareSheet;
@@ -26,30 +27,33 @@ import com.google.android.material.button.MaterialButton;
  */
 public class RoomDetailActivity extends AppCompatActivity {
 
+    private ActivityRoomDetailBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_room_detail);
+        binding = ActivityRoomDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        TextView title = findViewById(R.id.topAppBarCompactTitle);
+        TextView title = binding.roomDetailTopBar.topAppBarCompactTitle;
         title.setText("제주 가족 여행");
-        findViewById(R.id.topAppBarBack).setOnClickListener(v -> finish());
+        binding.roomDetailTopBar.topAppBarBack.setOnClickListener(v -> finish());
 
-        IconButtonView inviteButton = findViewById(R.id.roomDetailInviteButton);
+        IconButtonView inviteButton = binding.roomDetailInviteButton;
         inviteButton.setIcon(R.drawable.ic_add);
         inviteButton.setOnClickListener(v ->
                 InviteShareSheet.newInstance("https://mybag.app/invite/8f2c91")
                         .show(getSupportFragmentManager(), "invite_share"));
 
-        LinearLayout memberList = findViewById(R.id.roomDetailMemberList);
+        LinearLayout memberList = binding.roomDetailMemberList;
         addMember(memberList, "나", true, R.color.bag_avatar_2);
         addMember(memberList, "민지", false, R.color.bag_avatar_1);
         addMember(memberList, "유진", false, R.color.bag_avatar_4);
 
-        findViewById(R.id.roomDetailReanalyzeButton).setOnClickListener(v ->
+        binding.roomDetailReanalyzeButton.setOnClickListener(v ->
                 startActivity(new Intent(this, ScheduleUploadActivity.class)));
 
-        MaterialButton viewChecklist = findViewById(R.id.bottomCtaPrimary);
+        MaterialButton viewChecklist = binding.roomDetailBottomCta.bottomCtaPrimary;
         viewChecklist.setText(R.string.room_detail_view_checklist);
         viewChecklist.setOnClickListener(v -> startActivity(new Intent(this, ChecklistActivity.class)));
     }

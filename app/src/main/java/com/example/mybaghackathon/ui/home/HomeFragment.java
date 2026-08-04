@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.FragmentHomeBinding;
 import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.example.mybaghackathon.ui.createroom.CreateRoomActivity;
 import com.example.mybaghackathon.ui.molecules.AvatarStackHelper;
@@ -31,17 +32,20 @@ import java.util.Arrays;
  */
 public class HomeFragment extends Fragment {
 
+    private FragmentHomeBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-        TextView title = root.findViewById(R.id.topAppBarTitle);
+        TextView title = binding.homeTopAppBar.topAppBarTitle;
         title.setText(R.string.home_title);
-        root.findViewById(R.id.topAppBarAction).setVisibility(View.GONE);
+        binding.homeTopAppBar.topAppBarAction.setVisibility(View.GONE);
 
-        LinearLayout list = root.findViewById(R.id.homeTripList);
+        LinearLayout list = binding.homeTripList;
 
         View active = inflateCard(list);
         TripRoomCardBinder.bindActive(active, "도쿄 벚꽃 여행", "D-12",
@@ -63,10 +67,16 @@ public class HomeFragment extends Fragment {
         TripRoomCardBinder.bindPast(past, "부산 여름 여행");
         addWithSpacing(list, past);
 
-        root.findViewById(R.id.homeAddRoomWrapper).setOnClickListener(v ->
+        binding.homeAddRoomWrapper.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), CreateRoomActivity.class)));
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private View inflateCard(ViewGroup parent) {

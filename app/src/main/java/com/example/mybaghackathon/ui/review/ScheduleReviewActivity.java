@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.data.ChecklistItem;
+import com.example.mybaghackathon.databinding.ActivityScheduleReviewBinding;
 import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.PriorityDotView;
 import com.example.mybaghackathon.ui.atoms.WeatherIconView;
@@ -30,24 +31,27 @@ import java.util.List;
  */
 public class ScheduleReviewActivity extends AppCompatActivity {
 
+    private ActivityScheduleReviewBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_schedule_review);
+        binding = ActivityScheduleReviewBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        TextView title = findViewById(R.id.topAppBarCompactTitle);
+        TextView title = binding.reviewTopBar.topAppBarCompactTitle;
         title.setText(R.string.review_title);
-        findViewById(R.id.topAppBarBack).setOnClickListener(v -> finish());
+        binding.reviewTopBar.topAppBarBack.setOnClickListener(v -> finish());
 
-        bindReviewField(R.id.reviewDestinationCard, R.string.review_destination_label, "도쿄, 일본");
-        bindReviewField(R.id.reviewDatesCard, R.string.review_dates_label, "3.15(일) — 3.19(목)");
+        bindReviewField(binding.reviewDestinationCard, R.string.review_destination_label, "도쿄, 일본");
+        bindReviewField(binding.reviewDatesCard, R.string.review_dates_label, "3.15(일) — 3.19(목)");
 
-        LinearLayout weatherList = findViewById(R.id.reviewWeatherList);
+        LinearLayout weatherList = binding.reviewWeatherList;
         addWeatherRow(weatherList, "3.15(일)", 0, "맑음 14°");
         addWeatherRow(weatherList, "3.16(월)", 1, "비 11°");
         addWeatherRow(weatherList, "3.17(화)", 2, "흐림 12°");
 
-        final LinearLayout sections = findViewById(R.id.reviewItemSections);
+        final LinearLayout sections = binding.reviewItemSections;
         addPrioritySection(sections, 0, getString(R.string.review_priority_high), Arrays.asList(
                 new ChecklistItem("여권", 0), new ChecklistItem("항공권", 0), new ChecklistItem("충전기", 0)));
         addPrioritySection(sections, 1, getString(R.string.review_priority_mid), Arrays.asList(
@@ -55,7 +59,7 @@ public class ScheduleReviewActivity extends AppCompatActivity {
         addPrioritySection(sections, 2, getString(R.string.review_priority_low), Arrays.asList(
                 new ChecklistItem("선글라스", 2)));
 
-        findViewById(R.id.reviewAddItemLink).setOnClickListener(v -> {
+        binding.reviewAddItemLink.setOnClickListener(v -> {
             AddItemSheet sheet = new AddItemSheet();
             sheet.setOnItemAddedListener((label, priority) -> {
                 String[] labels = {getString(R.string.review_priority_high),
@@ -66,10 +70,10 @@ public class ScheduleReviewActivity extends AppCompatActivity {
             sheet.show(getSupportFragmentManager(), "add_item");
         });
 
-        LinearLayout excludedList = findViewById(R.id.reviewExcludedList);
+        LinearLayout excludedList = binding.reviewExcludedList;
         addExcludedRow(excludedList, "두꺼운 패딩");
 
-        MaterialButton generate = findViewById(R.id.bottomCtaPrimary);
+        MaterialButton generate = binding.reviewBottomCta.bottomCtaPrimary;
         generate.setText(R.string.review_generate);
         generate.setOnClickListener(v -> {
             startActivity(new Intent(this,
@@ -78,8 +82,7 @@ public class ScheduleReviewActivity extends AppCompatActivity {
         });
     }
 
-    private void bindReviewField(int cardContainerId, int labelRes, String value) {
-        View card = findViewById(cardContainerId);
+    private void bindReviewField(View card, int labelRes, String value) {
         ((TextView) card.findViewById(R.id.reviewFieldLabel)).setText(labelRes);
         ((TextView) card.findViewById(R.id.reviewFieldValue)).setText(value);
     }

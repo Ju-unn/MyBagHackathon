@@ -6,18 +6,18 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ViewCheckboxBinding;
 
 /**
  * A4 · 체크박스 — 상태 = 미체크 / 체크됨 / 제외됨.
  * 실제 보이는 박스는 22x22dp지만 터치 영역은 48x48dp 전체를 차지함
  * (QA 체크리스트 §5: 터치 영역은 투명한 히트 영역까지 포함해야 함).
  *
- * 기능: 클릭할 때마다 미체크↔체크 상태를 토글하고, 상태가 바뀔 때마다
+ * 기능: 클릭할 때마다 미체크 ↔ 체크 상태를 토글하고, 상태가 바뀔 때마다
  * OnCheckChangeListener로 알려주는 3단 상태 체크박스 뷰.
  */
 public class CheckboxView extends FrameLayout {
@@ -26,8 +26,7 @@ public class CheckboxView extends FrameLayout {
     public static final int CHECKED = 1;
     public static final int EXCLUDED = 2;
 
-    private FrameLayout box;
-    private ImageView icon;
+    private ViewCheckboxBinding binding;
     private int state = UNCHECKED;
     private OnCheckChangeListener listener;
 
@@ -51,9 +50,7 @@ public class CheckboxView extends FrameLayout {
     }
 
     private void init(Context context, @Nullable AttributeSet attrs) {
-        LayoutInflater.from(context).inflate(R.layout.view_checkbox, this, true);
-        box = findViewById(R.id.checkboxBox);
-        icon = findViewById(R.id.checkboxIcon);
+        binding = ViewCheckboxBinding.inflate(LayoutInflater.from(context), this, true);
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BagCheckboxView);
@@ -84,18 +81,18 @@ public class CheckboxView extends FrameLayout {
     private void render() {
         switch (state) {
             case CHECKED:
-                box.setBackgroundResource(R.drawable.bg_checkbox_checked);
-                icon.setImageResource(R.drawable.ic_check);
-                icon.setVisibility(View.VISIBLE);
+                binding.checkboxBox.setBackgroundResource(R.drawable.bg_checkbox_checked);
+                binding.checkboxIcon.setImageResource(R.drawable.ic_check);
+                binding.checkboxIcon.setVisibility(View.VISIBLE);
                 break;
             case EXCLUDED:
-                box.setBackgroundResource(R.drawable.bg_checkbox_excluded);
-                icon.setImageResource(R.drawable.ic_close_small);
-                icon.setVisibility(View.VISIBLE);
+                binding.checkboxBox.setBackgroundResource(R.drawable.bg_checkbox_excluded);
+                binding.checkboxIcon.setImageResource(R.drawable.ic_close_small);
+                binding.checkboxIcon.setVisibility(View.VISIBLE);
                 break;
             default:
-                box.setBackgroundResource(R.drawable.bg_checkbox_unchecked);
-                icon.setVisibility(View.INVISIBLE);
+                binding.checkboxBox.setBackgroundResource(R.drawable.bg_checkbox_unchecked);
+                binding.checkboxIcon.setVisibility(View.INVISIBLE);
                 break;
         }
     }

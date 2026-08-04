@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.MainActivity;
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ActivityLoginBinding;
 
 /**
  * S02 · 로그인 — 카카오 로그인 버튼 하나만 있고, 누르면 MainActivity
@@ -17,12 +18,15 @@ import com.example.mybaghackathon.R;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    private ActivityLoginBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        findViewById(R.id.loginKakaoButton).setOnClickListener(v -> {
+        binding.loginKakaoButton.setOnClickListener(v -> {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         });

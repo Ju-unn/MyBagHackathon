@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.FragmentChecklistAssignmentBinding;
 import com.example.mybaghackathon.ui.atoms.AvatarView;
 
 /**
@@ -24,22 +25,31 @@ import com.example.mybaghackathon.ui.atoms.AvatarView;
  */
 public class ChecklistAssignmentFragment extends Fragment {
 
+    private FragmentChecklistAssignmentBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_checklist_assignment, container, false);
+        binding = FragmentChecklistAssignmentBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-        LinearLayout assigned = root.findViewById(R.id.checklistAssignmentList);
+        LinearLayout assigned = binding.checklistAssignmentList;
         addRow(assigned, "여권", "나", R.color.bag_avatar_2, true);
         addRow(assigned, "항공권", "민지", R.color.bag_avatar_1, true);
         addRow(assigned, "우산", "유진", R.color.bag_avatar_4, false);
 
-        LinearLayout unassigned = root.findViewById(R.id.checklistUnassignedList);
+        LinearLayout unassigned = binding.checklistUnassignedList;
         addUnassignedRow(unassigned, "충전기");
         addUnassignedRow(unassigned, "선글라스");
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void addRow(LinearLayout list, String label, String initial, int colorRes, boolean confirmed) {

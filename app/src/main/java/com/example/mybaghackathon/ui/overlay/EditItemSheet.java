@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.SheetEditItemBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -31,6 +32,8 @@ public class EditItemSheet extends BottomSheetDialogFragment {
     @Nullable
     private OnItemEditedListener listener;
 
+    private SheetEditItemBinding binding;
+
     public static EditItemSheet newInstance(String currentLabel) {
         EditItemSheet sheet = new EditItemSheet();
         Bundle args = new Bundle();
@@ -47,19 +50,20 @@ public class EditItemSheet extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.sheet_edit_item, container, false);
+        binding = SheetEditItemBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-        TextInputEditText nameInput = root.findViewById(R.id.editItemNameInput);
+        TextInputEditText nameInput = binding.editItemNameInput;
         if (getArguments() != null) {
             nameInput.setText(getArguments().getString(ARG_LABEL, ""));
         }
 
-        root.findViewById(R.id.editItemDeleteButton).setOnClickListener(v -> {
+        binding.editItemDeleteButton.setOnClickListener(v -> {
             if (listener != null) listener.onItemDeleted();
             dismiss();
         });
 
-        root.findViewById(R.id.editItemSaveButton).setOnClickListener(v -> {
+        binding.editItemSaveButton.setOnClickListener(v -> {
             String label = nameInput.getText() != null ? nameInput.getText().toString().trim() : "";
             if (TextUtils.isEmpty(label)) return;
             if (listener != null) listener.onItemRenamed(label);
@@ -67,5 +71,11 @@ public class EditItemSheet extends BottomSheetDialogFragment {
         });
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

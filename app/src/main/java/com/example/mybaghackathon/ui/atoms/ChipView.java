@@ -5,12 +5,12 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ViewChipBinding;
 
 /**
  * A5 · 칩(Chip) — 스타일 = 브랜드(활성) / 뉴트럴(비활성) / 데인저.
@@ -20,7 +20,7 @@ import com.example.mybaghackathon.R;
  */
 public class ChipView extends FrameLayout {
 
-    private TextView label;
+    private ViewChipBinding binding;
     private boolean active;
 
     public ChipView(Context context) {
@@ -39,8 +39,7 @@ public class ChipView extends FrameLayout {
     }
 
     private void init(Context context, @Nullable AttributeSet attrs) {
-        LayoutInflater.from(context).inflate(R.layout.view_chip, this, true);
-        label = findViewById(R.id.chipLabel);
+        binding = ViewChipBinding.inflate(LayoutInflater.from(context), this);
 
         String text = "";
         if (attrs != null) {
@@ -50,23 +49,23 @@ public class ChipView extends FrameLayout {
             active = a.getBoolean(R.styleable.BagChipView_chipActive, false);
             a.recycle();
         }
-        label.setText(text);
+        binding.chipLabel.setText(text);
         setActive(active);
         setOnClickListener(v -> setActive(!active));
     }
 
     public void setLabel(String text) {
-        label.setText(text);
+        binding.chipLabel.setText(text);
     }
 
     public void setActive(boolean active) {
         this.active = active;
         if (active) {
-            label.setBackgroundResource(R.drawable.bg_pill_brand);
-            label.setTextColor(ContextCompat.getColor(getContext(), R.color.bag_text_on_brand));
+            binding.chipLabel.setBackgroundResource(R.drawable.bg_pill_brand);
+            binding.chipLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.bag_text_on_brand));
         } else {
-            label.setBackgroundResource(R.drawable.bg_pill_neutral);
-            label.setTextColor(ContextCompat.getColor(getContext(), R.color.bag_text_tertiary_safe));
+            binding.chipLabel.setBackgroundResource(R.drawable.bg_pill_neutral);
+            binding.chipLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.bag_text_tertiary_safe));
         }
     }
 

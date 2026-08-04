@@ -7,13 +7,13 @@ import android.graphics.drawable.LayerDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ViewAvatarBinding;
 
 /**
  * A1 · 아바타 — 원형 이니셜 배지.
@@ -26,7 +26,7 @@ import com.example.mybaghackathon.R;
  */
 public class AvatarView extends FrameLayout {
 
-    private TextView initialText;
+    private ViewAvatarBinding binding;
     private int color;
     private boolean strokeEnabled;
 
@@ -46,8 +46,7 @@ public class AvatarView extends FrameLayout {
     }
 
     private void init(Context context, @Nullable AttributeSet attrs) {
-        LayoutInflater.from(context).inflate(R.layout.view_avatar, this, true);
-        initialText = findViewById(R.id.avatarInitialText);
+        binding = ViewAvatarBinding.inflate(LayoutInflater.from(context), this);
         color = ContextCompat.getColor(context, R.color.bag_avatar_2);
         strokeEnabled = false;
 
@@ -57,13 +56,13 @@ public class AvatarView extends FrameLayout {
             color = a.getColor(R.styleable.BagAvatarView_avatarColor, color);
             strokeEnabled = a.getBoolean(R.styleable.BagAvatarView_avatarStroke, false);
             a.recycle();
-            if (initial != null) initialText.setText(initial);
+            if (initial != null) binding.avatarInitialText.setText(initial);
         }
         applyBackground();
     }
 
     public void setInitial(String initial) {
-        initialText.setText(initial);
+        binding.avatarInitialText.setText(initial);
     }
 
     public void setAvatarColor(@ColorInt int colorInt) {
@@ -79,7 +78,7 @@ public class AvatarView extends FrameLayout {
             ring.setShape(GradientDrawable.OVAL);
             ring.setColor(color);
             ring.setStroke(dp(2), strokeColorToMatchBackground);
-            initialText.setBackground(ring);
+            binding.avatarInitialText.setBackground(ring);
         }
     }
 
@@ -89,9 +88,9 @@ public class AvatarView extends FrameLayout {
         circle.setColor(color);
         if (strokeEnabled) {
             LayerDrawable layered = new LayerDrawable(new android.graphics.drawable.Drawable[]{circle});
-            initialText.setBackground(layered);
+            binding.avatarInitialText.setBackground(layered);
         } else {
-            initialText.setBackground(circle);
+            binding.avatarInitialText.setBackground(circle);
         }
     }
 

@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.SheetInviteBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 /**
@@ -25,6 +26,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class InviteShareSheet extends BottomSheetDialogFragment {
 
     private static final String ARG_LINK = "link";
+
+    private SheetInviteBinding binding;
 
     public static InviteShareSheet newInstance(String link) {
         InviteShareSheet sheet = new InviteShareSheet();
@@ -38,22 +41,29 @@ public class InviteShareSheet extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.sheet_invite, container, false);
+        binding = SheetInviteBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
         String link = getArguments() != null && getArguments().getString(ARG_LINK) != null
                 ? getArguments().getString(ARG_LINK) : "https://mybag.app/invite/8f2c91";
 
-        TextView linkText = root.findViewById(R.id.inviteLinkText);
+        TextView linkText = binding.inviteLinkText;
         linkText.setText(link);
 
-        root.findViewById(R.id.inviteCopyLinkButton).setOnClickListener(v -> {
+        binding.inviteCopyLinkButton.setOnClickListener(v -> {
             ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
             clipboard.setPrimaryClip(ClipData.newPlainText("invite_link", link));
             Toast.makeText(getContext(), R.string.action_copy_link, Toast.LENGTH_SHORT).show();
         });
 
-        root.findViewById(R.id.inviteKakaoButton).setOnClickListener(v -> dismiss());
+        binding.inviteKakaoButton.setOnClickListener(v -> dismiss());
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ActivityCreateRoomBinding;
 import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
 import com.google.android.material.button.MaterialButton;
 
@@ -22,22 +23,25 @@ import com.google.android.material.button.MaterialButton;
  */
 public class CreateRoomActivity extends AppCompatActivity {
 
+    private ActivityCreateRoomBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_room);
+        binding = ActivityCreateRoomBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        TextView title = findViewById(R.id.topAppBarCompactTitle);
+        TextView title = binding.createRoomTopBar.topAppBarCompactTitle;
         title.setText(R.string.create_room_title);
-        findViewById(R.id.topAppBarBack).setOnClickListener(v -> finish());
+        binding.createRoomTopBar.topAppBarBack.setOnClickListener(v -> finish());
 
-        LinearLayout memberList = findViewById(R.id.createRoomMemberList);
+        LinearLayout memberList = binding.createRoomMemberList;
         View me = LayoutInflater.from(this).inflate(R.layout.molecule_member_list_item, memberList, false);
         ((TextView) me.findViewById(R.id.memberName)).setText("나");
         me.findViewById(R.id.memberHostBadge).setVisibility(View.VISIBLE);
         memberList.addView(me);
 
-        MaterialButton submit = findViewById(R.id.bottomCtaPrimary);
+        MaterialButton submit = binding.createRoomBottomCta.bottomCtaPrimary;
         submit.setText(R.string.create_room_submit);
         submit.setOnClickListener(v -> {
             startActivity(new Intent(this, RoomDetailActivity.class));

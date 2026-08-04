@@ -5,12 +5,12 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.databinding.ViewWeatherIconBinding;
 
 /**
  * A9 · 날씨 아이콘 — 타입 = 맑음/비/흐림/눈. 20x20dp 원 + 글리프.
@@ -20,8 +20,7 @@ import com.example.mybaghackathon.R;
  */
 public class WeatherIconView extends FrameLayout {
 
-    private FrameLayout circle;
-    private ImageView glyph;
+    private ViewWeatherIconBinding binding;
 
     public WeatherIconView(Context context) {
         super(context);
@@ -39,9 +38,7 @@ public class WeatherIconView extends FrameLayout {
     }
 
     private void init(Context context, @Nullable AttributeSet attrs) {
-        LayoutInflater.from(context).inflate(R.layout.view_weather_icon, this, true);
-        circle = findViewById(R.id.weatherIconCircle);
-        glyph = findViewById(R.id.weatherIconGlyph);
+        binding = ViewWeatherIconBinding.inflate(LayoutInflater.from(context), this);
 
         int type = 0;
         if (attrs != null) {
@@ -73,7 +70,7 @@ public class WeatherIconView extends FrameLayout {
                 iconRes = R.drawable.ic_weather_sun;
                 break;
         }
-        circle.getBackground().mutate().setTint(ContextCompat.getColor(getContext(), colorRes));
-        glyph.setImageResource(iconRes);
+        binding.weatherIconCircle.getBackground().mutate().setTint(ContextCompat.getColor(getContext(), colorRes));
+        binding.weatherIconGlyph.setImageResource(iconRes);
     }
 }
