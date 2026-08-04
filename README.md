@@ -238,12 +238,14 @@ Presenter가 사용할 데이터 접근 규칙과 실제 구현체입니다.
 - WeatherRepositoryImpl.java
 
 data.remote.firebase
+
 Firebase Authentication과 Firestore 통신을 담당합니다.
 
 - FirebaseAuthDataSource.java
 - FirestoreTripDataSource.java
 
 data.remote.backend
+
 OpenAI API Key를 보관한 서버와 통신합니다.
 
 - BackendApi.java
@@ -251,12 +253,14 @@ OpenAI API Key를 보관한 서버와 통신합니다.
 - KakaoTokenDto.java
 
 data.remote.weather
+
 Open-Meteo API를 호출하고 날씨 응답을 받습니다.
 
 - OpenMeteoApi.java
 - WeatherDto.java
 
 data.mapper
+
 외부 응답 데이터를 앱의 Model 객체로 변환합니다.
 
 - TripMapper.java
@@ -264,6 +268,7 @@ data.mapper
 - WeatherMapper.java
 
 feature.auth
+
 로그인 화면 기능입니다.
 
 - LoginContract.java
@@ -271,6 +276,7 @@ feature.auth
 - LoginPresenter.java
 
 feature.home
+
 여행방 목록을 표시하는 홈 기능입니다.
 
 - HomeContract.java
@@ -278,6 +284,7 @@ feature.home
 - HomePresenter.java
 
 feature.trip
+
 여행방 생성, 초대, 참여자 확인 기능입니다.
 
 - TripRoomContract.java
@@ -286,6 +293,7 @@ feature.trip
 - CreateTripDialog.java
 
 feature.itinerary
+
 일정 캡처 업로드, AI 분석, 검토·수정 기능입니다.
 
 - ItineraryContract.java
@@ -295,6 +303,7 @@ feature.itinerary
 - ItineraryAdapter.java
 
 feature.weather
+
 여행지 날씨와 의식주 피드백 기능입니다.
 
 - WeatherContract.java
@@ -302,6 +311,7 @@ feature.weather
 - WeatherPresenter.java
 
 feature.baggage
+
 짐 사진 분석과 반입 제한·추천 물품 확인 기능입니다.
 
 - BaggageContract.java
@@ -311,6 +321,7 @@ feature.baggage
 - BaggageItemAdapter.java
 
 feature.checklist
+
 공용·개인 체크리스트와 담당자 지정 기능입니다.
 
 - ChecklistContract.java
@@ -319,6 +330,7 @@ feature.checklist
 - PackingItemAdapter.java
 
 feature.profile
+
 개인 준비물 추가·수정·삭제 기능입니다.
 
 - ProfileContract.java
@@ -326,6 +338,7 @@ feature.profile
 - ProfilePresenter.java
 
 feature.archive
+
 참여했던 여행방 목록과 상세 이동 기능입니다.
 
 - ArchiveContract.java
@@ -333,6 +346,7 @@ feature.archive
 - ArchivePresenter.java
 
 util
+
 이미지 압축, 날짜 변환, D-day 알림을 담당합니다.
 
 - ImageCompressor.java
