@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- S10 체크리스트 · 공용 리스트 탭 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
@@ -15,8 +16,48 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- 우선순위 필터 칩 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.example.mybaghackathon.ui.atoms.ChipView
+                android:id="@+id/checklistFilterAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_sm"
+                app:chipActive="true"
+                app:chipLabel="@string/checklist_filter_all" />
+
+            <com.example.mybaghackathon.ui.atoms.ChipView
+                android:id="@+id/checklistFilterEssential"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_sm"
+                app:chipActive="false"
+                app:chipLabel="@string/checklist_filter_essential" />
+
+            <com.example.mybaghackathon.ui.atoms.ChipView
+                android:id="@+id/checklistFilterMid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_sm"
+                app:chipActive="false"
+                app:chipLabel="@string/checklist_filter_mid" />
+
+            <com.example.mybaghackathon.ui.atoms.ChipView
+                android:id="@+id/checklistFilterOptional"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipActive="false"
+                app:chipLabel="@string/checklist_filter_optional" />
+
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/checklistCommonSections"
+            android:layout_marginTop="@dimen/space_lg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />

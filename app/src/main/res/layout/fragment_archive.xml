@@ -16,29 +16,40 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include layout="@layout/organism_top_app_bar_large" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/archive_title"
+            android:textAppearance="@style/TextAppearance.Bag.DisplayM" />
 
         <LinearLayout
             android:id="@+id/archiveSegmentRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_lg"
-            android:orientation="horizontal">
+            android:background="@drawable/bg_segment_track"
+            android:orientation="horizontal"
+            android:padding="4dp">
 
-            <com.example.mybaghackathon.ui.atoms.ChipView
+            <TextView
                 android:id="@+id/archiveSegmentActive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/space_sm"
-                app:chipActive="true"
-                app:chipLabel="@string/archive_segment_active" />
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_segment_selected"
+                android:gravity="center"
+                android:text="@string/archive_segment_active"
+                android:textAppearance="@style/TextAppearance.Bag.TitleS" />
 
-            <com.example.mybaghackathon.ui.atoms.ChipView
+            <TextView
                 android:id="@+id/archiveSegmentPast"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:chipActive="false"
-                app:chipLabel="@string/archive_segment_past" />
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/archive_segment_past"
+                android:textAppearance="@style/TextAppearance.Bag.BodyM"
+                android:textColor="@color/bag_text_tertiary_safe" />
         </LinearLayout>
 
         <LinearLayout

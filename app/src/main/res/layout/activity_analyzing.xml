@@ -4,21 +4,94 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
-    android:gravity="center"
     android:orientation="vertical"
     android:paddingStart="@dimen/screen_margin"
     android:paddingEnd="@dimen/screen_margin">
 
-    <ProgressBar
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:indeterminateTint="@color/bag_brand_default" />
+    <!-- 상단 스페이서 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
+    <!-- 중앙 블록: 스피너 + 진행 문구 -->
     <LinearLayout
-        android:id="@+id/analyzingStepList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_2xl"
-        android:orientation="vertical" />
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:indeterminateTint="@color/bag_brand_default" />
+
+        <!-- 첫 줄은 굵은 타이틀, 나머지 3줄은 회색 서브텍스트 -->
+        <LinearLayout
+            android:id="@+id/analyzingStepList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_2xl"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/analyzingStepTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="사진에서 일정을 읽고 있어요"
+                android:textAppearance="@style/TextAppearance.Bag.BodyLMedium"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="숙소 지역과 국가를 확인하고 있어요"
+                android:textAppearance="@style/TextAppearance.Bag.BodyM"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="일정별 날씨를 가져오고 있어요"
+                android:textAppearance="@style/TextAppearance.Bag.BodyM"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="챙길 물품을 고르고 있어요"
+                android:textAppearance="@style/TextAppearance.Bag.BodyM"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- 하단 스페이서 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- 취소 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="@dimen/space_2xl">
+
+        <TextView
+            android:id="@+id/analyzingCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="취소"
+            android:textAppearance="@style/TextAppearance.Bag.BodyLMedium"
+            android:textColor="@color/bag_text_secondary" />
+
+    </LinearLayout>
 
 </LinearLayout>

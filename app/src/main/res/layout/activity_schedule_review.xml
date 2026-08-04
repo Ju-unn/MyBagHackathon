@@ -6,14 +6,6 @@
     android:background="@color/bag_bg_base"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/reviewTopBar"
-        layout="@layout/organism_top_app_bar_compact"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space_sm"
-        android:layout_marginEnd="@dimen/screen_margin" />
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -29,9 +21,17 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- O1 TopAppBar (LargeTitle) -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/review_title"
+                android:textAppearance="@style/TextAppearance.Bag.DisplayM" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:text="@string/review_desc"
                 android:textAppearance="@style/TextAppearance.Bag.BodyM" />
 
@@ -68,6 +68,16 @@
                 android:orientation="vertical"
                 android:background="@drawable/bg_card_surface_border"
                 android:padding="@dimen/space_lg" />
+
+            <!-- M8 WarningBanner — 반입 제한 경고 -->
+            <FrameLayout
+                android:id="@+id/reviewRestrictionWarning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md">
+
+                <include layout="@layout/molecule_warning_banner" />
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"

@@ -29,69 +29,77 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/room_detail_members"
-                    android:textAppearance="@style/TextAppearance.Bag.TitleS" />
-
-                <com.example.mybaghackathon.ui.atoms.IconButtonView
-                    android:id="@+id/roomDetailInviteButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/roomDetailMemberList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:orientation="vertical" />
+            <!-- 여행 정보 요약 카드 -->
+            <include
+                android:id="@+id/roomDetailSummaryCard"
+                layout="@layout/organism_trip_room_card" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_2xl"
-                android:background="@drawable/bg_card_surface_border"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="@dimen/space_2xl">
-
-                <View
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:background="@drawable/oval_brand_subtle" />
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_lg"
-                    android:gravity="center"
-                    android:text="@string/room_detail_analyze_title"
+                    android:text="@string/room_detail_members"
                     android:textAppearance="@style/TextAppearance.Bag.TitleS" />
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/roomDetailMemberList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_xs"
-                    android:gravity="center"
-                    android:text="@string/room_detail_analyze_desc"
-                    android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+                    android:layout_marginTop="@dimen/space_md"
+                    android:orientation="vertical" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/roomDetailReanalyzeButton"
+                    android:id="@+id/roomDetailInviteButton"
                     style="@style/Widget.Bag.Button.Secondary.Outline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_lg"
-                    android:text="@string/room_detail_reanalyze" />
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="@string/room_detail_invite_button" />
+
+            </LinearLayout>
+
+            <!-- 일정 분석 CTA 카드 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:background="@drawable/bg_card_brand_subtle"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/space_xl">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_camera"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_lg"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_detail_analyze_title"
+                        android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_2xs"
+                        android:text="@string/room_detail_analyze_desc"
+                        android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

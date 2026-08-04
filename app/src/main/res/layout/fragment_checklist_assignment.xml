@@ -15,11 +15,25 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
+        <!-- 참여 인원 요약 -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/checklist_assignment_hint"
-            android:textAppearance="@style/TextAppearance.Bag.LabelM" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/checklistAssignmentAvatarStack"
+                layout="@layout/molecule_avatar_stack" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
+                android:text="@string/checklist_assignment_summary"
+                android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/checklistAssignmentList"
@@ -41,6 +55,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_md"
             android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_2xl"
+            android:text="@string/checklist_assignment_hint"
+            android:textAppearance="@style/TextAppearance.Bag.LabelM" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

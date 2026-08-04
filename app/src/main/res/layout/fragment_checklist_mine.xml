@@ -15,8 +15,44 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- 내 프로필 요약 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.example.mybaghackathon.ui.atoms.AvatarView
+                android:id="@+id/checklistMineAvatar"
+                android:layout_width="@dimen/avatar_size_xl"
+                android:layout_height="@dimen/avatar_size_xl" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/checklistMineName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/checklist_mine_name"
+                    android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+                <TextView
+                    android:id="@+id/checklistMineCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/checklist_mine_count"
+                    android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+
+            </LinearLayout>
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/checklistMineList"
+            android:layout_marginTop="@dimen/space_lg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
