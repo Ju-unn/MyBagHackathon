@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- M5 · TextField — State = Default/Focused/Error/Disabled.
-     Label is always visible above the field (never placeholder-only). -->
+<!-- M5 · TextField — 상태 = 기본/포커스/에러/비활성.
+     레이블은 항상 필드 위에 표시됨 (placeholder만 쓰지 않음). -->
 <com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

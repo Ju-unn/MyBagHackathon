@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">마이백</string>
 
-    <!-- A10 RestrictionTag -->
+    <!-- A10 반입 제한 태그 -->
     <string name="restriction_cabin_only">기내만 가능</string>
     <string name="restriction_checked_only">위탁만 가능</string>
     <string name="restriction_prohibited">반입 금지</string>
 
-    <!-- Common actions -->
+    <!-- 공통 액션 -->
     <string name="action_add">추가</string>
     <string name="action_save">저장</string>
     <string name="action_delete">삭제</string>
@@ -16,15 +16,15 @@
     <string name="action_share_kakao">카카오톡 공유</string>
     <string name="action_kakao_login">카카오로 시작하기</string>
 
-    <!-- S01 Splash -->
+    <!-- S01 스플래시 -->
     <string name="splash_loading">불러오는 중…</string>
 
-    <!-- S02 Login -->
+    <!-- S02 로그인 -->
     <string name="login_copy">사진 한 장이면\n짐 싸기 끝</string>
     <string name="login_subcopy">여행 일정 사진만 올리면 AI가 준비물을 챙겨드려요</string>
     <string name="login_terms">계속 진행하면 이용약관 및 개인정보처리방침에 동의하는 것으로 간주됩니다</string>
 
-    <!-- S03 Home -->
+    <!-- S03 홈 -->
     <string name="home_title">내 여행</string>
     <string name="home_add_room">+ 방 만들기</string>
     <string name="home_status_active">진행중</string>
@@ -36,14 +36,14 @@
     <string name="nav_trips">공용 여행</string>
     <string name="nav_profile">프로필</string>
 
-    <!-- S04 Create Room -->
+    <!-- S04 방 만들기 -->
     <string name="create_room_title">방 만들기</string>
     <string name="create_room_name_label">방 이름</string>
     <string name="create_room_name_hint">예) 도쿄 벚꽃 여행</string>
     <string name="create_room_invite_label">초대 인원</string>
     <string name="create_room_submit">방 만들기</string>
 
-    <!-- S05 Room Detail -->
+    <!-- S05 방 상세 -->
     <string name="room_detail_members">참여자</string>
     <string name="room_detail_host_badge">방장</string>
     <string name="room_detail_analyze_title">일정 사진 올리고 준비물 받기</string>
@@ -51,7 +51,7 @@
     <string name="room_detail_reanalyze">일정 다시 분석</string>
     <string name="room_detail_view_checklist">체크리스트 보기</string>
 
-    <!-- S06 Schedule Upload -->
+    <!-- S06 일정 사진 업로드 -->
     <string name="upload_title">일정 사진 업로드</string>
     <string name="upload_desc">아래 두 종류 사진을 올리면 AI가 숙소 일정과 지역, 날씨를 찾아 준비물까지 만들어드려요.</string>
     <string name="upload_guide_schedule_title">여행 일정표</string>
@@ -63,13 +63,13 @@
     <string name="upload_segment_international">해외</string>
     <string name="upload_start_analysis">AI 분석 시작하기</string>
 
-    <!-- S07 Analyzing -->
+    <!-- S07 분석 중 -->
     <string name="analyzing_step1">사진에서 일정을 읽고 있어요</string>
     <string name="analyzing_step2">숙소 지역과 국가를 확인하고 있어요</string>
     <string name="analyzing_step3">일정별 날씨를 가져오고 있어요</string>
     <string name="analyzing_step4">챙길 물품을 고르고 있어요</string>
 
-    <!-- S08 Schedule Review -->
+    <!-- S08 일정 검토 -->
     <string name="review_title">일정 검토</string>
     <string name="review_desc">분석된 내용을 확인하고 필요하면 수정하세요.</string>
     <string name="review_destination_label">여행지</string>
@@ -84,14 +84,14 @@
     <string name="review_generate">목록 아이템 생성</string>
     <string name="review_empty_notice">사진에서 정보를 찾지 못했어요. 직접 입력해 주세요.</string>
 
-    <!-- S09 Weather Feedback -->
+    <!-- S09 날씨 피드백 -->
     <string name="feedback_title">이렇게 준비하세요</string>
     <string name="feedback_clothing_title">옷차림</string>
     <string name="feedback_food_title">현지 음식</string>
     <string name="feedback_stay_title">숙소 유의사항</string>
     <string name="feedback_view_checklist">체크리스트 보기</string>
 
-    <!-- S10-12 Checklist -->
+    <!-- S10-12 체크리스트 -->
     <string name="checklist_title">짐 체크리스트</string>
     <string name="checklist_tab_common">공용 리스트</string>
     <string name="checklist_tab_mine">내 목록</string>
@@ -102,12 +102,12 @@
     <string name="checklist_unassigned_empty">아직 담당이 없어요</string>
     <string name="checklist_assignment_hint">담당 옆 뱃지를 눌러 나를 지정하고, ✓ 로 확정하세요</string>
 
-    <!-- S13 Archive -->
+    <!-- S13 공용 여행 -->
     <string name="archive_title">공용 여행</string>
     <string name="archive_segment_active">진행 중</string>
     <string name="archive_segment_past">지난 여행</string>
 
-    <!-- S14 Profile -->
+    <!-- S14 프로필 -->
     <string name="profile_my_items">내 기본 물품</string>
     <string name="profile_add_item">+ 물품 추가</string>
     <string name="profile_item_hint">새 여행방을 만들 때 체크리스트 초기값으로 제안돼요</string>
@@ -116,14 +116,14 @@
     <string name="profile_logout">로그아웃</string>
     <string name="profile_version">버전</string>
 
-    <!-- S15 Notification Settings -->
+    <!-- S15 알림 설정 -->
     <string name="notif_title">알림 설정</string>
     <string name="notif_d7">D-7 알림</string>
     <string name="notif_d3">D-3 알림</string>
     <string name="notif_d1">D-1 알림</string>
     <string name="notif_warning">출발일이 정해지지 않은 방은 알림이 오지 않아요. 일정 검토에서 날짜를 입력해 주세요.</string>
 
-    <!-- Overlays -->
+    <!-- 오버레이 -->
     <string name="bs_invite_title">초대 링크 공유</string>
     <string name="bs_add_item_title">항목 직접 추가</string>
     <string name="bs_add_item_name_label">물품명</string>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- O6 · EmptyState — Type = NoRoom/NoItem/NoArchive -->
+<!-- O6 · EmptyState — 타입 = 방없음/아이템없음/기록없음 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"

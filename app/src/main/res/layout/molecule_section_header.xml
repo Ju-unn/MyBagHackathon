@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- M4 · SectionHeader — Level = High / Mid / Low -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-    <LinearLayout
+<!-- M4 · SectionHeader — 중요도 = 필수 / 중간 / 선택 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="8dp">
+
+    <com.example.mybaghackathon.ui.atoms.PriorityDotView
+        android:id="@+id/sectionHeaderDot"
+        android:layout_width="7dp"
+        android:layout_height="7dp"
+        android:layout_marginEnd="6dp" />
+
+    <TextView
+        android:id="@+id/sectionHeaderLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingBottom="8dp">
-
-        <com.example.mybaghackathon.ui.atoms.PriorityDotView
-            android:id="@+id/sectionHeaderDot"
-            android:layout_width="7dp"
-            android:layout_height="7dp"
-            android:layout_marginEnd="6dp" />
-
-        <TextView
-            android:id="@+id/sectionHeaderLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Bag.LabelL"
-            tools:text="필수 · 5" />
-    </LinearLayout>
-</merge>
+        android:textAppearance="@style/TextAppearance.Bag.LabelL"
+        tools:text="필수 · 5" />
+</LinearLayout>

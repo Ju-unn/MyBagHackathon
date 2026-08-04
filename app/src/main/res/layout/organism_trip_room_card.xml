@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- O4 · TripRoomCard — State = Active/Upcoming/Past.
-     This layout is built for Active (bg/inverse + decoration circle +
-     avatar stack + progress bar). TripRoomCardBinder.bindUpcoming()/
-     bindPast() reconfigure the same views for the other two states. -->
+<!-- O4 · TripRoomCard — 상태 = 진행중/준비전/완료.
+     이 레이아웃은 기본적으로 진행중 상태 기준으로 만들어짐 (bg/inverse +
+     장식 원 + 아바타 스택 + 프로그레스 바). TripRoomCardBinder.bindUpcoming()/
+     bindPast()가 같은 뷰들을 재구성해서 나머지 두 상태를 표현함. -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

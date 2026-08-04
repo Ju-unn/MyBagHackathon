@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S03 Home — TopAppBar(Large) + list of TripRoomCards + DashedAddCard -->
+<!-- S03 홈 — TopAppBar(Large) + TripRoomCard 목록 + DashedAddCard -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

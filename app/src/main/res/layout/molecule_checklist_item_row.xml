@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- M12 · ChecklistItemRow — State = Unchecked/Checked/Excluded,
-     Assignee = None/Assigned, Restriction = None/Tagged.
-     h48 (h62 when the restriction tag row is visible). -->
+<!-- M12 · ChecklistItemRow — 상태 = 미체크/체크/제외,
+     담당자 = 없음/지정됨, 제한사항 = 없음/태그됨.
+     높이 48dp (제한사항 태그 줄이 보일 때는 62dp). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

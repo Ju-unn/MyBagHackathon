@@ -2,17 +2,22 @@
 <resources>
 
     <!-- ============================================================
-         TYPOGRAPHY (14) — Noto Sans KR weight mapping:
+         타이포그래피 (14종) — Noto Sans KR 굵기 매핑:
          Black -> sans-serif-black, Bold -> sans-serif (bold),
          Medium -> sans-serif-medium, Regular -> sans-serif.
-         Korean glyphs render via the system's Noto Sans CJK KR fallback,
-         so no font files need to be bundled.
+         한글 글리프는 시스템의 Noto Sans CJK KR 폴백으로 렌더링되므로
+         폰트 파일을 따로 넣을 필요 없음.
+
+         android:lineHeight는 API 28(Android 9) 이상에서만 지원되는 속성이라
+         여기(기본 values/)에는 넣지 않음. API 28 이상 기기에는
+         values-v28/styles.xml에 정의된 동일 스타일(줄간격 포함 버전)이
+         자동으로 대신 적용됨 — API 24~27 기기는 줄간격 없이 시스템
+         기본값으로 표시되고 앱 동작에는 영향 없음.
     ============================================================ -->
 
     <style name="TextAppearance.Bag.DisplayL" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:fontFamily">sans-serif-black</item>
         <item name="android:textSize">30sp</item>
-        <item name="android:lineHeight">38sp</item>
         <item name="android:letterSpacing">-0.02</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
@@ -20,7 +25,6 @@
     <style name="TextAppearance.Bag.DisplayM" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:fontFamily">sans-serif-black</item>
         <item name="android:textSize">28sp</item>
-        <item name="android:lineHeight">36sp</item>
         <item name="android:letterSpacing">-0.018</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
@@ -29,7 +33,6 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">20sp</item>
-        <item name="android:lineHeight">28sp</item>
         <item name="android:letterSpacing">-0.015</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
@@ -38,7 +41,6 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">19sp</item>
-        <item name="android:lineHeight">26sp</item>
         <item name="android:letterSpacing">-0.01</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
@@ -47,7 +49,6 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:lineHeight">22sp</item>
         <item name="android:letterSpacing">-0.006</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
@@ -56,14 +57,12 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:lineHeight">22sp</item>
         <item name="android:letterSpacing">0</item>
     </style>
 
     <style name="TextAppearance.Bag.BodyL" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:lineHeight">22sp</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
@@ -75,7 +74,6 @@
     <style name="TextAppearance.Bag.BodyM" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:lineHeight">20sp</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:textColor">@color/bag_text_secondary</item>
     </style>
@@ -89,21 +87,18 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">13sp</item>
-        <item name="android:lineHeight">18sp</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
 
     <style name="TextAppearance.Bag.LabelM" parent="TextAppearance.Material3.LabelMedium">
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">13sp</item>
-        <item name="android:lineHeight">18sp</item>
         <item name="android:textColor">@color/bag_text_secondary</item>
     </style>
 
     <style name="TextAppearance.Bag.LabelS" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:lineHeight">16sp</item>
         <item name="android:textColor">@color/bag_text_tertiary_safe</item>
     </style>
 
@@ -111,13 +106,12 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">11sp</item>
-        <item name="android:lineHeight">14sp</item>
         <item name="android:letterSpacing">0.06</item>
         <item name="android:textColor">@color/bag_text_secondary</item>
     </style>
 
     <!-- ============================================================
-         WIDGET STYLES
+         위젯 스타일
     ============================================================ -->
 
     <style name="Widget.Bag.Button.Primary" parent="Widget.Material3.Button">
@@ -180,7 +174,7 @@
         <item name="android:maxHeight">5dp</item>
     </style>
 
-    <style name="Widget.Bag.Divider">
+    <style name="Widget.Bag.Divider" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/bag_border_divider</item>
