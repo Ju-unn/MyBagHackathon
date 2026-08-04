@@ -1,76 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S02 로그인 — 카피 문구는 상단 2/3 영역 가운데 정렬, 카카오 CTA + 약관 문구는
-     퍼센트 가이드라인으로 하단에 고정해서 폰/태블릿/폴드 등
-     화면 크기가 달라져도 비율이 유지되도록 함. -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- S02 로그인 — 펜슬 디자인 기준: 상단은 화면 끝까지 꽉 채운 브랜드 비주얼 블록,
+     하단은 카피 + 카카오 CTA + 약관 문구를 담은 콘텐츠 블록 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
-    android:paddingStart="@dimen/screen_margin"
-    android:paddingEnd="@dimen/screen_margin">
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/loginCopyGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.38" />
-
-    <View
+    <!-- 브랜드 비주얼: 화면 폭 꽉 채움, 배경은 브랜드 연한색 -->
+    <FrameLayout
         android:id="@+id/loginArtwork"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/oval_brand_subtle"
-        app:layout_constraintBottom_toTopOf="@id/loginCopyGuide"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.42" />
+        android:layout_width="match_parent"
+        android:layout_height="460dp"
+        android:background="@color/bag_bg_brand_subtle">
 
-    <TextView
-        android:id="@+id/loginCopy"
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_luggage"
+            android:tint="@color/bag_brand_default" />
+
+    </FrameLayout>
+
+    <!-- 콘텐츠 블록 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/login_copy"
-        android:textAppearance="@style/TextAppearance.Bag.DisplayL"
-        app:layout_constraintTop_toBottomOf="@id/loginCopyGuide" />
+        android:orientation="vertical"
+        android:padding="@dimen/space_xl">
 
-    <TextView
-        android:id="@+id/loginSubcopy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="@string/login_subcopy"
-        android:textAppearance="@style/TextAppearance.Bag.BodyM"
-        app:layout_constraintTop_toBottomOf="@id/loginCopy" />
+        <TextView
+            android:id="@+id/loginCopy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/login_copy"
+            android:textAppearance="@style/TextAppearance.Bag.DisplayM" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/loginKakaoButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:backgroundTint="@color/kakao_yellow"
-        android:text="@string/action_kakao_login"
-        android:textColor="@color/kakao_text"
-        app:cornerRadius="@dimen/radius_md"
-        app:layout_constraintBottom_toTopOf="@id/loginTerms"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:elevation="0dp" />
+        <TextView
+            android:id="@+id/loginSubcopy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="@string/login_subcopy"
+            android:textAppearance="@style/TextAppearance.Bag.BodyM" />
 
-    <TextView
-        android:id="@+id/loginTerms"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="28dp"
-        android:gravity="center"
-        android:text="@string/login_terms"
-        android:textAppearance="@style/TextAppearance.Bag.LabelM"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loginKakaoButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/space_xl"
+            android:backgroundTint="@color/kakao_yellow"
+            android:text="@string/action_kakao_login"
+            android:textColor="@color/kakao_text"
+            app:cornerRadius="@dimen/radius_sm"
+            app:elevation="0dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/loginTerms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:gravity="center"
+            android:text="@string/login_terms"
+            android:textColor="@color/bag_text_tertiary_safe"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

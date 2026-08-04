@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S06 세그먼트 컨트롤 배경 트랙 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/bag_bg_subtle" />
+    <corners android:radius="@dimen/radius_md" />
+</shape>

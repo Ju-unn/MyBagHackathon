@@ -33,19 +33,66 @@
                 android:id="@+id/createRoomNameField"
                 layout="@layout/molecule_text_field" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_2xl"
-                android:text="@string/create_room_invite_label"
-                android:textAppearance="@style/TextAppearance.Bag.TitleS" />
-
+            <!-- 초대 인원 스테퍼 (펜슬 StepperField) -->
             <LinearLayout
-                android:id="@+id/createRoomMemberList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:orientation="vertical" />
+                android:layout_marginTop="@dimen/space_2xl"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_room_invite_label"
+                    android:textAppearance="@style/TextAppearance.Bag.LabelM" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:id="@+id/createRoomMemberMinus"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/oval_subtle">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_remove"
+                            android:contentDescription="@null" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/createRoomMemberCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_lg"
+                        android:layout_marginEnd="@dimen/space_lg"
+                        android:text="3명"
+                        android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+                    <FrameLayout
+                        android:id="@+id/createRoomMemberPlus"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/oval_solid">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_add"
+                            android:contentDescription="@null" />
+                    </FrameLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

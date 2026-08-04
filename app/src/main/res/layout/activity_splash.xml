@@ -1,46 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S01 스플래시 -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!-- S01 스플래시 — 펜슬 디자인 기준: 배경은 브랜드색이 아니라 반전 배경(ink_900) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bag_brand_default">
+    android:background="@color/bag_bg_inverse"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/splashLogo"
-        android:layout_width="wrap_content"
+    <!-- 상단 스페이서 — 중앙 블록을 화면 가운데로 밀어줌 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- 중앙 블록: 로고 박스 + 앱 이름 -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-black"
-        android:text="@string/app_name"
-        android:textColor="@color/bag_text_on_brand"
-        android:textSize="32sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.42" />
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/splashProgress"
-        style="?android:attr/progressBarStyleSmall"
-        android:layout_width="wrap_content"
+        <FrameLayout
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/bg_splash_logo">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_luggage"
+                android:tint="@color/bag_text_on_brand" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/splashLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:text="@string/app_name"
+            android:textAppearance="@style/TextAppearance.Bag.DisplayL"
+            android:textColor="@color/bag_text_on_inverse" />
+
+    </LinearLayout>
+
+    <!-- 하단 스페이서 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- 하단 로딩 문구 -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:indeterminateTint="@color/bag_text_on_brand"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/splashLogo"
-        app:layout_constraintVertical_bias="0.15" />
+        android:gravity="center"
+        android:paddingBottom="@dimen/space_4xl">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:text="@string/splash_loading"
-        android:textColor="@color/bag_text_on_brand"
-        android:textAppearance="@style/TextAppearance.Bag.BodyM"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/splashLoadingLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/splash_loading"
+            android:textColor="#80FFFFFF"
+            android:textSize="12sp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+</LinearLayout>
