@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- M3 · AvatarStack — overlap -8dp, 2dp stroke matching the surface it
+     sits on. Add/remove <AvatarView> children in code for Count 2/3/4/5+. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/avatarStackRoot"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" />

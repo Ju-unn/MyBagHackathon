@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- O1 · TopAppBar (LargeTitle) — title + optional description + optional
+     trailing action (IconButtonView), used at the top of a scroll body. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/topAppBarTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.Bag.DisplayM"
+            tools:text="내 여행" />
+
+        <com.example.mybaghackathon.ui.atoms.IconButtonView
+            android:id="@+id/topAppBarAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/topAppBarDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textAppearance="@style/TextAppearance.Bag.BodyM"
+        android:visibility="gone"
+        tools:text="분석된 내용을 확인하고 필요하면 수정하세요." />
+</LinearLayout>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/touch_target_min"
+    android:layout_height="@dimen/touch_target_min"
+    android:gravity="center">
+
+    <FrameLayout
+        android:id="@+id/iconButtonCircle"
+        android:layout_width="@dimen/icon_button_size"
+        android:layout_height="@dimen/icon_button_size"
+        android:layout_gravity="center"
+        android:background="@drawable/oval_solid"
+        android:elevation="4dp">
+
+        <ImageView
+            android:id="@+id/iconButtonIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null" />
+    </FrameLayout>
+</FrameLayout>

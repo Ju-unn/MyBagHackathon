@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/touch_target_min"
+    android:layout_height="@dimen/touch_target_min"
+    android:gravity="center">
+
+    <FrameLayout
+        android:id="@+id/checkboxBox"
+        android:layout_width="@dimen/checkbox_size"
+        android:layout_height="@dimen/checkbox_size"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_checkbox_unchecked">
+
+        <ImageView
+            android:id="@+id/checkboxIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_check"
+            android:visibility="invisible"
+            android:contentDescription="@null" />
+    </FrameLayout>
+</FrameLayout>

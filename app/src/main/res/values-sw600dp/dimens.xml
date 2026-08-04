@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tablets / unfolded foldables (smallest width >= 600dp):
+         wider side margins so content doesn't stretch edge-to-edge. -->
+    <dimen name="screen_margin">40dp</dimen>
+</resources>

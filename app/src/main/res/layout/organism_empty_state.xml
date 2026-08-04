@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- O6 · EmptyState — Type = NoRoom/NoItem/NoArchive -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <View
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:background="@drawable/oval_brand_subtle" />
+
+    <TextView
+        android:id="@+id/emptyStateTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAppearance="@style/TextAppearance.Bag.TitleS"
+        tools:text="함께할 여행방이 없어요" />
+
+    <TextView
+        android:id="@+id/emptyStateDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Bag.BodyM"
+        tools:text="방을 만들고 친구를 초대해보세요" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/emptyStateAction"
+        style="@style/Widget.Bag.Button.Primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        tools:text="방 만들기" />
+</LinearLayout>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="BagAvatarView">
+        <attr name="avatarInitial" format="string" />
+        <attr name="avatarColor" format="color" />
+        <attr name="avatarStroke" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="BagBadgeView">
+        <attr name="badgeText" format="string" />
+        <attr name="badgeStyle" format="enum">
+            <enum name="brand" value="0" />
+            <enum name="neutral" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BagChipView">
+        <attr name="chipLabel" format="string" />
+        <attr name="chipActive" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="BagRestrictionTagView">
+        <attr name="restrictionType" format="enum">
+            <enum name="cabinOnly" value="0" />
+            <enum name="checkedOnly" value="1" />
+            <enum name="prohibited" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BagPriorityDotView">
+        <attr name="priorityLevel" format="enum">
+            <enum name="high" value="0" />
+            <enum name="mid" value="1" />
+            <enum name="low" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BagWeatherIconView">
+        <attr name="weatherType" format="enum">
+            <enum name="sun" value="0" />
+            <enum name="rain" value="1" />
+            <enum name="cloud" value="2" />
+            <enum name="snow" value="3" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BagCheckboxView">
+        <attr name="checkState" format="enum">
+            <enum name="unchecked" value="0" />
+            <enum name="checked" value="1" />
+            <enum name="excluded" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BagDDayBadgeView">
+        <attr name="ddayText" format="string" />
+        <attr name="ddayBrand" format="boolean" />
+    </declare-styleable>
+
+</resources>

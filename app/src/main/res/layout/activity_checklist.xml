@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S10-12 Checklist — compact top bar + 3-tab TabLayout, tabs swap fragments manually -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bag_bg_base"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/checklistTopBar"
+        layout="@layout/organism_top_app_bar_compact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_sm"
+        android:layout_marginEnd="@dimen/screen_margin" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/checklistTabs"
+        style="@style/Widget.Bag.TabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tab_bar_height">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/checklist_tab_common" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/checklist_tab_mine" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/checklist_tab_assignment" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <FrameLayout
+        android:id="@+id/checklistFragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S07 Analyzing -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bag_bg_base"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/screen_margin"
+    android:paddingEnd="@dimen/screen_margin">
+
+    <ProgressBar
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:indeterminateTint="@color/bag_brand_default" />
+
+    <LinearLayout
+        android:id="@+id/analyzingStepList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_2xl"
+        android:orientation="vertical" />
+
+</LinearLayout>

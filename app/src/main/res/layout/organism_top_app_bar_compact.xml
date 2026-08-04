@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- O1 · TopAppBar (Compact) — h56, back button + centered title -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/topAppBarBack"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/action_cancel"
+        android:padding="12dp"
+        android:src="@drawable/ic_back" />
+
+    <TextView
+        android:id="@+id/topAppBarCompactTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.Bag.TitleS"
+        tools:text="방 만들기" />
+</LinearLayout>

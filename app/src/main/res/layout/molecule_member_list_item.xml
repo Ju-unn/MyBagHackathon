@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- M7 · MemberListItem — h56, Avatar36 + name + optional Host badge -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <com.example.mybaghackathon.ui.atoms.AvatarView
+        android:id="@+id/memberAvatar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        app:avatarInitial="민" />
+
+    <TextView
+        android:id="@+id/memberName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.Bag.BodyLMedium"
+        tools:text="민지" />
+
+    <TextView
+        android:id="@+id/memberHostBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_pill_brand_subtle"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:text="@string/room_detail_host_badge"
+        android:textAppearance="@style/TextAppearance.Bag.Eyebrow"
+        android:textColor="@color/bag_text_brand" />
+</LinearLayout>
