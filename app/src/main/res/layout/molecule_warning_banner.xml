@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- M8 · WarningBanner — Type = Danger / Info. Left 4dp accent bar + text. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/warningBannerRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_restriction_danger"
+    android:orientation="horizontal">
+
+    <View
+        android:id="@+id/warningBannerAccent"
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:background="@color/bag_status_danger" />
+
+    <TextView
+        android:id="@+id/warningBannerText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="16dp"
+        android:textAppearance="@style/TextAppearance.Bag.BodyM"
+        android:textColor="@color/bag_text_primary"
+        tools:text="보조배터리 등 3개 항목에 반입 규정이 있어요" />
+</LinearLayout>

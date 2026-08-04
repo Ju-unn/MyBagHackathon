@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- M13 · AssignmentRow — Owner = Unassigned/Me/Others, Confirm = None/Checked/Excluded -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@drawable/bg_input_field"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+
+    <TextView
+        android:id="@+id/assignmentRowLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.Bag.BodyL"
+        tools:text="우산" />
+
+    <com.example.mybaghackathon.ui.atoms.AvatarView
+        android:id="@+id/assignmentRowAvatar"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginEnd="8dp"
+        app:avatarInitial="김" />
+
+    <View
+        android:id="@+id/assignmentRowConfirm"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/oval_stroke" />
+</LinearLayout>

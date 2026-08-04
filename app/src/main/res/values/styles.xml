@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ============================================================
+         TYPOGRAPHY (14) — Noto Sans KR weight mapping:
+         Black -> sans-serif-black, Bold -> sans-serif (bold),
+         Medium -> sans-serif-medium, Regular -> sans-serif.
+         Korean glyphs render via the system's Noto Sans CJK KR fallback,
+         so no font files need to be bundled.
+    ============================================================ -->
+
+    <style name="TextAppearance.Bag.DisplayL" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:lineHeight">38sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:textColor">@color/bag_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Bag.DisplayM" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:lineHeight">36sp</item>
+        <item name="android:letterSpacing">-0.018</item>
+        <item name="android:textColor">@color/bag_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Bag.TitleL" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineHeight">28sp</item>
+        <item name="android:letterSpacing">-0.015</item>
+        <item name="android:textColor">@color/bag_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Bag.TitleM" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:lineHeight">26sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textColor">@color/bag_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Bag.TitleS" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight">22sp</item>
+        <item name="android:letterSpacing">-0.006</item>
+        <item name="android:textColor">@color/bag_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Bag.ButtonL" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight">22sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Bag.BodyL" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineHeight">22sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textColor">@color/bag_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Bag.BodyLMedium" parent="TextAppearance.Bag.BodyL">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.Bag.BodyM" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineHeight">20sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textColor">@color/bag_text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.Bag.BodyMMedium" parent="TextAppearance.Bag.BodyM">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/bag_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Bag.LabelL" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:lineHeight">18sp</item>
+        <item name="android:textColor">@color/bag_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Bag.LabelM" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:lineHeight">18sp</item>
+        <item name="android:textColor">@color/bag_text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.Bag.LabelS" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:lineHeight">16sp</item>
+        <item name="android:textColor">@color/bag_text_tertiary_safe</item>
+    </style>
+
+    <style name="TextAppearance.Bag.Eyebrow" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:lineHeight">14sp</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/bag_text_secondary</item>
+    </style>
+
+    <!-- ============================================================
+         WIDGET STYLES
+    ============================================================ -->
+
+    <style name="Widget.Bag.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:textAppearance">@style/TextAppearance.Bag.ButtonL</item>
+        <item name="android:textColor">@color/bag_text_on_brand</item>
+        <item name="backgroundTint">@color/bag_brand_default</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:paddingStart">@dimen/space_2xl</item>
+        <item name="android:paddingEnd">@dimen/space_2xl</item>
+        <item name="elevation">8dp</item>
+    </style>
+
+    <style name="Widget.Bag.Button.Ink" parent="Widget.Bag.Button.Primary">
+        <item name="backgroundTint">@color/bag_bg_inverse</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.Bag.Button.Disabled" parent="Widget.Bag.Button.Primary">
+        <item name="backgroundTint">@color/bag_bg_subtle</item>
+        <item name="android:textColor">@color/bag_text_tertiary_safe</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.Bag.Button.Secondary.Outline" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textAppearance">@style/TextAppearance.Bag.ButtonL</item>
+        <item name="android:textColor">@color/bag_text_primary</item>
+        <item name="strokeColor">@color/bag_border_strong</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:minHeight">@dimen/button_height_secondary</item>
+    </style>
+
+    <style name="Widget.Bag.Button.Secondary.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textAppearance">@style/TextAppearance.Bag.ButtonL</item>
+        <item name="android:textColor">@color/bag_text_secondary</item>
+    </style>
+
+    <style name="Widget.Bag.TextField" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/radius_md</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_md</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_md</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_md</item>
+        <item name="boxStrokeColor">@color/bag_brand_default</item>
+        <item name="hintTextColor">@color/bag_text_secondary</item>
+        <item name="android:textColorHint">@color/bag_text_tertiary_safe</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1.5dp</item>
+    </style>
+
+    <style name="Widget.Bag.ProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/bg_progress_bar</item>
+        <item name="android:minHeight">5dp</item>
+        <item name="android:maxHeight">5dp</item>
+    </style>
+
+    <style name="Widget.Bag.ProgressBar.OnDark">
+        <item name="android:progressDrawable">@drawable/bg_progress_bar_on_dark</item>
+        <item name="android:minHeight">5dp</item>
+        <item name="android:maxHeight">5dp</item>
+    </style>
+
+    <style name="Widget.Bag.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/bag_border_divider</item>
+    </style>
+
+    <style name="Widget.Bag.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/bag_bg_surface</item>
+        <item name="itemIconTint">@color/bottom_nav_item_color</item>
+        <item name="itemTextColor">@color/bottom_nav_item_color</item>
+        <item name="itemActiveIndicatorStyle">@null</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.Bag.TabLayout" parent="Widget.Material3.TabLayout">
+        <item name="android:background">@color/bag_bg_base</item>
+        <item name="tabIndicatorColor">@color/bag_brand_default</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabIndicatorFullWidth">false</item>
+        <item name="tabSelectedTextColor">@color/bag_text_primary</item>
+        <item name="tabTextColor">@color/bag_text_tertiary_safe</item>
+        <item name="tabTextAppearance">@style/TextAppearance.Bag.BodyL</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabRippleColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.Bag.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/bag_bg_subtle</item>
+        <item name="android:textAppearance">@style/TextAppearance.Bag.Eyebrow</item>
+        <item name="chipCornerRadius">@dimen/radius_full</item>
+        <item name="chipMinHeight">24dp</item>
+        <item name="chipStartPadding">10dp</item>
+        <item name="chipEndPadding">10dp</item>
+    </style>
+
+</resources>

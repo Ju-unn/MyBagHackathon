@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S13 Archive — TopAppBar(Large) + segment control + trip list -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bag_bg_base"
+    android:clipToPadding="false"
+    android:paddingStart="@dimen/screen_margin"
+    android:paddingTop="@dimen/screen_margin"
+    android:paddingEnd="@dimen/screen_margin"
+    android:paddingBottom="@dimen/space_4xl">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include layout="@layout/organism_top_app_bar_large" />
+
+        <LinearLayout
+            android:id="@+id/archiveSegmentRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:orientation="horizontal">
+
+            <com.example.mybaghackathon.ui.atoms.ChipView
+                android:id="@+id/archiveSegmentActive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_sm"
+                app:chipActive="true"
+                app:chipLabel="@string/archive_segment_active" />
+
+            <com.example.mybaghackathon.ui.atoms.ChipView
+                android:id="@+id/archiveSegmentPast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipActive="false"
+                app:chipLabel="@string/archive_segment_past" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/archiveTripList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

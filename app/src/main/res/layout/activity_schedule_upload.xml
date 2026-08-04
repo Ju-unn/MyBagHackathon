@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S06 Schedule Upload -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bag_bg_base"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/uploadTopBar"
+        layout="@layout/organism_top_app_bar_compact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_sm"
+        android:layout_marginEnd="@dimen/screen_margin" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingEnd="@dimen/screen_margin">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/upload_desc"
+                android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+
+            <LinearLayout
+                android:id="@+id/uploadScheduleCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl">
+
+                <include layout="@layout/molecule_upload_guide_card" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/uploadHotelCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md">
+
+                <include layout="@layout/molecule_upload_guide_card" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="@string/upload_add_more"
+                android:textAppearance="@style/TextAppearance.Bag.LabelM" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:orientation="horizontal">
+
+                <com.example.mybaghackathon.ui.atoms.ChipView
+                    android:id="@+id/uploadSegmentDomestic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    app:chipActive="false"
+                    app:chipLabel="@string/upload_segment_domestic" />
+
+                <com.example.mybaghackathon.ui.atoms.ChipView
+                    android:id="@+id/uploadSegmentIntl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:chipActive="true"
+                    app:chipLabel="@string/upload_segment_international" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <include
+        android:id="@+id/uploadBottomCta"
+        layout="@layout/organism_bottom_cta" />
+
+</LinearLayout>

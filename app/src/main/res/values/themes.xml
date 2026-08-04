@@ -1,8 +1,38 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme. Light-only by design (see README §1: Starter
+         plan variable collections support one mode; dark mode intentionally
+         out of scope). values-night/themes.xml mirrors this so the app never
+         flips to a dark palette that was never designed. -->
     <style name="Base.Theme.MyBagHackathon" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/bag_brand_default</item>
+        <item name="colorOnPrimary">@color/bag_text_on_brand</item>
+        <item name="colorPrimaryContainer">@color/bag_bg_brand_subtle</item>
+        <item name="colorOnPrimaryContainer">@color/bag_text_brand</item>
+
+        <item name="colorSecondary">@color/bag_brand_default</item>
+        <item name="colorOnSecondary">@color/bag_text_on_brand</item>
+
+        <item name="colorError">@color/bag_status_danger</item>
+        <item name="colorErrorContainer">@color/bag_status_danger_bg</item>
+        <item name="colorOnError">@color/bag_text_on_brand</item>
+
+        <item name="android:colorBackground">@color/bag_bg_base</item>
+        <item name="colorSurface">@color/bag_bg_surface</item>
+        <item name="colorOnSurface">@color/bag_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/bag_text_secondary</item>
+        <item name="colorOutline">@color/bag_border_default</item>
+        <item name="colorOutlineVariant">@color/bag_border_divider</item>
+
+        <item name="android:statusBarColor">@color/bag_bg_base</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/bag_bg_surface</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+
+        <item name="materialButtonStyle">@style/Widget.Bag.Button.Primary</item>
+        <item name="textInputStyle">@style/Widget.Bag.TextField</item>
     </style>
 
     <style name="Theme.MyBagHackathon" parent="Base.Theme.MyBagHackathon" />

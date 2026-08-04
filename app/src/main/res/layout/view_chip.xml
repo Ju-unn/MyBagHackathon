@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <TextView
+        android:id="@+id/chipLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:background="@drawable/bg_pill_neutral"
+        android:gravity="center"
+        android:minWidth="@dimen/touch_target_min"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:textAppearance="@style/TextAppearance.Bag.Eyebrow"
+        android:textColor="@color/bag_text_tertiary_safe"
+        tools:text="필수" />
+</merge>

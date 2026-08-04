@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S14 Profile — avatar/name header + my default items + settings list -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bag_bg_base"
+    android:clipToPadding="false"
+    android:paddingStart="@dimen/screen_margin"
+    android:paddingTop="@dimen/screen_margin"
+    android:paddingEnd="@dimen/screen_margin"
+    android:paddingBottom="@dimen/space_4xl">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.example.mybaghackathon.ui.atoms.AvatarView
+                android:id="@+id/profileAvatar"
+                android:layout_width="@dimen/avatar_size_xl"
+                android:layout_height="@dimen/avatar_size_xl"
+                app:avatarInitial="신" />
+
+            <TextView
+                android:id="@+id/profileName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.Bag.TitleL"
+                tools:text="신이삭" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_2xl"
+            android:text="@string/profile_my_items"
+            android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+        <LinearLayout
+            android:id="@+id/profileItemList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:text="@string/profile_item_hint"
+            android:textAppearance="@style/TextAppearance.Bag.LabelM" />
+
+        <FrameLayout
+            android:id="@+id/profileAddItemWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md">
+
+            <include layout="@layout/molecule_dashed_add_card" />
+        </FrameLayout>
+
+        <View style="@style/Widget.Bag.Divider" android:layout_marginTop="@dimen/space_2xl" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="@string/profile_settings"
+            android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+        <TextView
+            android:id="@+id/profileNotifRow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target_min"
+            android:gravity="center_vertical"
+            android:text="@string/profile_notification_settings"
+            android:textAppearance="@style/TextAppearance.Bag.BodyL" />
+
+        <TextView
+            android:id="@+id/profileLogoutRow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target_min"
+            android:gravity="center_vertical"
+            android:text="@string/profile_logout"
+            android:textAppearance="@style/TextAppearance.Bag.BodyL"
+            android:textColor="@color/bag_status_danger" />
+
+        <TextView
+            android:id="@+id/profileVersionRow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target_min"
+            android:gravity="center_vertical"
+            android:text="@string/profile_version"
+            android:textAppearance="@style/TextAppearance.Bag.BodyM"
+            tools:text="버전 1.0.0" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

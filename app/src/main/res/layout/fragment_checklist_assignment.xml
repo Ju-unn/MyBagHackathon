@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S12 Checklist · 분담 현황 tab -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bag_bg_base"
+    android:clipToPadding="false"
+    android:paddingStart="@dimen/screen_margin"
+    android:paddingTop="@dimen/space_lg"
+    android:paddingEnd="@dimen/screen_margin"
+    android:paddingBottom="@dimen/space_4xl">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/checklist_assignment_hint"
+            android:textAppearance="@style/TextAppearance.Bag.LabelM" />
+
+        <LinearLayout
+            android:id="@+id/checklistAssignmentList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_2xl"
+            android:text="@string/checklist_unassigned"
+            android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+        <LinearLayout
+            android:id="@+id/checklistUnassignedList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

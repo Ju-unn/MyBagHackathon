@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- M10 · UploadGuideCard — State = Empty / Selected -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/uploadGuideCardRoot"
+    android:layout_width="match_parent"
+    android:layout_height="86dp"
+    android:background="@drawable/bg_card_lg_border"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <FrameLayout
+        android:id="@+id/uploadGuideThumb"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:background="@drawable/bg_card_surface">
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/uploadGuideTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Bag.BodyLMedium"
+            tools:text="여행 일정표" />
+
+        <TextView
+            android:id="@+id/uploadGuideDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.Bag.BodyM"
+            tools:text="항공권·캘린더 캡처" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/uploadGuideIndicator"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/oval_stroke" />
+</LinearLayout>

@@ -1,5 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- ============================================================
+         PRIMITIVES (29) — raw palette, do not use directly in layouts.
+         Reference via the Semantic tokens below instead.
+    ============================================================ -->
+    <color name="blue_700">#FF2B5F7F</color>
+    <color name="blue_600">#FF2F6B90</color>
+    <color name="blue_500">#FF3A7CA5</color>
+    <color name="blue_300">#FF8DB4C7</color>
+    <color name="blue_200">#FFA9C7D8</color>
+    <color name="blue_100">#FFE4EFF5</color>
+    <color name="blue_900">#FF1C3341</color>
+
+    <color name="ink_900">#FF16181C</color>
+    <color name="ink_800">#FF1E2126</color>
+    <color name="ink_700">#FF262A30</color>
+    <color name="ink_600">#FF2E323A</color>
+
+    <color name="slate_500">#FF6B7280</color>
+
+    <color name="sand_50">#FFFAFAF9</color>
+    <color name="sand_100">#FFF1F0EC</color>
+    <color name="sand_150">#FFEAEAE6</color>
+    <color name="sand_200">#FFEEEEEC</color>
+    <color name="sand_250">#FFF2F2EE</color>
+
+    <color name="stone_300">#FFD9D8D2</color>
+    <color name="stone_400">#FFC7C6C1</color>
+    <color name="stone_500">#FF9A9A94</color>
+    <color name="stone_600">#FF6B6B65</color>
+
+    <color name="amber_500">#FFE8A33D</color>
+    <color name="amber_300">#FFE8C56A</color>
+    <color name="teal_500">#FF5C9EAD</color>
+    <color name="gray_500">#FF7B7F87</color>
+
+    <color name="clay_500">#FFC4543F</color>
+    <color name="clay_100">#FFF7E7E3</color>
+    <color name="clay_900">#FF3A2320</color>
+
+    <color name="white_primitive">#FFFFFFFF</color>
+
+    <!-- ============================================================
+         SEMANTIC (30) — use these in layouts/styles/drawables.
+         Android naming mirrors BagColors.xxx from the design spec.
+    ============================================================ -->
+
+    <!-- Background -->
+    <color name="bag_bg_base">@color/sand_50</color>
+    <color name="bag_bg_surface">@color/white_primitive</color>
+    <color name="bag_bg_subtle">@color/sand_100</color>
+    <color name="bag_bg_inverse">@color/ink_900</color>
+    <color name="bag_bg_brand_subtle">@color/blue_100</color>
+    <color name="bag_bg_track">@color/sand_150</color>
+
+    <!-- Brand -->
+    <color name="bag_brand_default">@color/blue_500</color>
+    <color name="bag_brand_pressed">@color/blue_600</color>
+
+    <!-- Text -->
+    <color name="bag_text_primary">@color/ink_900</color>
+    <color name="bag_text_secondary">@color/slate_500</color>
+    <color name="bag_text_tertiary">@color/stone_500</color>
+    <!-- stone_500 on bg_base is 3.0:1 — fails 4.5:1. Use bag_text_tertiary_safe
+         (stone_600, 4.9:1) for any readable body/caption text instead. -->
+    <color name="bag_text_tertiary_safe">@color/stone_600</color>
+    <color name="bag_text_on_brand">@color/white_primitive</color>
+    <color name="bag_text_on_inverse">@color/white_primitive</color>
+    <color name="bag_text_brand">@color/blue_500</color>
+
+    <!-- Border -->
+    <color name="bag_border_default">@color/sand_200</color>
+    <color name="bag_border_strong">@color/stone_300</color>
+    <color name="bag_border_divider">@color/sand_250</color>
+
+    <!-- Priority -->
+    <color name="bag_priority_high">@color/blue_500</color>
+    <color name="bag_priority_mid">@color/blue_300</color>
+    <color name="bag_priority_low">@color/stone_300</color>
+
+    <!-- Status -->
+    <color name="bag_status_danger">@color/clay_500</color>
+    <color name="bag_status_danger_bg">@color/clay_100</color>
+    <!-- status_warning (#E8A33D) text on white is 2.3:1 — fails. Use it only
+         for icons/backgrounds; pair with bag_text_tertiary_safe or
+         bag_status_danger for readable label text. -->
+    <color name="bag_status_warning">@color/amber_500</color>
+    <color name="bag_status_warning_bg">#1FE8A33D</color>
+
+    <!-- Avatars -->
+    <color name="bag_avatar_1">@color/amber_500</color>
+    <color name="bag_avatar_2">@color/teal_500</color>
+    <color name="bag_avatar_3">@color/gray_500</color>
+    <color name="bag_avatar_4">@color/blue_300</color>
+
+    <!-- Weather -->
+    <color name="bag_weather_sun">@color/amber_300</color>
+    <color name="bag_weather_rain">@color/blue_200</color>
+    <color name="bag_weather_cloud">@color/stone_300</color>
+
+    <!-- Kakao brand exception (login button only — not part of the palette) -->
+    <color name="kakao_yellow">#FFFEE500</color>
+    <color name="kakao_text">#D9000000</color>
+
+    <!-- Legacy template colors (kept for AppCompat defaults) -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

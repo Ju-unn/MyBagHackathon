@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- O4 · TripRoomCard — State = Active/Upcoming/Past.
+     This layout is built for Active (bg/inverse + decoration circle +
+     avatar stack + progress bar). TripRoomCardBinder.bindUpcoming()/
+     bindPast() reconfigure the same views for the other two states. -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tripCardRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/bag_bg_inverse"
+    app:cardCornerRadius="@dimen/radius_xl"
+    app:cardElevation="0dp"
+    app:strokeWidth="0dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/tripCardDecoration"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="-30dp"
+            android:layout_marginEnd="-30dp"
+            android:background="@drawable/oval_solid" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tripCardStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Bag.LabelM"
+                        android:textColor="@color/bag_brand_default"
+                        tools:text="진행중" />
+
+                    <TextView
+                        android:id="@+id/tripCardTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.Bag.TitleL"
+                        android:textColor="@color/bag_text_on_inverse"
+                        tools:text="도쿄 벚꽃 여행" />
+                </LinearLayout>
+
+                <com.example.mybaghackathon.ui.atoms.DDayBadgeView
+                    android:id="@+id/tripCardDDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tripCardBottomRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/tripCardAvatarStack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tripCardProgressLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Bag.BodyM"
+                    android:textColor="@color/bag_text_on_inverse"
+                    tools:text="체크리스트 68% 완료" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/tripCardProgressBar"
+                style="@style/Widget.Bag.ProgressBar.OnDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:max="100"
+                tools:progress="68" />
+
+            <TextView
+                android:id="@+id/tripCardHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="@style/TextAppearance.Bag.BodyM"
+                android:textColor="@color/bag_text_tertiary_safe"
+                android:visibility="gone"
+                tools:text="일정 사진 업로드 필요" />
+        </LinearLayout>
+    </FrameLayout>
+</com.google.android.material.card.MaterialCardView>
