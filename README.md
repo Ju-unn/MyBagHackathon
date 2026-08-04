@@ -59,7 +59,6 @@
 
 3. API 선정
 
-| 기능 | 사용할 API/서비스 | 사용 목적 | 선정 이유 |
 1. 일정·숙소 캡처 분석
 - 사용할 API 서비스 : OpenAI Responses API gpt-5.4-mini
 - 사용 목적 : 이미지에서 날짜, 도시, 국가, 숙소 정보 추출
@@ -279,7 +278,6 @@ feature.home
 - HomePresenter.java
 
 feature.trip
-
 여행방 생성, 초대, 참여자 확인 기능입니다.
 
 - TripRoomContract.java
