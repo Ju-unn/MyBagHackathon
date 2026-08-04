@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityWeatherFeedbackBinding;
+import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.google.android.material.button.MaterialButton;
 
@@ -29,10 +30,10 @@ public class WeatherFeedbackActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityWeatherFeedbackBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
-        TextView title = findViewById(R.id.topAppBarTitle);
-        title.setText(R.string.feedback_title);
-        findViewById(R.id.topAppBarAction).setVisibility(View.GONE);
+        binding.feedbackTopAppBar.topAppBarTitle.setText(R.string.feedback_title);
+        binding.feedbackTopAppBar.topAppBarAction.setVisibility(View.GONE);
 
         LinearLayout list = binding.feedbackSectionList;
         addSection(list, R.string.feedback_clothing_title,

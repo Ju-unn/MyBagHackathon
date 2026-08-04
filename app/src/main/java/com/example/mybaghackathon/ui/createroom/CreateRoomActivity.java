@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityCreateRoomBinding;
+import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
 import com.google.android.material.button.MaterialButton;
 
@@ -27,6 +28,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityCreateRoomBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
         TextView title = binding.createRoomTopBar.topAppBarCompactTitle;
         title.setText(R.string.create_room_title);

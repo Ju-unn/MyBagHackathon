@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityNotificationSettingsBinding;
+import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 
 /**
  * S15 · 알림 설정 — D-7/D-3/D-1 토글 + 날짜 누락 경고.
@@ -23,6 +24,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityNotificationSettingsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
         TextView title = binding.notifTopBar.topAppBarCompactTitle;
         title.setText(R.string.notif_title);

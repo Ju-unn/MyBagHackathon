@@ -39,6 +39,9 @@ public class TripArchiveFragment extends Fragment {
         binding = FragmentArchiveBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        binding.archiveTopAppBar.topAppBarTitle.setText(R.string.archive_title);
+        binding.archiveTopAppBar.topAppBarAction.setVisibility(View.GONE);
+
         list = binding.archiveTripList;
         activeChip = binding.archiveSegmentActive;
         pastChip = binding.archiveSegmentPast;

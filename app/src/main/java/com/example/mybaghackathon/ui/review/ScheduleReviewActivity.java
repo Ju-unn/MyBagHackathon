@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.data.ChecklistItem;
 import com.example.mybaghackathon.databinding.ActivityScheduleReviewBinding;
+import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.PriorityDotView;
 import com.example.mybaghackathon.ui.atoms.WeatherIconView;
@@ -38,6 +39,11 @@ public class ScheduleReviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityScheduleReviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
+
+        binding.reviewTopAppBar.topAppBarTitle.setText(R.string.review_title);
+        binding.reviewTopAppBar.topAppBarDesc.setText(R.string.review_desc);
+        binding.reviewTopAppBar.topAppBarDesc.setVisibility(View.VISIBLE);
 
         bindReviewField(binding.reviewDestinationCard, R.string.review_destination_label, "도쿄, 일본");
         bindReviewField(binding.reviewDatesCard, R.string.review_dates_label, "3.15(일) — 3.19(목)");

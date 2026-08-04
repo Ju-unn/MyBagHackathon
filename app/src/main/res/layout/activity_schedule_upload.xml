@@ -21,19 +21,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- O1 TopAppBar (LargeTitle) -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/upload_title"
-                android:textAppearance="@style/TextAppearance.Bag.DisplayM" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@string/upload_desc"
-                android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+            <include
+                android:id="@+id/uploadTopAppBar"
+                layout="@layout/organism_top_app_bar_large" />
 
             <LinearLayout
                 android:id="@+id/uploadScheduleCard"

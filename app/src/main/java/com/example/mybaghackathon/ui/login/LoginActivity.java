@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mybaghackathon.MainActivity;
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityLoginBinding;
+import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 
 /**
  * S02 · 로그인 — 카카오 로그인 버튼 하나만 있고, 누르면 MainActivity
@@ -25,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
         binding.loginKakaoButton.setOnClickListener(v -> {
             startActivity(new Intent(this, MainActivity.class));

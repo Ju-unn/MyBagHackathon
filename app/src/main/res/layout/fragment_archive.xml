@@ -16,11 +16,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/archive_title"
-            android:textAppearance="@style/TextAppearance.Bag.DisplayM" />
+        <include
+            android:id="@+id/archiveTopAppBar"
+            layout="@layout/organism_top_app_bar_large" />
 
         <LinearLayout
             android:id="@+id/archiveSegmentRow"
