@@ -24,4 +24,20 @@ public final class EdgeToEdgeUtil {
             return insets;
         });
     }
+
+    /**
+     * root 하단에 바텀 네비게이션 등 화면에 붙는 뷰가 있을 때 사용.
+     * root는 top/left/right만 인셋 패딩을 받고, 하단 인셋은 bottomView에 패딩으로 들어가
+     * root와 bottomView 사이에 빈 여백이 생기지 않는다.
+     */
+    public static void applySystemBarPadding(ComponentActivity activity, View root, View bottomView) {
+        EdgeToEdge.enable(activity);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            bottomView.setPadding(bottomView.getPaddingLeft(), bottomView.getPaddingTop(),
+                    bottomView.getPaddingRight(), systemBars.bottom);
+            return insets;
+        });
+    }
 }
