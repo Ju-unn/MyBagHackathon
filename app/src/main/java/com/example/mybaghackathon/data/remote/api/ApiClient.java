@@ -17,10 +17,12 @@ public class ApiClient {
 
     private final Retrofit retrofit;
 
+    // 인증 헤더 인터셉터 + 로깅 인터셉터를 붙인 Retrofit 인스턴스를 만든다
     public ApiClient(TokenStorage tokenStorage) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+        // 저장된 JWT가 있으면 모든 요청에 Authorization 헤더를 자동으로 붙인다
         Interceptor authInterceptor = chain -> {
             Request original = chain.request();
             String token = tokenStorage.getToken();
@@ -47,6 +49,7 @@ public class ApiClient {
                 .build();
     }
 
+    // 주어진 API 인터페이스의 Retrofit 구현체를 만들어 반환한다
     public <T> T create(Class<T> apiClass) {
         return retrofit.create(apiClass);
     }

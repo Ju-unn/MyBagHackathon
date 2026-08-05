@@ -14,6 +14,7 @@ public class AppContainer {
     public final TokenStorage tokenStorage;
     public final AuthRepository authRepository;
 
+    // TokenStorage → ApiClient → AuthApi → AuthRepository 순으로 엮어서 보관한다
     public AppContainer(Context context) {
         tokenStorage = new TokenStorage(context.getApplicationContext());
 

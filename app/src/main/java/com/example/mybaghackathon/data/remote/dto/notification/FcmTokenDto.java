@@ -15,6 +15,7 @@ public class FcmTokenDto {
     @SerializedName("app_version")
     private final String appVersion;
 
+    // FCM 토큰 등록 요청 바디를 만든다
     public FcmTokenDto(String token, String deviceId, String platform, String appVersion) {
         this.token = token;
         this.deviceId = deviceId;

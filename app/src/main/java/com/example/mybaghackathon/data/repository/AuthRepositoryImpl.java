@@ -26,6 +26,7 @@ public class AuthRepositoryImpl implements AuthRepository {
         this.tokenStorage = tokenStorage;
     }
 
+    // 카카오 로그인 API 호출 → 성공 시 JWT 저장 후 User 반환, 실패 시 에러 반환
     @Override
     public AppResult<User> loginWithKakao(String kakaoAccessToken) {
         try {
@@ -45,6 +46,7 @@ public class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
+    // 로그아웃 API 호출 → 성공 시 저장된 토큰 삭제
     @Override
     public AppResult<Void> logout() {
         try {
@@ -61,6 +63,7 @@ public class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
+    // FCM 토큰 등록 API 호출
     @Override
     public AppResult<Void> registerFcmToken(String token, String deviceId, String platform, String appVersion) {
         try {
@@ -78,11 +81,13 @@ public class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
+    // 실패 응답에서 상태코드와 메시지를 뽑아 AppError로 변환한다
     private AppError toError(Response<?> response, ApiResponseDto<?> body) {
         String message = body != null ? body.getMessage() : "요청에 실패했습니다.";
         return new AppError(response.code(), message);
     }
 
+    // IOException(네트워크 자체 실패) 상황을 위한 공통 에러를 만든다
     private AppError networkError() {
         return new AppError(0, "네트워크 오류가 발생했습니다.");
     }

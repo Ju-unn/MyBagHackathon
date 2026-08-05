@@ -10,6 +10,7 @@ public class MyBagApplication extends Application {
 
     private AppContainer appContainer;
 
+    // 카카오 SDK 초기화 후 AppContainer(공용 객체 모음)를 생성한다
     @Override
     public void onCreate() {
         super.onCreate();
@@ -17,6 +18,7 @@ public class MyBagApplication extends Application {
         appContainer = new AppContainer(this);
     }
 
+    // Activity/Fragment 등에서 Repository 같은 공용 객체를 꺼내 쓰기 위한 접근자
     public AppContainer getAppContainer() {
         return appContainer;
     }

@@ -9,6 +9,7 @@ public final class UserMapper {
     private UserMapper() {
     }
 
+    // 로그인 응답의 user 정보를 User 모델로 변환한다
     public static User from(AuthTokenDto.UserPayload dto) {
         if (dto == null) {
             return null;
