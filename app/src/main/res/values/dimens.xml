@@ -21,6 +21,10 @@
     <dimen name="radius_xl">22dp</dimen>
     <dimen name="radius_full">999dp</dimen>
 
+    <!-- img_app_icon.png 원본의 둥근 사각형 곡률 + 흰 여백을 그대로 이어가도록
+         역산한 값(원본 1254px 기준 반경≈275px, 여백≈34px → (275+34)/1254 비율) -->
+    <dimen name="radius_app_icon">37dp</dimen>
+
     <!-- 최소 터치 영역 (QA 체크리스트 §5) -->
     <dimen name="touch_target_min">48dp</dimen>
 
