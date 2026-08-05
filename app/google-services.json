@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1058029303346",
+    "project_id": "mybag-d252e",
+    "storage_bucket": "mybag-d252e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1058029303346:android:f8a36faa64f54fafa6ee2b",
+        "android_client_info": {
+          "package_name": "com.example.mybaghackathon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJwjuMbCQg2r54BWVvRx_SAr6a0hNfGR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
