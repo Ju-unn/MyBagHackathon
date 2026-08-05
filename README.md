@@ -385,15 +385,32 @@ com.example.mybaghackathon
 │   │   │   └── NotificationApi.java
 │   │   └── dto
 │   │       ├── common
+│   │       │   └── ApiResponseDto.java
 │   │       ├── auth
+│   │       │   ├── KakaoLoginRequestDto.java
+│   │       │   └── AuthTokenDto.java
 │   │       ├── creation
+│   │       │   └── CreationSessionDto.java
 │   │       ├── trip
+│   │       │   ├── TripDto.java
+│   │       │   ├── TripMemberDto.java
+│   │       │   └── TripInviteDto.java
 │   │       ├── upload
+│   │       │   └── TripUploadDto.java
 │   │       ├── analysis
+│   │       │   ├── AnalysisRequestDto.java
+│   │       │   └── AnalysisResponseDto.java
 │   │       ├── packing
+│   │       │   ├── PackingItemDto.java
+│   │       │   └── DefaultItemDto.java
 │   │       ├── weather
+│   │       │   ├── WeatherDto.java
+│   │       │   └── WeatherFeedbackDto.java
 │   │       ├── profile
+│   │       │   └── ProfileDto.java
 │   │       └── notification
+│   │           ├── NotificationSettingsDto.java
+│   │           └── FcmTokenDto.java
 │   ├── mapper
 │   │   ├── UserMapper.java
 │   │   ├── TripMapper.java
