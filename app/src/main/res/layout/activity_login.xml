@@ -8,19 +8,26 @@
     android:background="@color/bag_bg_base"
     android:orientation="vertical">
 
-    <!-- 브랜드 비주얼: 화면 폭 꽉 채움, 배경은 브랜드 연한색 -->
+    <!-- 브랜드 비주얼: 화면 폭 꽉 채움, 배경은 브랜드 연한색, 중앙에 앱 아이콘 아트워크.
+         고정 높이 대신 남는 세로 공간을 채우는 weight로 잡아서, 화면이 작은
+         기기에서는 잘리지 않게 줄어들고 화면이 큰 기기에서는 아이콘 주변
+         여백으로 자연스럽게 늘어나 반응형으로 동작함 -->
     <FrameLayout
         android:id="@+id/loginArtwork"
         android:layout_width="match_parent"
-        android:layout_height="460dp"
-        android:background="@color/bag_bg_brand_subtle">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_login_artwork">
 
-        <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="152dp"
+            android:layout_height="152dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_luggage"
-            android:tint="@color/bag_brand_default" />
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_app_icon"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Bag.RoundedIcon" />
 
     </FrameLayout>
 
@@ -36,13 +43,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login_copy"
-            android:textAppearance="@style/TextAppearance.Bag.DisplayM" />
+            android:textAppearance="@style/TextAppearance.Bag.DisplayM"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/loginSubcopy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_xl"
+            android:layout_marginTop="@dimen/space_sm"
             android:text="@string/login_subcopy"
             android:textAppearance="@style/TextAppearance.Bag.BodyM" />
 
