@@ -7,9 +7,11 @@ appcompat = "1.7.1"
 material = "1.14.0"
 activity = "1.13.0"
 constraintlayout = "2.2.1"
+kakao = "2.24.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+kakao-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
