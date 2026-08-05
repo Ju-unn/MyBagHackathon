@@ -101,7 +101,7 @@
 ### 여행방과 동행자
 
 - 사용자가 여행방을 생성합니다.
-- 초대 코드 또는 링크로 동행자가 참여합니다.
+- 초대 링크로 동행자가 참여합니다. 링크 내부의 난수 코드는 서버가 참여 요청을 검증할 때 사용합니다.
 - 여행방 참여자는 같은 준비물 목록을 조회합니다.
 - 준비물 담당자를 지정하거나 취소합니다.
 
@@ -126,21 +126,22 @@
 
 ## 4. 유저플로우
 
-1. 앱을 실행합니다.
-2. 카카오 계정으로 로그인합니다.
+1. 앱 실행 후 로그인 상태를 확인합니다.
+2. 로그인 정보가 없거나 만료되었으면 S02에서 카카오 로그인을 진행합니다.
 3. EC2 서버가 카카오 토큰을 확인하고 앱 전용 로그인 토큰을 발급합니다.
-4. 홈에서 참여 중인 여행방을 확인합니다.
-5. 방을 만들거나 초대 코드로 여행방에 참여합니다.
-6. 여행방 상세에서 참여자 목록을 확인합니다.
-7. 여행 일정표와 숙소 예약 캡처를 여러 장 업로드합니다.
-8. EC2 서버가 OpenAI API에 분석을 요청합니다.
-9. 사용자가 날짜, 장소, 국가, 숙소 정보를 검토하고 수정합니다.
-10. 사용자가 목록 생성 버튼을 누릅니다.
-11. EC2 서버가 날씨와 기본 준비물 규칙을 결합해 체크리스트를 생성합니다.
-12. 참여자가 준비물 담당자를 지정합니다.
-13. 개인 목록에서 준비 상태를 v/x로 확정합니다.
-14. 여행 종료 후 해당 여행방을 아카이브에서 확인합니다.
-15. 여행 전 WorkManager 또는 추후 FCM 알림으로 최종 점검합니다.
+4. S03 홈에서 진행 중인 여행과 준비 중인 여행을 확인합니다.
+5. S04에서 여행방을 만들거나 공유받은 초대 링크로 기존 방에 참여합니다.
+6. S05에서 일정표, 숙소 확인서, 추가 자료를 여러 장 업로드합니다.
+7. S06에서 EC2 서버가 OpenAI API에 분석을 요청하고 진행 상태를 확인합니다.
+8. S07에서 추출된 분석 결과를 먼저 확인합니다.
+9. S08에서 날짜, 장소, 국가, 숙소 정보를 검토·수정한 뒤 확정합니다.
+10. S09 여행방 상세에서 여행 정보와 참여자를 확인하고 초대 링크를 공유합니다.
+11. S10에서 일정별 날씨와 의식주 피드백을 확인합니다.
+12. 체크리스트에서 S11 공용, S12 내 목록, S13 분담 현황 탭을 사용합니다.
+13. 참여자가 준비물 담당자를 지정하고 준비 상태를 v/x로 변경합니다.
+14. S14에서 종료된 여행을 아카이브로 확인합니다.
+15. S15에서 프로필과 기본 물품을 관리합니다.
+16. S16에서 D-7, D-3, D-1 등의 알림 설정을 관리합니다.
 
 ---
 
@@ -342,133 +343,125 @@ EC2는 이미 구축되어 있으므로 실제 월 비용은 팀 AWS 계정에�
 
 ## 8. Android 패키지 구조
 
+기본 패키지는 실제 프로젝트와 동일한 `com.example.mybaghackathon`을 사용합니다. UI는 최종 S01~S16 흐름을 기준으로 구성하고, 서버 연결 코드는 `data` 아래에서 API·DTO·Mapper·Repository로 분리합니다.
+
 ```text
 com.example.mybaghackathon
+├── MainActivity.java
 ├── app
-│   ├── PackMateApplication.java
-│   ├── AppContainer.java
-│   └── BaseActivity.java
-│
+│   ├── MyBagApplication.java
+│   └── AppContainer.java
 ├── common
 │   ├── AppResult.java
 │   ├── AppError.java
 │   └── Constants.java
-│
 ├── model
 │   ├── User.java
 │   ├── Trip.java
 │   ├── TripMember.java
-│   ├── Itinerary.java
-│   ├── PackingItem.java
+│   ├── TripInvite.java
+│   ├── TripUpload.java
 │   ├── AnalysisResult.java
-│   └── Weather.java
-│
+│   ├── TripSchedule.java
+│   ├── Accommodation.java
+│   ├── PackingItem.java
+│   ├── DefaultItem.java
+│   ├── NotificationSettings.java
+│   ├── Weather.java
+│   └── WeatherFeedback.java
 ├── data
+│   ├── remote
+│   │   ├── api
+│   │   │   ├── ApiClient.java
+│   │   │   ├── AuthApi.java
+│   │   │   ├── CreationSessionApi.java
+│   │   │   ├── TripApi.java
+│   │   │   ├── InviteApi.java
+│   │   │   ├── UploadApi.java
+│   │   │   ├── AnalysisApi.java
+│   │   │   ├── PackingApi.java
+│   │   │   ├── WeatherApi.java
+│   │   │   ├── ProfileApi.java
+│   │   │   └── NotificationApi.java
+│   │   └── dto
+│   │       ├── common
+│   │       ├── auth
+│   │       ├── creation
+│   │       ├── trip
+│   │       ├── upload
+│   │       ├── analysis
+│   │       ├── packing
+│   │       ├── weather
+│   │       ├── profile
+│   │       └── notification
+│   ├── mapper
+│   │   ├── UserMapper.java
+│   │   ├── TripMapper.java
+│   │   ├── AnalysisMapper.java
+│   │   ├── PackingItemMapper.java
+│   │   ├── WeatherMapper.java
+│   │   └── NotificationMapper.java
 │   ├── repository
 │   │   ├── AuthRepository.java
 │   │   ├── AuthRepositoryImpl.java
+│   │   ├── CreationSessionRepository.java
+│   │   ├── CreationSessionRepositoryImpl.java
 │   │   ├── TripRepository.java
 │   │   ├── TripRepositoryImpl.java
-│   │   ├── PackingRepository.java
-│   │   ├── PackingRepositoryImpl.java
+│   │   ├── UploadRepository.java
+│   │   ├── UploadRepositoryImpl.java
 │   │   ├── AnalysisRepository.java
 │   │   ├── AnalysisRepositoryImpl.java
+│   │   ├── PackingRepository.java
+│   │   ├── PackingRepositoryImpl.java
 │   │   ├── WeatherRepository.java
-│   │   └── WeatherRepositoryImpl.java
-│   │
-│   ├── remote
-│   │   └── api
-│   │       ├── ApiClient.java
-│   │       ├── AuthApi.java
-│   │       ├── TripApi.java
-│   │       ├── AnalysisApi.java
-│   │       ├── PackingApi.java
-│   │       ├── WeatherApi.java
-│   │       └── ArchiveApi.java
-│   │
-│   ├── dto
-│   │   ├── LoginRequestDto.java
-│   │   ├── LoginResponseDto.java
-│   │   ├── TripDto.java
-│   │   ├── ItineraryDto.java
-│   │   ├── PackingItemDto.java
-│   │   ├── AnalysisResponseDto.java
-│   │   └── WeatherDto.java
-│   │
-│   └── mapper
-│       ├── UserMapper.java
-│       ├── TripMapper.java
-│       ├── ItineraryMapper.java
-│       ├── PackingItemMapper.java
-│       ├── AnalysisMapper.java
-│       └── WeatherMapper.java
-│
+│   │   ├── WeatherRepositoryImpl.java
+│   │   ├── ProfileRepository.java
+│   │   ├── ProfileRepositoryImpl.java
+│   │   ├── NotificationRepository.java
+│   │   └── NotificationRepositoryImpl.java
+│   └── local
+│       └── TokenStorage.java
 ├── ui
 │   ├── EdgeToEdgeUtil.java
-│   │
-│   ├── analyzing
-│   │   └── AnalyzingActivity.java
-│   │
-│   ├── archive
-│   │   └── TripArchiveFragment.java
-│   │
-│   ├── atoms
-│   │   ├── AvatarView.java
-│   │   ├── CheckboxView.java
-│   │   ├── ChipView.java
-│   │   ├── DDayBadgeView.java
-│   │   ├── IconButtonView.java
-│   │   ├── PriorityDotView.java
-│   │   ├── RestrictionTagView.java
-│   │   └── WeatherIconView.java
-│   │
-│   ├── checklist
-│   │   ├── ChecklistActivity.java
-│   │   ├── ChecklistAssignmentFragment.java
-│   │   ├── ChecklistCommonFragment.java
-│   │   └── ChecklistMineFragment.java
-│   │
-│   ├── createroom
-│   │   └── CreateRoomActivity.java
-│   │
-│   ├── feedback
-│   │   └── WeatherFeedbackActivity.java
-│   │
-│   ├── home
-│   │   └── HomeFragment.java
-│   │
+│   ├── splash
+│   │   └── SplashActivity.java
 │   ├── login
 │   │   └── LoginActivity.java
-│   │
-│   ├── molecules
-│   │   └── AvatarStackHelper.java
-│   │
-│   ├── organisms
-│   │   └── TripRoomCardBinder.java
-│   │
+│   ├── home
+│   │   └── HomeFragment.java
+│   ├── createroom
+│   │   └── CreateRoomActivity.java
+│   ├── upload
+│   │   └── ScheduleUploadActivity.java
+│   ├── analyzing
+│   │   └── AnalyzingActivity.java
+│   ├── analysisresult
+│   │   └── AnalysisResultActivity.java
+│   ├── review
+│   │   └── ScheduleReviewActivity.java
+│   ├── roomdetail
+│   │   └── RoomDetailActivity.java
+│   ├── feedback
+│   │   └── WeatherFeedbackActivity.java
+│   ├── checklist
+│   │   ├── ChecklistActivity.java
+│   │   ├── ChecklistCommonFragment.java
+│   │   ├── ChecklistMineFragment.java
+│   │   └── ChecklistAssignmentFragment.java
+│   ├── archive
+│   │   └── TripArchiveFragment.java
+│   ├── profile
+│   │   └── ProfileFragment.java
+│   ├── settings
+│   │   └── NotificationSettingsActivity.java
 │   ├── overlay
 │   │   ├── AddItemSheet.java
 │   │   ├── EditItemSheet.java
 │   │   └── InviteShareSheet.java
-│   │
-│   ├── profile
-│   │   └── ProfileFragment.java
-│   │
-│   ├── review
-│   │   └── ScheduleReviewActivity.java
-│   │
-│   ├── roomdetail
-│   │   └── RoomDetailActivity.java
-│   │
-│   ├── settings
-│   │   └── NotificationSettingsActivity.java
-│   │
-│   ├── splash
-│   │   └── SplashActivity.java
-│   │
-│   └── upload
-│       └── ScheduleUploadActivity.java
-│
+│   ├── atoms
+│   ├── molecules
+│   └── organisms
 └── util
     ├── ImageCompressor.java
     ├── DateUtils.java
@@ -476,326 +469,386 @@ com.example.mybaghackathon
     └── ReminderScheduler.java
 ```
 
-기본 패키지는 `com.team.packmate`입니다. 위 트리의 패키지별 책임은 아래에서 설명합니다.
+### 패키지별 책임
 
-### app
+- `model`은 Android 화면과 Presenter가 사용하는 앱 내부 데이터를 정의합니다.
+- `data.remote.api`는 EC2 PHP REST API의 Retrofit 요청을 정의합니다.
+- `data.remote.dto`는 서버의 요청·응답 JSON 형식을 기능별로 구분합니다.
+- `data.mapper`는 서버 DTO를 Android Model로 변환합니다.
+- `data.repository`는 Presenter가 사용할 데이터 접근 규칙과 구현체를 제공합니다.
+- `data.local`은 로그인 token처럼 기기에 보관해야 하는 값만 관리합니다.
+- `ui`는 최종 화면 흐름 S01~S16과 오버레이를 기능별 패키지로 구분합니다.
 
-앱 실행과 공용 객체 생성을 담당합니다.
+### 최종 흐름에 따른 구조 규칙
 
-- `PackMateApplication.java`
-- `AppContainer.java`
-- `BaseActivity.java`
-
-### common
-
-공통 결과, 오류, 상수를 관리합니다.
-
-- `AppResult.java`
-- `AppError.java`
-- `Constants.java`
-
-### model
-
-Android 앱에서 사용하는 데이터 모델입니다.
-
-- `User.java`
-- `Trip.java`
-- `TripMember.java`
-- `Itinerary.java`
-- `PackingItem.java`
-- `AnalysisResult.java`
-- `Weather.java`
-
-### data.repository
-
-Presenter가 사용할 데이터 접근 규칙과 구현체입니다.
-
-- `AuthRepository.java`
-- `AuthRepositoryImpl.java`
-- `TripRepository.java`
-- `TripRepositoryImpl.java`
-- `PackingRepository.java`
-- `PackingRepositoryImpl.java`
-- `AnalysisRepository.java`
-- `AnalysisRepositoryImpl.java`
-- `WeatherRepository.java`
-- `WeatherRepositoryImpl.java`
-
-### data.remote.server
-
-AWS EC2 PHP REST API와 통신합니다.
-
-- `ApiClient.java`
-- `AuthApi.java`
-- `TripApi.java`
-- `AnalysisApi.java`
-- `PackingApi.java`
-- `WeatherApi.java`
-- `ArchiveApi.java`
-
-### data.dto
-
-서버 요청과 응답 형식을 정의합니다.
-
-- `LoginRequestDto.java`
-- `LoginResponseDto.java`
-- `TripDto.java`
-- `ItineraryDto.java`
-- `PackingItemDto.java`
-- `AnalysisResponseDto.java`
-- `WeatherDto.java`
-
-### data.mapper
-
-서버 DTO를 Android Model로 변환합니다.
-
-- `UserMapper.java`
-- `TripMapper.java`
-- `ItineraryMapper.java`
-- `PackingItemMapper.java`
-- `AnalysisMapper.java`
-- `WeatherMapper.java`
-
-### feature.auth
-
-카카오 로그인과 EC2 서버 인증 기능입니다.
-
-- `LoginContract.java`
-- `LoginActivity.java`
-- `LoginPresenter.java`
-
-### feature.home
-
-참여 중인 여행방 목록을 표시합니다.
-
-- `HomeContract.java`
-- `HomeActivity.java`
-- `HomePresenter.java`
-
-### feature.trip
-
-여행방 생성, 초대, 참여자 관리 기능입니다.
-
-- `TripRoomContract.java`
-- `TripRoomActivity.java`
-- `TripRoomPresenter.java`
-- `CreateTripDialog.java`
-
-### feature.itinerary
-
-여러 장의 일정 캡처 업로드, 분석, 검토·수정 기능입니다.
-
-- `ItineraryContract.java`
-- `ItineraryUploadActivity.java`
-- `ItineraryReviewActivity.java`
-- `ItineraryPresenter.java`
-- `ItineraryAdapter.java`
-
-### feature.weather
-
-여행지 날씨와 의식주 피드백을 표시합니다.
-
-- `WeatherContract.java`
-- `WeatherFragment.java`
-- `WeatherPresenter.java`
-
-### feature.checklist
-
-공용·개인 준비물과 담당자, 준비 상태를 관리합니다.
-
-- `ChecklistContract.java`
-- `ChecklistFragment.java`
-- `ChecklistPresenter.java`
-- `PackingItemAdapter.java`
-
-### feature.profile
-
-개인 준비물 추가·수정·삭제 기능입니다.
-
-- `ProfileContract.java`
-- `ProfileFragment.java`
-- `ProfilePresenter.java`
-
-### feature.archive
-
-종료된 여행방 목록과 상세 내용을 표시합니다.
-
-- `ArchiveContract.java`
-- `ArchiveFragment.java`
-- `ArchivePresenter.java`
-
-### util
-
-이미지 압축, 날짜 변환, 로그인 토큰, 알림을 담당합니다.
-
-- `ImageCompressor.java`
-- `DateUtils.java`
-- `TokenManager.java`
-- `ReminderScheduler.java`
+- S04의 방 이름과 예상 인원은 실제 여행방이 생성되기 전까지 생성 세션의 임시 상태로 관리합니다.
+- S05~S08은 `CreationSessionRepository`를 통해 업로드·분석·결과 확정을 처리합니다.
+- S08에서 목록 아이템 생성을 확정한 뒤 서버가 반환한 `tripId`부터 `TripRepository`를 사용합니다.
+- S09는 날씨 팁과 체크리스트로 이동하는 여행방 허브 화면입니다.
+- S10은 S09에서 진입하고 뒤로 가기로 복귀하며 체크리스트로 직접 이동하지 않습니다.
+- 참여자가 1명이면 `ChecklistMineFragment`만 표시하고, 2명 이상이면 체크리스트 3개 탭을 표시합니다.
+- 기존 `data/ChecklistItem.java`는 UI 확인용 임시 데이터이며 실제 연동 시 `model/PackingItem.java`로 교체합니다.
+- `Itinerary.java`와 `TripSchedule.java`는 중복 사용하지 않고 최종 일정 Model을 `TripSchedule.java`로 통일합니다.
 
 ---
 
 ## 9. EC2 PHP 서버 구조
 
+EC2 PHP 서버는 인증, 방 생성 전 임시 세션, 여러 장 업로드, AI 분석, 여행방 확정, 체크리스트 공유를 처리합니다. S04에서 실제 방을 바로 만들지 않고 S08의 목록 아이템 생성 시점에 방과 방장 권한을 확정하는 최신 흐름을 기준으로 합니다.
+
+### 서버 요청 흐름
+
 ```text
-server
-├── config
-│   ├── database.php
-│   ├── env.php
-│   └── cors.php
-├── middleware
-│   ├── auth.php
-│   ├── room_permission.php
-│   └── rate_limit.php
-└── api
-    ├── auth
-    │   ├── kakao_login.php
-    │   └── logout.php
-    ├── trips
-    │   ├── list.php
-    │   ├── create.php
-    │   ├── detail.php
-    │   ├── join.php
-    │   ├── members.php
-    │   └── archive.php
-    ├── itinerary
-    │   ├── upload.php
-    │   ├── analyze.php
-    │   └── confirm.php
-    ├── weather
-    │   └── forecast.php
-    ├── checklist
-    │   ├── generate.php
-    │   ├── list.php
-    │   ├── create.php
-    │   ├── update.php
-    │   ├── delete.php
-    │   ├── assign.php
-    │   └── check.php
-    └── notifications
-        └── FCM 연동 예정
+Android 앱
+└── HTTPS JSON 또는 Multipart 요청
+    └── Apache2
+        └── public/index.php
+            ├── Router
+            ├── Middleware
+            ├── Controller
+            ├── Service
+            ├── Repository
+            └── MySQL
+
+외부 연동
+├── Kakao 사용자 정보 API
+├── OpenAI Responses API
+├── Open-Meteo API
+└── FCM HTTP v1 API · 구현 예정
 ```
 
-함수 내부 코드는 작성하지 않고 PHP 파일과 책임만 정의합니다.
+### 권장 디렉터리 구조
 
-### config
+```text
+server
+├── public
+│   ├── index.php
+│   └── .htaccess
+├── bootstrap
+│   └── app.php
+├── config
+│   ├── database.php
+│   ├── environment.php
+│   ├── cors.php
+│   └── upload.php
+├── routes
+│   ├── auth.php
+│   ├── creation_sessions.php
+│   ├── trips.php
+│   ├── invites.php
+│   ├── uploads.php
+│   ├── analyses.php
+│   ├── packing.php
+│   ├── weather.php
+│   ├── profile.php
+│   └── notifications.php
+├── src
+│   ├── Controller
+│   │   ├── AuthController.php
+│   │   ├── CreationSessionController.php
+│   │   ├── TripController.php
+│   │   ├── InviteController.php
+│   │   ├── UploadController.php
+│   │   ├── AnalysisController.php
+│   │   ├── PackingController.php
+│   │   ├── WeatherController.php
+│   │   ├── ProfileController.php
+│   │   └── NotificationController.php
+│   ├── Service
+│   │   ├── AuthService.php
+│   │   ├── CreationSessionService.php
+│   │   ├── TripService.php
+│   │   ├── InviteService.php
+│   │   ├── UploadService.php
+│   │   ├── AnalysisService.php
+│   │   ├── PackingService.php
+│   │   ├── WeatherService.php
+│   │   └── NotificationService.php
+│   ├── Repository
+│   │   ├── UserRepository.php
+│   │   ├── AuthSessionRepository.php
+│   │   ├── CreationSessionRepository.php
+│   │   ├── TripRepository.php
+│   │   ├── TripMemberRepository.php
+│   │   ├── TripInviteRepository.php
+│   │   ├── TripUploadRepository.php
+│   │   ├── AnalysisRepository.php
+│   │   ├── ScheduleRepository.php
+│   │   ├── AccommodationRepository.php
+│   │   ├── PackingItemRepository.php
+│   │   └── NotificationRepository.php
+│   ├── Middleware
+│   │   ├── AuthMiddleware.php
+│   │   ├── CreationSessionOwnerMiddleware.php
+│   │   ├── TripMemberMiddleware.php
+│   │   ├── TripOwnerMiddleware.php
+│   │   └── RateLimitMiddleware.php
+│   ├── Client
+│   │   ├── KakaoApiClient.php
+│   │   ├── OpenAiApiClient.php
+│   │   ├── OpenMeteoApiClient.php
+│   │   └── FcmApiClient.php
+│   └── Support
+│       ├── ApiResponse.php
+│       ├── Validator.php
+│       ├── FileUploader.php
+│       ├── TokenIssuer.php
+│       └── ErrorHandler.php
+├── storage
+│   ├── uploads
+│   │   ├── creation_sessions
+│   │   └── trips
+│   └── logs
+├── sql
+│   └── schema.sql
+├── .env.example
+└── composer.json
+```
 
-- `database.php` - MySQL 연결 설정
-- `env.php` - OpenAI Key 등 환경설정 로딩
-- `cors.php` - 허용 Origin과 Header 설정
+`public`만 Apache2의 DocumentRoot로 공개합니다. 업로드 원본, 환경변수, 로그, SQL 파일은 외부에서 직접 접근할 수 없는 위치에 둡니다.
 
-### middleware
+### 계층별 책임
 
-- `auth.php` - 앱 로그인 토큰 확인
-- `room_permission.php` - 여행방 참여 권한 확인
-- `rate_limit.php` - AI 요청 횟수 제한
+- `Controller`는 요청값 확인과 응답 반환을 담당합니다.
+- `Service`는 생성 세션 확정, 초대 참여처럼 여러 저장 작업이 묶이는 업무 규칙을 담당합니다.
+- `Repository`는 MySQL 조회·저장을 담당합니다.
+- `Middleware`는 로그인, 생성 세션 소유자, 여행방 참여자·방장 권한을 검사합니다.
+- `Client`는 Kakao, OpenAI, Open-Meteo, FCM 외부 호출을 한곳에 모읍니다.
+- `FileUploader`는 여러 장 이미지의 MIME, 용량, 파일명과 저장 위치를 검사합니다.
 
-### api/auth
+### 최종 흐름 기준 REST API
 
-- `kakao_login.php` - 카카오 토큰 확인 및 앱 로그인 토큰 발급
-- `logout.php` - 로그인 토큰 종료
+```text
+인증 · S02
+POST   /api/auth/kakao
+POST   /api/auth/refresh
+POST   /api/auth/logout
 
-### api/trips
+방 생성 전 임시 세션 · S04~S08
+POST   /api/creation-sessions
+GET    /api/creation-sessions/{sessionId}
+PATCH  /api/creation-sessions/{sessionId}
+DELETE /api/creation-sessions/{sessionId}
+POST   /api/creation-sessions/{sessionId}/uploads
+GET    /api/creation-sessions/{sessionId}/uploads
+DELETE /api/creation-sessions/{sessionId}/uploads/{uploadId}
+POST   /api/creation-sessions/{sessionId}/analyses
+GET    /api/creation-sessions/{sessionId}/analyses/{analysisId}
+PUT    /api/creation-sessions/{sessionId}/analysis-result
+POST   /api/creation-sessions/{sessionId}/confirm
 
-- `list.php` - 참여 중인 여행방 목록
-- `create.php` - 여행방 생성
-- `detail.php` - 여행방 상세
-- `join.php` - 초대 코드 참여
-- `members.php` - 참여자 목록
-- `archive.php` - 여행방 아카이브
+확정된 여행방 · S03, S09, S14
+GET    /api/trips?view=home
+GET    /api/trips/{tripId}
+PATCH  /api/trips/{tripId}
+DELETE /api/trips/{tripId}
+GET    /api/trips?status=ARCHIVED
+GET    /api/trips/{tripId}/members
 
-### api/itinerary
+초대 링크·동행자 · 방장 전용 발급
+POST   /api/trips/{tripId}/invites
+POST   /api/invites/{inviteCode}/join
+DELETE /api/trips/{tripId}/members/{userId}
 
-- `upload.php` - 여러 장의 일정·숙소 이미지 수신
-- `analyze.php` - OpenAI 이미지 분석 요청
-- `confirm.php` - 사용자가 수정·확정한 일정 저장
+일정 재분석 · 방장 전용
+POST   /api/trips/{tripId}/analysis-sessions
 
-### api/weather
+날씨·의식주 팁 · S10
+GET    /api/trips/{tripId}/weather-feedback
 
-- `forecast.php` - 장소 좌표와 일정별 날씨 조회
+체크리스트 · S11~S13
+GET    /api/trips/{tripId}/packing-items?scope=COMMON
+GET    /api/trips/{tripId}/packing-items?assignee=me
+GET    /api/trips/{tripId}/packing-items?groupBy=assignee
+POST   /api/trips/{tripId}/packing-items
+PATCH  /api/trips/{tripId}/packing-items/{itemId}
+DELETE /api/trips/{tripId}/packing-items/{itemId}
+PATCH  /api/trips/{tripId}/packing-items/{itemId}/assignee
+PATCH  /api/trips/{tripId}/packing-items/{itemId}/completion
 
-### api/checklist
+프로필·기본 물품 · S15
+GET    /api/me
+PATCH  /api/me
+GET    /api/me/default-items
+POST   /api/me/default-items
+PATCH  /api/me/default-items/{defaultItemId}
+DELETE /api/me/default-items/{defaultItemId}
 
-- `generate.php` - 일정·날씨 기반 준비물 생성
-- `list.php` - 준비물 목록 조회
-- `create.php` - 준비물 직접 추가
-- `update.php` - 준비물 수정
-- `delete.php` - 준비물 삭제
-- `assign.php` - 담당자 지정·취소
-- `check.php` - 준비 상태 v/x 변경
+알림 · S16
+GET    /api/me/notification-settings
+POST   /api/me/fcm-tokens              · 구현 예정
+DELETE /api/me/fcm-tokens/{deviceId}   · 구현 예정
+```
 
-### api/notifications
+S16의 D-7, D-3, D-1 알림은 MVP에서 읽기 전용으로 표시합니다. 사용자별 알림 시점 변경 API는 추후 구현합니다.
 
-- FCM 연동 시 추가 예정
+### 권한 규칙
+
+- 생성 세션의 업로드·분석·확정은 해당 세션을 만든 사용자만 수행할 수 있습니다.
+- 방 만들기, 일정 업로드·재분석, 초대 링크 발급은 방장 전용입니다.
+- 여행방 참여자만 여행 정보와 체크리스트를 조회할 수 있습니다.
+- Android에서 버튼을 숨기는 것과 별개로 PHP 서버가 권한을 다시 검사합니다.
+- 권한이 없으면 HTTP 403을 반환합니다.
+
+### 반드시 트랜잭션으로 처리할 작업
+
+- 생성 세션 확정: 여행방 생성 → 생성자를 OWNER로 등록 → 일정·숙소 저장 → 공용·개인 준비물 저장 → 분석 확정 → 생성 세션 완료
+- 초대 참여: 초대 유효성 확인 → 중복 참여 확인 → 참여자 등록 → 초대 사용 횟수 증가
+- 내 목록 슬라이드 삭제: 삭제 권한 확인 → 준비물 소프트 삭제
+- 여행방 삭제: 관련 데이터의 소프트 삭제 또는 외래키 정책 적용
 
 ---
 
 ## 10. MySQL 데이터 구조
 
-### users
+MySQL은 사용자, 방 생성 전 임시 세션, 확정된 여행방, 분석 결과, 체크리스트와 알림 데이터를 관리합니다. 이 문서에서는 데이터 영역과 관계만 정의하며 테이블별 상세 컬럼과 `CREATE TABLE` 문은 작성하지 않습니다.
 
-- 사용자 기본 정보
-- Kakao 사용자 식별자
-- 닉네임과 프로필 이미지
-- 생성일과 수정일
+### 설계 기준
 
-### auth_tokens
+- MySQL 8.0, InnoDB, `utf8mb4`를 사용합니다.
+- Android는 MySQL에 직접 접속하지 않고 EC2 PHP REST API를 통해서만 접근합니다.
+- S04에서 입력한 방 정보는 실제 여행방이 아니라 생성 세션으로 임시 보관합니다.
+- S08에서 목록 아이템 생성을 확정할 때 실제 여행방과 OWNER 권한을 생성합니다.
+- AI 원문과 사용자가 확정한 일정·숙소·준비물을 구분합니다.
+- 업로드 이미지는 MySQL BLOB으로 저장하지 않고 EC2 비공개 경로에 저장합니다.
+- 날짜·시간은 UTC로 저장하고 Android에서 사용자 시간대로 표시합니다.
+- 아카이브는 별도 데이터를 복사하지 않고 여행방 상태와 종료일을 기준으로 조회합니다.
+- 삭제 복구와 관계 보존이 필요한 데이터는 소프트 삭제를 사용합니다.
 
-- 앱 로그인 토큰
-- 사용자 식별자
-- 만료일
+### 데이터 관계
 
-### trips
+```text
+사용자
+├── 로그인 세션
+├── 기본 준비물
+├── 알림 설정 · MVP 읽기 전용
+├── FCM 기기 token · 구현 예정
+├── 방 생성 세션
+│   ├── 여러 장 업로드
+│   └── AI 분석 실행과 1차 결과
+└── 여행방 참여 관계
+    └── 확정된 여행방
+        ├── 참여자
+        ├── 초대 링크
+        ├── 확정 일정
+        ├── 확정 숙소
+        ├── AI 분석 이력
+        ├── 공용·개인 준비물
+        └── 날씨·의식주 피드백 캐시 · 필요 시
+```
 
-- 여행방 이름
-- 방장 사용자 식별자
-- 여행 시작일과 종료일
-- 여행 국가와 대표 도시
-- 초대 코드
-- 아카이브 상태
+### 방 생성 전 데이터
 
-### trip_members
+S04에서 입력한 방 이름과 예상 인원은 생성 세션에 저장합니다. 생성 세션은 만든 사용자만 접근할 수 있으며 홈과 아카이브 목록에는 표시하지 않습니다.
 
-- 여행방 식별자
-- 사용자 식별자
-- 방장 또는 참여자 역할
-- 참여일
+```text
+생성 세션 상태
+├── DRAFT       방 정보 입력
+├── UPLOADING   이미지 업로드 중
+├── ANALYZING   AI 분석 중
+├── REVIEWING   S07·S08 검토 중
+├── CONFIRMED   실제 여행방 생성 완료
+├── FAILED      분석 또는 확정 실패
+└── EXPIRED     유효기간 만료
+```
 
-### itineraries
+생성 세션에는 방 이름, 예상 인원, 생성자, 진행 상태, 만료 시점만 보관합니다. 실제 방장 권한과 여행방 참여 관계는 S08 확정 전까지 만들지 않습니다.
 
-- 여행방 식별자
-- 날짜
-- 도시와 국가
-- 숙소 이름
-- 체크인·체크아웃
-- AI 신뢰도
-- 사용자 확정 여부
+### 업로드와 AI 분석 데이터
 
-### ai_analyses
+- 일정표, 항공권, 캘린더 캡처, 숙소 확인서와 추가 이미지를 여러 장 관리합니다.
+- 국내·해외 여부는 사용자가 직접 선택하지 않고 분석 결과의 국가와 이동수단으로 판단합니다.
+- 분석 실행마다 별도 이력을 남겨 재분석과 실패 원인을 구분합니다.
+- S07의 1차 결과는 여행지, 날짜, 숙소, 이동수단을 우선 확인합니다.
+- S08에서 사용자가 수정·확정한 값은 AI 원문과 분리하여 저장합니다.
+- 생성 세션이 만료되거나 취소되면 임시 업로드와 분석 데이터는 보관 정책에 따라 삭제합니다.
 
-- 여행방 식별자
-- 분석 상태
-- 사용 모델
-- 분석 결과 JSON
-- 프롬프트 버전
-- 생성일
+### 여행방 확정 데이터
 
-원본 이미지 데이터는 MySQL에 저장하지 않습니다.
+S08에서 사용자가 목록 아이템 생성을 누르면 다음 데이터를 하나의 트랜잭션으로 확정합니다.
 
-### packing_items
+```text
+생성 세션 검증
+→ 실제 여행방 생성
+→ 생성자를 OWNER로 등록
+→ 일정 저장
+→ 숙소 저장
+→ 준비물 저장
+→ 공용·개인 분류 반영
+→ 분석 상태 확정
+→ 생성 세션 완료
+```
 
-- 여행방 식별자
-- 준비물 이름
-- 카테고리
-- 중요도
-- 담당자 식별자
-- 준비 상태
-- AI 추천 또는 사용자 추가 출처
+하나라도 실패하면 전체 작업을 취소하여 방만 존재하거나 체크리스트만 누락되는 상태를 방지합니다.
 
-### notification_tokens
+### 여행방과 참여자
 
-- FCM 연결 시 추가 예정
-- 사용자별 기기 token 저장
+- 여행방은 방장, 여행명, 예상 인원, 국내·해외 자동 판단 결과, 국가·도시, 여행 기간과 상태를 관리합니다.
+- 생성 세션 단계의 데이터는 홈에 표시하지 않고 확정된 여행방만 홈과 아카이브에서 조회합니다.
+- 방장은 일정 업로드·재분석, 초대 링크 발급과 참여자 관리 권한을 가집니다.
+- 일반 참여자는 공유된 여행 정보와 체크리스트를 조회하고 자신의 담당 항목을 관리합니다.
+- 같은 사용자가 같은 여행방에 중복 참여하지 않도록 제한합니다.
+
+### 일정과 숙소
+
+- 일정은 날짜, 시간, 국가·도시, 장소, 활동 내용과 정렬 순서를 관리합니다.
+- 숙소는 숙소명, 주소, 체크인·체크아웃과 위치 정보를 관리합니다.
+- 일정과 숙소는 AI 분석 원문이 아니라 사용자가 S08에서 검토·확정한 값을 기준으로 저장합니다.
+- 예약번호와 투숙객 이름처럼 앱 기능에 필요하지 않은 개인정보는 저장하지 않습니다.
+
+### 체크리스트
+
+```text
+공용 준비물
+→ 참여자 2명 이상일 때 S11에 표시
+→ 담당자 지정·해제 가능
+→ 완료 상태와 진행률 관리
+
+개인 준비물
+→ S12 내 목록에 표시
+→ 목록에 남아있는 항목은 챙길 물품
+→ 가져가지 않을 항목은 슬라이드 삭제
+
+분담 현황
+→ 참여자 2명 이상일 때 S13에 표시
+→ 담당자별 항목과 미지정 항목을 그룹화
+```
+
+- 준비물의 공용·개인 분류와 담당자 지정은 서로 다른 값으로 관리합니다.
+- v/x 최종 확정 상태는 저장하지 않습니다.
+- 내 목록에서 삭제한 항목은 실행취소 시간을 지원할 수 있도록 우선 소프트 삭제합니다.
+- 공용 체크리스트의 체크 상태와 진행률을 위한 완료 정보는 유지합니다.
+- 현재 UI는 준비물 한 개에 담당자 한 명을 지정하는 구조입니다.
+
+### 기본 물품
+
+- 프로필에서 관리하는 기본 물품은 특정 여행의 준비물과 분리합니다.
+- 새 여행방 체크리스트를 생성할 때 활성화된 기본 물품을 개인 준비물 후보로 복사할 수 있습니다.
+- 기본 물품 변경이 과거 여행의 준비물에 영향을 주지 않도록 복사 후 별도 데이터로 관리합니다.
+
+### 날씨와 알림
+
+- Open-Meteo 결과는 요청 시 조회하고 짧게 캐시하는 것을 기본으로 합니다.
+- 여러 사용자의 반복 요청으로 응답 속도가 문제가 될 때만 여행별 날씨 캐시를 추가합니다.
+- S16의 D-7, D-3, D-1 알림 설정은 MVP에서 읽기 전용으로 표시합니다.
+- 사용자별 알림 커스터마이징과 FCM token 저장은 구현 예정으로 구분합니다.
+- 출발일이 확정되지 않은 여행방에는 D-day 알림을 보내지 않습니다.
+
+### API Key와 비밀값
+
+```text
+EC2 환경변수
+├── DB_HOST
+├── DB_NAME
+├── DB_USER
+├── DB_PASSWORD
+├── KAKAO_REST_API_KEY
+├── OPENAI_API_KEY
+├── OPEN_METEO_BASE_URL
+└── FCM_SERVICE_ACCOUNT_PATH · 구현 예정
+```
+
+API Key, DB 비밀번호, 로그인 token 원문은 MySQL 데이터, Android 소스 또는 GitHub README에 저장하지 않습니다.
 
 ---
 
