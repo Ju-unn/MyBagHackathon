@@ -5,8 +5,8 @@ import android.app.Application;
 import com.example.mybaghackathon.BuildConfig;
 import com.kakao.sdk.common.KakaoSdk;
 
-// 앱 실행 시 초기화(공용 객체 생성 등)를 담당하는 Application 클래스
-public class PackMateApplication extends Application {
+// 앱 전역 초기화 진입점으로 사용하는 Application 클래스
+public class MyBagApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
