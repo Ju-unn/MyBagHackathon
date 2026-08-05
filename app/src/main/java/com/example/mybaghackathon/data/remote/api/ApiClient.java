@@ -1,5 +1,56 @@
 package com.example.mybaghackathon.data.remote.api;
 
+import com.example.mybaghackathon.common.Constants;
+import com.example.mybaghackathon.data.local.TokenStorage;
+
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 // Retrofit 등 서버 통신 클라이언트를 생성/설정
 public class ApiClient {
+
+    private final Retrofit retrofit;
+
+    // 인증 헤더 인터셉터 + 로깅 인터셉터를 붙인 Retrofit 인스턴스를 만든다
+    public ApiClient(TokenStorage tokenStorage) {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        // 저장된 JWT가 있으면 모든 요청에 Authorization 헤더를 자동으로 붙인다
+        Interceptor authInterceptor = chain -> {
+            Request original = chain.request();
+            String token = tokenStorage.getToken();
+            if (token == null) {
+                return chain.proceed(original);
+            }
+            Request authorized = original.newBuilder()
+                    .header("Authorization", "Bearer " + token)
+                    .build();
+            return chain.proceed(authorized);
+        };
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(authInterceptor)
+                .addInterceptor(logging)
+                .build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    // 주어진 API 인터페이스의 Retrofit 구현체를 만들어 반환한다
+    public <T> T create(Class<T> apiClass) {
+        return retrofit.create(apiClass);
+    }
 }
