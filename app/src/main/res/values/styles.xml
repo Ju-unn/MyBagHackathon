@@ -15,8 +15,20 @@
          기본값으로 표시되고 앱 동작에는 영향 없음.
     ============================================================ -->
 
+    <!-- Material3.* 부모 스타일들이 (android:fontFamily뿐 아니라) 네임스페이스 없는
+         fontFamily(AppCompat 호환 속성)도 "sans-serif" 계열로 미리 지정해둔다.
+         AppCompat의 폰트 처리는 이 호환 fontFamily를 android:fontFamily보다 먼저
+         읽기 때문에, android:fontFamily만 재정의하면 상위의 sans-serif가 계속
+         이겨서 Pretendard bold/medium이 전부 무시된다. 그래서 아래 모든 스타일은
+         두 속성을 항상 같이 재정의한다. -->
+    <style name="Widget.Bag.TextView" parent="Widget.AppCompat.TextView">
+        <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
+    </style>
+
     <style name="TextAppearance.Bag.DisplayL" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">30sp</item>
         <item name="android:letterSpacing">-0.02</item>
         <item name="android:textColor">@color/bag_text_primary</item>
@@ -24,6 +36,7 @@
 
     <style name="TextAppearance.Bag.DisplayM" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">28sp</item>
         <item name="android:letterSpacing">-0.018</item>
         <item name="android:textColor">@color/bag_text_primary</item>
@@ -31,6 +44,7 @@
 
     <style name="TextAppearance.Bag.TitleL" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">20sp</item>
         <item name="android:letterSpacing">-0.015</item>
         <item name="android:textColor">@color/bag_text_primary</item>
@@ -38,6 +52,7 @@
 
     <style name="TextAppearance.Bag.TitleM" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">19sp</item>
         <item name="android:letterSpacing">-0.01</item>
         <item name="android:textColor">@color/bag_text_primary</item>
@@ -45,6 +60,7 @@
 
     <style name="TextAppearance.Bag.TitleS" parent="TextAppearance.Material3.TitleSmall">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">16sp</item>
         <item name="android:letterSpacing">-0.006</item>
         <item name="android:textColor">@color/bag_text_primary</item>
@@ -52,12 +68,14 @@
 
     <style name="TextAppearance.Bag.ButtonL" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">16sp</item>
         <item name="android:letterSpacing">0</item>
     </style>
 
     <style name="TextAppearance.Bag.BodyL" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">15sp</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:textColor">@color/bag_text_primary</item>
@@ -65,10 +83,12 @@
 
     <style name="TextAppearance.Bag.BodyLMedium" parent="TextAppearance.Bag.BodyL">
         <item name="android:fontFamily">@font/pretendard_medium</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
     </style>
 
     <style name="TextAppearance.Bag.BodyM" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">14sp</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:textColor">@color/bag_text_secondary</item>
@@ -76,29 +96,34 @@
 
     <style name="TextAppearance.Bag.BodyMMedium" parent="TextAppearance.Bag.BodyM">
         <item name="android:fontFamily">@font/pretendard_medium</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
 
     <style name="TextAppearance.Bag.LabelL" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
 
     <style name="TextAppearance.Bag.LabelM" parent="TextAppearance.Material3.LabelMedium">
         <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/bag_text_secondary</item>
     </style>
 
     <style name="TextAppearance.Bag.LabelS" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:fontFamily">@font/pretendard_medium</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/bag_text_tertiary_safe</item>
     </style>
 
     <style name="TextAppearance.Bag.Eyebrow" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">11sp</item>
         <item name="android:letterSpacing">0.06</item>
         <item name="android:textColor">@color/bag_text_secondary</item>
@@ -202,6 +227,11 @@
         <item name="chipMinHeight">24dp</item>
         <item name="chipStartPadding">10dp</item>
         <item name="chipEndPadding">10dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Bag.RoundedIcon" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/radius_app_icon</item>
     </style>
 
 </resources>

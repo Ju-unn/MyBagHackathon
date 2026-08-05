@@ -3,11 +3,17 @@
      지원되는 속성이라 여기서만 적용함. values/styles.xml의 같은 이름 스타일
      14종을 전부 그대로 가져오고 lineHeight만 추가한 완전한 버전임
      (부분 오버라이드가 아니라, API 28+ 기기에서는 이 파일의 정의가
-     values/styles.xml 대신 통째로 사용됨). -->
+     values/styles.xml 대신 통째로 사용됨).
+
+     Material3.* 부모 스타일이 네임스페이스 없는 fontFamily(AppCompat 호환
+     속성)를 "sans-serif"로 먼저 지정해두고, AppCompat 폰트 처리는 이 속성을
+     android:fontFamily보다 먼저 읽기 때문에 android:fontFamily만 재정의하면
+     상위의 sans-serif가 이겨버린다. 그래서 두 속성을 항상 같이 재정의한다. -->
 <resources>
 
     <style name="TextAppearance.Bag.DisplayL" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">30sp</item>
         <item name="android:lineHeight">38sp</item>
         <item name="android:letterSpacing">-0.02</item>
@@ -16,6 +22,7 @@
 
     <style name="TextAppearance.Bag.DisplayM" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">28sp</item>
         <item name="android:lineHeight">36sp</item>
         <item name="android:letterSpacing">-0.018</item>
@@ -24,6 +31,7 @@
 
     <style name="TextAppearance.Bag.TitleL" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">20sp</item>
         <item name="android:lineHeight">28sp</item>
         <item name="android:letterSpacing">-0.015</item>
@@ -32,6 +40,7 @@
 
     <style name="TextAppearance.Bag.TitleM" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">19sp</item>
         <item name="android:lineHeight">26sp</item>
         <item name="android:letterSpacing">-0.01</item>
@@ -40,6 +49,7 @@
 
     <style name="TextAppearance.Bag.TitleS" parent="TextAppearance.Material3.TitleSmall">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">16sp</item>
         <item name="android:lineHeight">22sp</item>
         <item name="android:letterSpacing">-0.006</item>
@@ -48,6 +58,7 @@
 
     <style name="TextAppearance.Bag.ButtonL" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">16sp</item>
         <item name="android:lineHeight">22sp</item>
         <item name="android:letterSpacing">0</item>
@@ -55,6 +66,7 @@
 
     <style name="TextAppearance.Bag.BodyL" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">15sp</item>
         <item name="android:lineHeight">22sp</item>
         <item name="android:letterSpacing">0</item>
@@ -63,10 +75,12 @@
 
     <style name="TextAppearance.Bag.BodyLMedium" parent="TextAppearance.Bag.BodyL">
         <item name="android:fontFamily">@font/pretendard_medium</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
     </style>
 
     <style name="TextAppearance.Bag.BodyM" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">14sp</item>
         <item name="android:lineHeight">20sp</item>
         <item name="android:letterSpacing">0</item>
@@ -75,11 +89,13 @@
 
     <style name="TextAppearance.Bag.BodyMMedium" parent="TextAppearance.Bag.BodyM">
         <item name="android:fontFamily">@font/pretendard_medium</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
         <item name="android:textColor">@color/bag_text_primary</item>
     </style>
 
     <style name="TextAppearance.Bag.LabelL" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">13sp</item>
         <item name="android:lineHeight">18sp</item>
         <item name="android:textColor">@color/bag_text_primary</item>
@@ -87,6 +103,7 @@
 
     <style name="TextAppearance.Bag.LabelM" parent="TextAppearance.Material3.LabelMedium">
         <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">13sp</item>
         <item name="android:lineHeight">18sp</item>
         <item name="android:textColor">@color/bag_text_secondary</item>
@@ -94,6 +111,7 @@
 
     <style name="TextAppearance.Bag.LabelS" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:fontFamily">@font/pretendard_medium</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">12sp</item>
         <item name="android:lineHeight">16sp</item>
         <item name="android:textColor">@color/bag_text_tertiary_safe</item>
@@ -101,6 +119,7 @@
 
     <style name="TextAppearance.Bag.Eyebrow" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">11sp</item>
         <item name="android:lineHeight">14sp</item>
         <item name="android:letterSpacing">0.06</item>
