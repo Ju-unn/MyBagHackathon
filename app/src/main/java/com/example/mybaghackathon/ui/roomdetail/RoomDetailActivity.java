@@ -40,6 +40,7 @@ public class RoomDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityRoomDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
         String roomName = getIntent().getStringExtra(EXTRA_ROOM_NAME);
