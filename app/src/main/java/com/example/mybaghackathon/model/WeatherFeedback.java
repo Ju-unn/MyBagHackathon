@@ -1,130 +1,28 @@
 package com.example.mybaghackathon.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * 확정된 여행 일정의 날씨 요약과 의식주 준비 안내를 나타내는 모델입니다.
- */
+// 여행 목적지·날씨 기반 옷차림/음식/숙소 GPT 조언 (WeatherFeedbackDto 1:1 대응)
+// 지역·기온·기간·일별예보는 이 API가 아니라 trips/detail.php + weather/forecast.php에서 가져올 것
 public class WeatherFeedback {
 
-    private long tripId;
-    private String region;
-    private String startDate;
-    private String endDate;
-    private Double minimumTemperature;
-    private Double maximumTemperature;
-    private List<Weather> dailyForecasts = new ArrayList<>();
-    private String clothingAdvice;
-    private String foodAdvice;
-    private String accommodationAdvice;
+    private final String clothing;
+    private final String food;
+    private final String accommodationNotes;
 
-    public WeatherFeedback() {
+    public WeatherFeedback(String clothing, String food, String accommodationNotes) {
+        this.clothing = clothing;
+        this.food = food;
+        this.accommodationNotes = accommodationNotes;
     }
 
-    public WeatherFeedback(
-            long tripId,
-            String region,
-            String startDate,
-            String endDate,
-            Double minimumTemperature,
-            Double maximumTemperature,
-            List<Weather> dailyForecasts,
-            String clothingAdvice,
-            String foodAdvice,
-            String accommodationAdvice
-    ) {
-        this.tripId = tripId;
-        this.region = region;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.minimumTemperature = minimumTemperature;
-        this.maximumTemperature = maximumTemperature;
-        setDailyForecasts(dailyForecasts);
-        this.clothingAdvice = clothingAdvice;
-        this.foodAdvice = foodAdvice;
-        this.accommodationAdvice = accommodationAdvice;
+    public String getClothing() {
+        return clothing;
     }
 
-    public long getTripId() {
-        return tripId;
+    public String getFood() {
+        return food;
     }
 
-    public void setTripId(long tripId) {
-        this.tripId = tripId;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-
-    public Double getMinimumTemperature() {
-        return minimumTemperature;
-    }
-
-    public void setMinimumTemperature(Double minimumTemperature) {
-        this.minimumTemperature = minimumTemperature;
-    }
-
-    public Double getMaximumTemperature() {
-        return maximumTemperature;
-    }
-
-    public void setMaximumTemperature(Double maximumTemperature) {
-        this.maximumTemperature = maximumTemperature;
-    }
-
-    public List<Weather> getDailyForecasts() {
-        return dailyForecasts;
-    }
-
-    public void setDailyForecasts(List<Weather> dailyForecasts) {
-        this.dailyForecasts = dailyForecasts == null
-                ? new ArrayList<>()
-                : new ArrayList<>(dailyForecasts);
-    }
-
-    public String getClothingAdvice() {
-        return clothingAdvice;
-    }
-
-    public void setClothingAdvice(String clothingAdvice) {
-        this.clothingAdvice = clothingAdvice;
-    }
-
-    public String getFoodAdvice() {
-        return foodAdvice;
-    }
-
-    public void setFoodAdvice(String foodAdvice) {
-        this.foodAdvice = foodAdvice;
-    }
-
-    public String getAccommodationAdvice() {
-        return accommodationAdvice;
-    }
-
-    public void setAccommodationAdvice(String accommodationAdvice) {
-        this.accommodationAdvice = accommodationAdvice;
+    public String getAccommodationNotes() {
+        return accommodationNotes;
     }
 }
