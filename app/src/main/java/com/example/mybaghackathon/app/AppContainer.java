@@ -8,6 +8,7 @@ import com.example.mybaghackathon.data.remote.api.ApiClient;
 import com.example.mybaghackathon.data.remote.api.AuthApi;
 import com.example.mybaghackathon.data.remote.api.DefaultItemApi;
 import com.example.mybaghackathon.data.remote.api.PackingApi;
+import com.example.mybaghackathon.data.remote.api.TripApi;
 import com.example.mybaghackathon.data.remote.api.UploadApi;
 import com.example.mybaghackathon.data.remote.api.WeatherApi;
 import com.example.mybaghackathon.data.repository.AnalysisRepository;
@@ -18,6 +19,8 @@ import com.example.mybaghackathon.data.repository.DefaultItemRepository;
 import com.example.mybaghackathon.data.repository.DefaultItemRepositoryImpl;
 import com.example.mybaghackathon.data.repository.PackingRepository;
 import com.example.mybaghackathon.data.repository.PackingRepositoryImpl;
+import com.example.mybaghackathon.data.repository.TripRepository;
+import com.example.mybaghackathon.data.repository.TripRepositoryImpl;
 import com.example.mybaghackathon.data.repository.UploadRepository;
 import com.example.mybaghackathon.data.repository.UploadRepositoryImpl;
 import com.example.mybaghackathon.data.repository.WeatherRepository;
@@ -33,6 +36,7 @@ public class AppContainer {
     public final AnalysisRepository analysisRepository;
     public final PackingRepository packingRepository;
     public final DefaultItemRepository defaultItemRepository;
+    public final TripRepository tripRepository;
 
     // TokenStorage → ApiClient → 각 Api → Repository 순으로 엮어서 보관한다
     public AppContainer(Context context) {
@@ -45,6 +49,7 @@ public class AppContainer {
         AnalysisApi analysisApi = apiClient.create(AnalysisApi.class);
         PackingApi packingApi = apiClient.create(PackingApi.class);
         DefaultItemApi defaultItemApi = apiClient.create(DefaultItemApi.class);
+        TripApi tripApi = apiClient.create(TripApi.class);
 
         authRepository = new AuthRepositoryImpl(authApi, tokenStorage);
         weatherRepository = new WeatherRepositoryImpl(weatherApi);
@@ -52,5 +57,6 @@ public class AppContainer {
         analysisRepository = new AnalysisRepositoryImpl(analysisApi);
         packingRepository = new PackingRepositoryImpl(packingApi);
         defaultItemRepository = new DefaultItemRepositoryImpl(defaultItemApi);
+        tripRepository = new TripRepositoryImpl(tripApi);
     }
 }
