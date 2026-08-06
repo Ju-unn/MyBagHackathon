@@ -1,12 +1,13 @@
 package com.example.mybaghackathon.data.mapper;
 
+import com.example.mybaghackathon.data.remote.dto.packing.ChecklistItemDto;
 import com.example.mybaghackathon.data.remote.dto.packing.PackingItemDto;
 import com.example.mybaghackathon.model.PackingItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// PackingItemDto를 PackingItem 모델로 변환
+// PackingItemDto/ChecklistItemDto를 PackingItem 모델로 변환
 public final class PackingItemMapper {
 
     private PackingItemMapper() {
@@ -24,6 +25,37 @@ public final class PackingItemMapper {
             item.setCategory(dto.getCategory());
             item.setPriority(dto.getPriority());
             result.add(item);
+        }
+        return result;
+    }
+
+    // 체크리스트 API(list/create 등)가 돌려주는 packing_items 전체 필드 변환
+    public static PackingItem fromChecklistItem(ChecklistItemDto dto) {
+        return new PackingItem(
+                dto.getPackingItemId(),
+                dto.getTripId(),
+                dto.getItemName(),
+                dto.getCategory(),
+                dto.getPriority(),
+                dto.getItemScope(),
+                dto.getSource(),
+                dto.getRestrictionType(),
+                dto.getRestrictionReason(),
+                dto.getAssigneeUserId(),
+                dto.isCompleted(),
+                dto.getCompletedAt(),
+                dto.getItemStatus(),
+                dto.getSortOrder()
+        );
+    }
+
+    public static List<PackingItem> fromChecklistItems(List<ChecklistItemDto> dtos) {
+        List<PackingItem> result = new ArrayList<>();
+        if (dtos == null) {
+            return result;
+        }
+        for (ChecklistItemDto dto : dtos) {
+            result.add(fromChecklistItem(dto));
         }
         return result;
     }
