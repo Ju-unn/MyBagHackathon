@@ -29,11 +29,6 @@
         <!-- S05 일정 사진 업로드 -->
         <activity
             android:name=".ui.upload.ScheduleUploadActivity"
-            android:exported="true" />
-
-        <!-- S05 일정 사진 업로드 -->
-        <activity
-            android:name=".ui.upload.ScheduleUploadActivity"
             android:exported="false" />
 
         <!-- S06 분석 중 -->
