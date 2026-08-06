@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 카카오 로그인 버튼 컨테이너 — 디자인 가이드 규정 색상(#FEE500), 모서리는
+     기존보다 덜 둥글게 radius_xs 사용 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/kakao_yellow" />
+    <corners android:radius="@dimen/radius_xs" />
+</shape>
