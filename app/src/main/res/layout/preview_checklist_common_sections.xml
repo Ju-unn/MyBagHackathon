@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Studio 미리보기 전용 공용 체크리스트 샘플. 실행 시 부모에서 숨긴다. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.example.mybaghackathon.ui.atoms.PriorityDotView
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            app:priorityLevel="high" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xs"
+            android:text="@string/review_priority_high"
+            android:textAppearance="@style/TextAppearance.Bag.LabelL" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.example.mybaghackathon.ui.atoms.CheckboxView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:checkState="checked" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space_md"
+            android:layout_weight="1"
+            android:text="@string/checklist_item_passport"
+            android:textAppearance="@style/TextAppearance.Bag.BodyL"
+            android:textColor="@color/bag_text_tertiary_safe" />
+
+        <com.example.mybaghackathon.ui.atoms.AvatarView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginEnd="@dimen/space_md"
+            app:avatarColor="@color/bag_avatar_3"
+            app:avatarInitial="유" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.example.mybaghackathon.ui.atoms.CheckboxView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:checkState="checked" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space_md"
+            android:layout_weight="1"
+            android:text="@string/checklist_item_flight_ticket"
+            android:textAppearance="@style/TextAppearance.Bag.BodyL"
+            android:textColor="@color/bag_text_tertiary_safe" />
+
+        <com.example.mybaghackathon.ui.atoms.AvatarView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginEnd="@dimen/space_md"
+            app:avatarColor="@color/bag_avatar_2"
+            app:avatarInitial="민" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.example.mybaghackathon.ui.atoms.CheckboxView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:checkState="unchecked" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/checklist_item_phone_charger"
+            android:textAppearance="@style/TextAppearance.Bag.BodyL" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="@dimen/space_lg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.example.mybaghackathon.ui.atoms.PriorityDotView
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            app:priorityLevel="mid" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xs"
+            android:text="@string/review_priority_mid"
+            android:textAppearance="@style/TextAppearance.Bag.LabelL" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.example.mybaghackathon.ui.atoms.CheckboxView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:checkState="unchecked" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/checklist_item_power_bank"
+            android:textAppearance="@style/TextAppearance.Bag.BodyL" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.example.mybaghackathon.ui.atoms.CheckboxView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:checkState="unchecked" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/checklist_item_umbrella"
+            android:textAppearance="@style/TextAppearance.Bag.BodyL" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="@dimen/space_lg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.example.mybaghackathon.ui.atoms.PriorityDotView
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            app:priorityLevel="low" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xs"
+            android:text="@string/review_priority_low"
+            android:textAppearance="@style/TextAppearance.Bag.LabelL" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.example.mybaghackathon.ui.atoms.CheckboxView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:checkState="unchecked" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/checklist_item_medicine"
+            android:textAppearance="@style/TextAppearance.Bag.BodyL" />
+    </LinearLayout>
+</LinearLayout>

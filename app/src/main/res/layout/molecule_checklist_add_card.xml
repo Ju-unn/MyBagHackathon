@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 체크리스트 전용 항목 추가 카드. 홈의 방 만들기 카드와 문구를 분리한다. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dashedAddCardRoot"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:background="@drawable/bg_dashed_card"
+    android:gravity="center"
+    android:minHeight="@dimen/touch_target_min">
+
+    <TextView
+        android:id="@+id/checklistAddCardLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/checklist_add_manual"
+        android:textAppearance="@style/TextAppearance.Bag.BodyMMedium"
+        android:textColor="@color/bag_text_brand" />
+
+    <!-- 기존 ChecklistCommonFragment의 findViewById 호출을 위한 호환 View.
+         화면에 표시되는 문구는 checklistAddCardLabel이 전담한다. -->
+    <TextView
+        android:id="@+id/dashedAddCardLabel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/checklist_add_manual"
+        android:visibility="gone" />
+</FrameLayout>
