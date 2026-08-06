@@ -52,14 +52,16 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="@string/feedback_region"
-                        android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+                        android:textAppearance="@style/TextAppearance.Bag.TitleS"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/feedback_temperature"
-                        android:textAppearance="@style/TextAppearance.Bag.BodyLMedium"
-                        android:textColor="@color/bag_text_brand" />
+                        android:textAppearance="@style/TextAppearance.Bag.BodyLBold"
+                        android:textColor="@color/bag_text_brand"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <TextView
@@ -96,7 +98,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/feedback_clothing_title"
-                        android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+                        android:textAppearance="@style/TextAppearance.Bag.TitleS"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -132,7 +135,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/feedback_food_title"
-                        android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+                        android:textAppearance="@style/TextAppearance.Bag.TitleS"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -168,7 +172,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/feedback_stay_title"
-                        android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+                        android:textAppearance="@style/TextAppearance.Bag.TitleS"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"

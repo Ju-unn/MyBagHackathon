@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_md"
             android:text="@string/checklist_swipe_hint"
-            android:textAppearance="@style/TextAppearance.Bag.LabelS" />
+            android:textAppearance="@style/TextAppearance.Bag.Caption" />
 
         <FrameLayout
             android:id="@+id/checklistMineEmptyState"

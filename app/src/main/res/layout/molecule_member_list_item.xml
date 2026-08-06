@@ -34,5 +34,6 @@
         android:paddingBottom="2dp"
         android:text="@string/room_detail_host_badge"
         android:textAppearance="@style/TextAppearance.Bag.Eyebrow"
-        android:textColor="@color/bag_text_brand" />
+        android:textColor="@color/bag_text_brand"
+        android:textStyle="bold" />
 </LinearLayout>
