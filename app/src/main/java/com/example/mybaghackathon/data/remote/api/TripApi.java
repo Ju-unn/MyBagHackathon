@@ -22,13 +22,13 @@ public interface TripApi {
     @POST("api/trips/create.php")
     Call<ApiResponseDto<TripInviteDto>> create(@Body TripCreateRequestDto body);
 
-    // 홈(S03) — 보관되지 않은 내 여행방 목록
+    // 홈(S03) — 진행중인 내 여행방 목록 (tab 생략 시 서버 기본값 ongoing)
     @GET("api/trips/list.php")
     Call<ApiResponseDto<TripListResponseDto>> list();
 
-    // 보관함(S14)
-    @GET("api/trips/archive.php")
-    Call<ApiResponseDto<TripListResponseDto>> archive();
+    // 보관함(S13/S14) — tab=past로 지난 여행만 조회 (같은 list.php를 재사용, archive.php는 폐지됨)
+    @GET("api/trips/list.php")
+    Call<ApiResponseDto<TripListResponseDto>> archive(@Query("tab") String tab);
 
     // 방 상세(S09)
     @GET("api/trips/detail.php")

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-// GET /api/trips/list.php, /api/trips/archive.php 응답 — { "trips": [...] }
+// GET /api/trips/list.php?tab=ongoing|past 응답 — { "trips": [...] }
 public class TripListResponseDto {
 
     @SerializedName("trips")
