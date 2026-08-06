@@ -14,8 +14,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/checklist_add_manual"
-        android:textAppearance="@style/TextAppearance.Bag.BodyMMedium"
-        android:textColor="@color/bag_text_brand" />
+        android:textAppearance="@style/TextAppearance.Bag.BodyMBold"
+        android:textColor="@color/bag_text_brand"
+        android:textStyle="bold" />
 
     <!-- 기존 ChecklistCommonFragment의 findViewById 호출을 위한 호환 View.
          화면에 표시되는 문구는 checklistAddCardLabel이 전담한다. -->
