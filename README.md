@@ -387,7 +387,8 @@ com.example.mybaghackathon
 │   │   │   ├── AnalysisApi.java
 │   │   │   ├── PackingApi.java
 │   │   │   ├── WeatherApi.java
-│   │   │   └── DefaultItemApi.java
+│   │   │   ├── DefaultItemApi.java
+│   │   │   └── NotificationSettingsApi.java
 │   │   └── dto
 │   │       ├── common/ApiResponseDto.java
 │   │       ├── auth/{KakaoLoginRequestDto, AuthTokenDto}.java
@@ -405,7 +406,7 @@ com.example.mybaghackathon
 │   │       │               DefaultItemUpdateRequestDto, DefaultItemIdRequestDto,
 │   │       │               DefaultItemListResponseDto}.java
 │   │       ├── weather/{WeatherDto, WeatherForecastDto, WeatherFeedbackDto}.java
-│   │       └── notification/{NotificationSettingsDto, FcmTokenDto}.java   # NotificationSettingsDto는 S16용, 아직 미연결(FcmTokenDto만 실사용 중)
+│   │       └── notification/{NotificationSettingsDto, NotificationSettingsUpdateRequestDto, FcmTokenDto}.java   # S16 데이터 레이어 연결 완료(2026-08-07), 화면(NotificationSettingsActivity) 연결만 남음
 │   ├── mapper
 │   │   ├── UserMapper.java
 │   │   ├── TripMapper.java
@@ -413,7 +414,7 @@ com.example.mybaghackathon
 │   │   ├── PackingItemMapper.java
 │   │   ├── WeatherMapper.java
 │   │   ├── DefaultItemMapper.java
-│   │   └── NotificationMapper.java
+│   │   └── NotificationMapper.java                # 2026-08-07 구현 완료(기존 빈 스캐폴딩 재사용)
 │   ├── repository
 │   │   ├── AuthRepository.java / AuthRepositoryImpl.java
 │   │   ├── TripRepository.java / TripRepositoryImpl.java
@@ -421,7 +422,8 @@ com.example.mybaghackathon
 │   │   ├── AnalysisRepository.java / AnalysisRepositoryImpl.java
 │   │   ├── PackingRepository.java / PackingRepositoryImpl.java   # 체크리스트 담당
 │   │   ├── WeatherRepository.java / WeatherRepositoryImpl.java
-│   │   └── DefaultItemRepository.java / DefaultItemRepositoryImpl.java
+│   │   ├── DefaultItemRepository.java / DefaultItemRepositoryImpl.java
+│   │   └── NotificationSettingsRepository.java / NotificationSettingsRepositoryImpl.java
 │   └── local
 │       └── TokenStorage.java
 ├── ui
@@ -480,7 +482,7 @@ com.example.mybaghackathon
 - **`model/DefaultItem.java`** — 아무 코드에서도 참조하지 않던 죽은 클래스. 실제로 쓰이는 건 `model/UserDefaultItem.java`(서버 응답 필드에 맞춰 새로 만든 것).
 - **`data/remote/dto/packing/DefaultItemDto.java`** — `data/remote/dto/defaultitem/DefaultItemDto.java`와 이름이 같던 별개 클래스. `DefaultItemMapper`가 실제로 쓰는 `defaultitem` 패키지 쪽만 남김.
 
-**남겨둔 것**: `data/remote/dto/notification/NotificationSettingsDto.java`, `model/NotificationSettings.java`는 아직 미연결이지만 S16 화면·서버 `notification_settings` 테이블에 대응하는 정상 스캐폴딩이라 삭제하지 않았습니다. `data/ChecklistItem.java`도 UI 임시 더미로 계속 쓰이고 있어 남겨뒀습니다(실 연동 시 `model/PackingItem.java` + `packingRepository`로 교체 예정).
+**남겨둔 것**: `data/remote/dto/notification/NotificationSettingsDto.java`, `model/NotificationSettings.java`는 그때는 아직 미연결이었지만 서버 `notification_settings` 테이블에 대응하는 정상 스캐폴딩이라 삭제하지 않았고, **2026-08-07 데이터 레이어(Api/Repository/Mapper) 연결까지 완료**했습니다(`AppContainer.notificationSettingsRepository`). S16 화면(`NotificationSettingsActivity`) 자체는 아직 토글 로직이 안 붙어 있어 화면 연결만 남았습니다. `data/ChecklistItem.java`도 UI 임시 더미로 계속 쓰이고 있어 남겨뒀습니다(실 연동 시 `model/PackingItem.java` + `packingRepository`로 교체 예정).
 
 ### 화면 연결 시 참고할 흐름
 
