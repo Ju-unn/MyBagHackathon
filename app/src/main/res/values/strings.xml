@@ -14,7 +14,7 @@
     <string name="action_cancel">취소</string>
     <string name="action_copy_link">링크 복사</string>
     <string name="action_share_kakao">카카오톡 공유</string>
-    <string name="action_kakao_login">카카오로 시작하기</string>
+    <string name="action_kakao_login">카카오 로그인</string>
 
     <!-- S01 스플래시 -->
     <string name="splash_loading">불러오는 중…</string>

@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login_copy"
-            android:textAppearance="@style/TextAppearance.Bag.DisplayM"
+            android:textAppearance="@style/TextAppearance.Bag.DisplayL"
             android:textStyle="bold" />
 
         <TextView
@@ -54,16 +54,41 @@
             android:text="@string/login_subcopy"
             android:textAppearance="@style/TextAppearance.Bag.BodyM" />
 
-        <com.google.android.material.button.MaterialButton
+        <!-- 카카오 로그인 디자인 가이드 준수: PSD 원본에서 심볼 벡터 패스와
+             레이블 문구를 분리 추출해 심볼(ic_kakao_symbol) + 텍스트 조합으로
+             재구성함. 완성 이미지(90px 고정 높이)를 그대로 쓰면 버튼이 과도하게
+             커지는 문제가 있어, 높이를 자유롭게 조절할 수 있도록 분리함.
+             가이드가 정한 색상(컨테이너 #FEE500 / 심볼 #000000 / 레이블
+             #000000 85%)과 형태·비율은 그대로 유지.
+             https://developers.kakao.com/docs/ko/kakaologin/design-guide -->
+        <FrameLayout
             android:id="@+id/loginKakaoButton"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginTop="@dimen/space_xl"
-            android:backgroundTint="@color/kakao_yellow"
-            android:text="@string/action_kakao_login"
-            android:textColor="@color/kakao_text"
-            app:cornerRadius="@dimen/radius_sm"
-            app:elevation="0dp" />
+            android:background="@drawable/bg_kakao_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="@dimen/space_lg"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_kakao_symbol" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/action_kakao_login"
+                android:textAppearance="@style/TextAppearance.Bag.ButtonL"
+                android:textColor="@color/kakao_text" />
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/loginTerms"
