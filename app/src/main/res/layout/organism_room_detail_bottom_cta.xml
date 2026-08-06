@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S09 전용 하단 CTA: 팁과 체크리스트로 각각 이동한다. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bag_bg_base"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/bottomCtaDivider"
+        style="@style/Widget.Bag.Divider"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:id="@+id/bottomCtaButtonRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingEnd="@dimen/screen_margin"
+        android:paddingBottom="@dimen/space_2xl">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bottomCtaSecondary"
+            style="@style/Widget.Bag.Button.Secondary.Outline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/room_detail_view_tips" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bottomCtaPrimary"
+            style="@style/Widget.Bag.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_md"
+            android:layout_weight="1"
+            android:text="@string/room_detail_view_checklist" />
+    </LinearLayout>
+</LinearLayout>

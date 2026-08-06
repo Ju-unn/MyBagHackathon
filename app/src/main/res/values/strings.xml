@@ -32,6 +32,8 @@
     <string name="home_status_upcoming">준비 전</string>
     <string name="home_status_past">완료</string>
     <string name="home_upload_needed">일정 사진 업로드 필요</string>
+    <string name="home_empty_title">함께할 여행방이 없어요</string>
+    <string name="home_empty_desc">방을 만들고 여행을 준비해보아요</string>
     <string name="checklist_progress_format">체크리스트 %1$d%% 완료</string>
     <string name="nav_home">홈</string>
     <string name="nav_trips">공용 여행</string>
@@ -45,6 +47,19 @@
     <string name="create_room_submit">방 만들기</string>
 
     <!-- S05 방 상세 -->
+    <string name="room_detail_schedule_title">일정 정보</string>
+    <string name="room_detail_destination_label">여행지</string>
+    <string name="room_detail_destination_value">도쿄, 일본</string>
+    <string name="room_detail_dates_label">숙소 일정</string>
+    <string name="room_detail_dates_value">3.14 — 3.18 · 4박5일</string>
+    <string name="room_detail_weather_title">일정별 날씨</string>
+    <string name="room_detail_weather_day1">3.14(토)</string>
+    <string name="room_detail_weather_day2">3.15(일)</string>
+    <string name="room_detail_weather_day3">3.16(월)</string>
+    <string name="room_detail_weather_status1">맑음 12°</string>
+    <string name="room_detail_weather_status2">맑음 14°</string>
+    <string name="room_detail_weather_status3">흐림 11°</string>
+    <string name="room_detail_restriction_warning">보조배터리 등 3개 항목에 반입 규정이 있어요</string>
     <string name="room_detail_members">참여자</string>
     <string name="room_detail_host_badge">방장</string>
     <string name="room_detail_analyze_title">일정 사진 올리고 준비물 받기</string>
@@ -52,6 +67,9 @@
     <string name="room_detail_reanalyze">일정 다시 분석</string>
     <string name="room_detail_view_checklist">체크리스트 보기</string>
     <string name="room_detail_invite_button">초대 링크 공유</string>
+    <string name="room_detail_invite_symbol">+</string>
+    <string name="room_detail_invite_note">+ 버튼은 방장에게만 보여요</string>
+    <string name="room_detail_view_tips">팁 보기</string>
 
     <!-- S05 일정 사진 업로드 -->
     <string name="upload_title">일정 사진 업로드</string>
@@ -91,8 +109,9 @@
 
     <!-- S09 날씨 피드백 -->
     <string name="feedback_title">이렇게 준비하세요</string>
-    <string name="feedback_region">도쿄, 일본</string>
-    <string name="feedback_period">3.14 — 3.18 · 11° ~ 16°</string>
+    <string name="feedback_region">도쿄</string>
+    <string name="feedback_period">3.14 — 3.18 · 4박5일</string>
+    <string name="feedback_temperature">11° ~ 14°</string>
     <string name="feedback_clothing_title">옷차림</string>
     <string name="feedback_clothing_desc">낮에는 가벼운 자켓, 저녁엔 니트나 코트를 겹쳐 입으세요. 일교차가 큰 편이에요.</string>
     <string name="feedback_food_title">현지 음식</string>
@@ -105,6 +124,8 @@
     <string name="checklist_title">짐 체크리스트</string>
     <string name="checklist_trip_name">도쿄 벚꽃 여행</string>
     <string name="checklist_progress_summary">8/15 완료</string>
+    <string name="checklist_solo_progress_summary">3/3 완료</string>
+    <string name="checklist_collaboration_note">공용 리스트·분담 현황 탭은 참여자 2명 이상일 때만 보여요</string>
     <string name="checklist_tab_common">공용 리스트</string>
     <string name="checklist_tab_mine">내 목록</string>
     <string name="checklist_tab_assignment">분담 현황</string>
@@ -112,11 +133,19 @@
     <string name="checklist_filter_essential">필수</string>
     <string name="checklist_filter_mid">중간</string>
     <string name="checklist_filter_optional">선택</string>
-    <string name="checklist_add_manual">+ 항목 수동 추가</string>
+    <string name="checklist_item_passport">여권</string>
+    <string name="checklist_item_flight_ticket">항공권</string>
+    <string name="checklist_item_phone_charger">휴대폰 충전기</string>
+    <string name="checklist_item_power_bank">보조배터리</string>
+    <string name="checklist_item_umbrella">우산</string>
+    <string name="checklist_item_medicine">상비약</string>
+    <string name="checklist_add_manual">+ 항목 추가</string>
+    <string name="checklist_claim_note">체크박스를 탭하면 내가 담당으로 지정돼요 · 밀어서 수정하거나 삭제할 수 있어요</string>
+    <string name="checklist_swipe_hint">← 밀어서 수정하거나 삭제할 수 있어요 · 삭제하면 안 가져가는 걸로 확정돼요</string>
     <string name="checklist_unassigned">미지정</string>
     <string name="checklist_unassigned_empty">아직 담당이 없어요</string>
-    <string name="checklist_assignment_hint">담당 옆 뱃지를 눌러 나를 지정하고, ✓ 로 확정하세요</string>
-    <string name="checklist_assignment_summary">3명이 함께 준비 중</string>
+    <string name="checklist_assignment_hint">담당자별 준비 상태를 한눈에 확인할 수 있어요</string>
+    <string name="checklist_assignment_summary">2명이 함께 준비 중</string>
     <string name="checklist_mine_name">민지</string>
     <string name="checklist_mine_count">5개 담당 중</string>
 

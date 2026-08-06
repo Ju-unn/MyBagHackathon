@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S09 날씨 피드백 -->
+<!-- S10 · 날씨·의식주 팁 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
@@ -11,165 +12,189 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:paddingStart="@dimen/screen_margin"
-        android:paddingTop="@dimen/screen_margin"
-        android:paddingEnd="@dimen/screen_margin"
-        android:paddingBottom="@dimen/space_2xl">
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingStart="@dimen/screen_margin"
+            android:paddingTop="@dimen/screen_margin"
+            android:paddingEnd="@dimen/screen_margin"
+            android:paddingBottom="@dimen/space_3xl">
 
             <include
                 android:id="@+id/feedbackTopAppBar"
-                layout="@layout/organism_top_app_bar_large" />
+                layout="@layout/organism_top_app_bar_large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-            <!-- 여행 지역 · 기간 요약 카드 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_xl"
-                android:background="@drawable/bg_card_brand_subtle"
+                android:background="@drawable/bg_card_surface_border"
                 android:orientation="vertical"
                 android:padding="@dimen/space_lg">
 
-                <TextView
-                    android:id="@+id/feedbackRegion"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/feedback_region"
-                    android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/feedbackRegion"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/space_md"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/feedback_region"
+                        android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feedback_temperature"
+                        android:textAppearance="@style/TextAppearance.Bag.BodyLMedium"
+                        android:textColor="@color/bag_text_brand" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/feedbackPeriod"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="@dimen/space_sm"
                     android:text="@string/feedback_period"
                     android:textAppearance="@style/TextAppearance.Bag.LabelM" />
-
             </LinearLayout>
 
-            <!-- 옷차림 / 현지 음식 / 숙소 유의사항 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:gravity="top"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_shirt"
+                    app:tint="@color/bag_brand_default" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feedback_clothing_title"
+                        android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_2xs"
+                        android:text="@string/feedback_clothing_desc"
+                        android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:gravity="top"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_utensils"
+                    app:tint="@color/bag_brand_default" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feedback_food_title"
+                        android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_2xs"
+                        android:text="@string/feedback_food_desc"
+                        android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:gravity="top"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_house"
+                    app:tint="@color/bag_brand_default" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feedback_stay_title"
+                        android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_2xs"
+                        android:text="@string/feedback_stay_desc"
+                        android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 기능 연동 단계에서 서버 응답으로 교체할 동적 컨테이너 -->
             <LinearLayout
                 android:id="@+id/feedbackSectionList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xl"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@drawable/ic_shirt"
-                        android:contentDescription="@null" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/space_md"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/feedback_clothing_title"
-                            android:textAppearance="@style/TextAppearance.Bag.TitleS" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/feedback_clothing_desc"
-                            android:textAppearance="@style/TextAppearance.Bag.BodyM" />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_xl"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@drawable/ic_utensils"
-                        android:contentDescription="@null" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/space_md"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/feedback_food_title"
-                            android:textAppearance="@style/TextAppearance.Bag.TitleS" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/feedback_food_desc"
-                            android:textAppearance="@style/TextAppearance.Bag.BodyM" />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_xl"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@drawable/ic_house"
-                        android:contentDescription="@null" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/space_md"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/feedback_stay_title"
-                            android:textAppearance="@style/TextAppearance.Bag.TitleS" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/feedback_stay_desc"
-                            android:textAppearance="@style/TextAppearance.Bag.BodyM" />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-            </LinearLayout>
-
+                android:orientation="vertical"
+                android:visibility="gone" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- 현재 Pen 최종안에는 하단 CTA가 없지만 기존 ViewBinding 호환을 위해 유지한다. -->
     <include
         android:id="@+id/feedbackBottomCta"
-        layout="@layout/organism_bottom_cta" />
+        layout="@layout/organism_bottom_cta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
 </LinearLayout>

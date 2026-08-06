@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S12 체크리스트 · 분담 현황 탭 -->
+<!-- S13 · 체크리스트 분담 현황 탭 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
     android:clipToPadding="false"
+    android:fillViewport="true"
     android:paddingStart="@dimen/screen_margin"
     android:paddingTop="@dimen/space_lg"
     android:paddingEnd="@dimen/screen_margin"
@@ -39,7 +40,7 @@
             android:id="@+id/checklistAssignmentList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
+            android:layout_marginTop="@dimen/space_xl"
             android:orientation="vertical" />
 
         <TextView
@@ -61,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_2xl"
             android:text="@string/checklist_assignment_hint"
-            android:textAppearance="@style/TextAppearance.Bag.LabelM" />
+            android:textAppearance="@style/TextAppearance.Bag.LabelS" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
