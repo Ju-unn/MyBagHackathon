@@ -26,6 +26,11 @@
             </intent-filter>
         </activity>
 
+        <!-- S05 일정 사진 업로드 -->
+        <activity
+            android:name=".ui.upload.ScheduleUploadActivity"
+            android:exported="true" />
+
         <!-- 카카오톡 앱으로 로그인 시 인가 코드를 돌려받는 리다이렉트 액티비티 -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"

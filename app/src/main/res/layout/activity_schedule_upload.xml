@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S06 일정 사진 업로드 -->
+<!-- S05 일정 사진 업로드 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -25,68 +25,65 @@
                 android:id="@+id/uploadTopAppBar"
                 layout="@layout/organism_top_app_bar_large" />
 
-            <LinearLayout
-                android:id="@+id/uploadScheduleCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xl">
-
-                <include layout="@layout/molecule_upload_guide_card" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/uploadHotelCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md">
-
-                <include layout="@layout/molecule_upload_guide_card" />
-            </LinearLayout>
-
-            <!-- M9 DashedAddCard — 사진 추가 안내 (56dp) -->
+            <!-- AddMore — 드롭존, 탭하면 사진 여러 장을 한 번에 선택 -->
             <FrameLayout
+                android:id="@+id/uploadDropzone"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="@dimen/space_md"
+                android:layout_height="140dp"
+                android:layout_marginTop="@dimen/space_lg"
                 android:background="@drawable/bg_dashed_card"
-                android:gravity="center">
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/upload_add_more"
-                    android:textAppearance="@style/TextAppearance.Bag.LabelM" />
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/image_plus"
+                        app:tint="#3A7CA6" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/upload_dropzone_title"
+                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Bag.LabelL"
+                        android:textColor="@color/bag_text_brand" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_2xs"
+                        android:text="@string/upload_dropzone_desc"
+                        android:textAppearance="@style/TextAppearance.Bag.LabelM" />
+
+                </LinearLayout>
+
             </FrameLayout>
 
-            <!-- 국내/해외 세그먼트 컨트롤 -->
-            <LinearLayout
+            <!-- PreviewRow — 선택된 사진 썸네일 + 맨 끝 추가 타일(uploadAddTile) -->
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_2xl"
-                android:background="@drawable/bg_segment_track"
-                android:orientation="horizontal"
-                android:padding="4dp">
+                android:layout_marginTop="@dimen/space_lg"
+                android:scrollbars="none">
 
-                <TextView
-                    android:id="@+id/uploadSegmentDomestic"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/upload_segment_domestic"
-                    android:textAppearance="@style/TextAppearance.Bag.BodyM"
-                    android:textColor="@color/bag_text_tertiary_safe" />
-
-                <TextView
-                    android:id="@+id/uploadSegmentIntl"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_segment_selected"
-                    android:gravity="center"
-                    android:text="@string/upload_segment_international"
-                    android:textAppearance="@style/TextAppearance.Bag.TitleS" />
-            </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/uploadPreviewRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"/>
+            </HorizontalScrollView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -234,4 +234,9 @@
         <item name="cornerSize">@dimen/radius_app_icon</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.Bag.PhotoThumb" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+
 </resources>
