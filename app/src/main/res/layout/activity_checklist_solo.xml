@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S11~S13 · 참여자 2명 이상 체크리스트: 공용 / 내 목록 / 분담 현황 3탭 -->
+<!-- S12 · 참여자 1명 체크리스트: 탭 없이 내 목록만 단독으로 표시한다. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,10 +24,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_2xs"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/checklistTripName"
+                android:id="@+id/checklistSoloTripName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_md"
@@ -38,60 +39,27 @@
                 android:textAppearance="@style/TextAppearance.Bag.BodyM" />
 
             <TextView
-                android:id="@+id/checklistProgressLabel"
+                android:id="@+id/checklistSoloProgressLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/checklist_progress_summary"
+                android:maxLines="1"
+                android:text="@string/checklist_solo_progress_summary"
                 android:textAppearance="@style/TextAppearance.Bag.BodyMMedium" />
         </LinearLayout>
 
         <ProgressBar
-            android:id="@+id/checklistProgressBar"
+            android:id="@+id/checklistSoloProgressBar"
             style="@style/Widget.Bag.ProgressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
             android:max="100"
-            android:progress="53" />
-
-        <TextView
-            android:id="@+id/checklistCollaborationNote"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:text="@string/checklist_collaboration_note"
-            android:textAppearance="@style/TextAppearance.Bag.Eyebrow" />
-
+            android:progress="100" />
     </LinearLayout>
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/checklistTabs"
-        style="@style/Widget.Bag.TabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/screen_margin"
-        android:layout_marginTop="@dimen/space_sm"
-        android:layout_marginEnd="@dimen/screen_margin"
-        android:minHeight="@dimen/tab_bar_height">
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/checklist_tab_common" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/checklist_tab_mine" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/checklist_tab_assignment" />
-    </com.google.android.material.tabs.TabLayout>
-
-    <FrameLayout
-        android:id="@+id/checklistFragmentContainer"
+    <include
+        android:id="@+id/checklistSoloMineContent"
+        layout="@layout/fragment_checklist_mine"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />

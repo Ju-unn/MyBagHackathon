@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S11 체크리스트 · 내 목록 탭 -->
+<!-- S12 · 체크리스트 내 목록 탭 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
     android:clipToPadding="false"
+    android:fillViewport="true"
     android:paddingStart="@dimen/screen_margin"
     android:paddingTop="@dimen/space_lg"
     android:paddingEnd="@dimen/screen_margin"
@@ -15,47 +18,70 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- 내 프로필 요약 -->
-        <LinearLayout
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <com.example.mybaghackathon.ui.atoms.AvatarView
-                android:id="@+id/checklistMineAvatar"
-                android:layout_width="@dimen/avatar_size_xl"
-                android:layout_height="@dimen/avatar_size_xl" />
+            android:fillViewport="false"
+            android:overScrollMode="never"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/space_md"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/checklistMineName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/checklist_mine_name"
-                    android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+            <com.example.mybaghackathon.ui.atoms.ChipView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_sm"
+                app:chipActive="true"
+                app:chipLabel="@string/checklist_filter_all" />
 
-                <TextView
-                    android:id="@+id/checklistMineCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/checklist_mine_count"
-                    android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+            <com.example.mybaghackathon.ui.atoms.ChipView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_sm"
+                app:chipActive="false"
+                app:chipLabel="@string/checklist_filter_essential" />
 
+            <com.example.mybaghackathon.ui.atoms.ChipView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_sm"
+                app:chipActive="false"
+                app:chipLabel="@string/checklist_filter_mid" />
+
+            <com.example.mybaghackathon.ui.atoms.ChipView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipActive="false"
+                app:chipLabel="@string/checklist_filter_optional" />
             </LinearLayout>
-        </LinearLayout>
+        </HorizontalScrollView>
 
         <LinearLayout
             android:id="@+id/checklistMineList"
-            android:layout_marginTop="@dimen/space_lg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_marginTop="@dimen/space_lg"
+            android:orientation="vertical"
+            tools:visibility="gone" />
+
+        <include
+            android:id="@+id/checklistMinePreviewItems"
+            layout="@layout/preview_checklist_mine_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="@string/checklist_swipe_hint"
+            android:textAppearance="@style/TextAppearance.Bag.LabelS" />
 
         <FrameLayout
             android:id="@+id/checklistMineEmptyState"
@@ -66,5 +92,13 @@
             <include layout="@layout/organism_empty_state" />
         </FrameLayout>
 
+        <FrameLayout
+            android:id="@+id/checklistMineAddWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg">
+
+            <include layout="@layout/molecule_checklist_add_card" />
+        </FrameLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

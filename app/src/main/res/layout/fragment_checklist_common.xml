@@ -2,10 +2,12 @@
 <!-- S10 체크리스트 · 공용 리스트 탭 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
     android:clipToPadding="false"
+    android:fillViewport="true"
     android:paddingStart="@dimen/screen_margin"
     android:paddingTop="@dimen/space_lg"
     android:paddingEnd="@dimen/screen_margin"
@@ -17,10 +19,17 @@
         android:orientation="vertical">
 
         <!-- 우선순위 필터 칩 -->
-        <LinearLayout
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:fillViewport="false"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
             <com.example.mybaghackathon.ui.atoms.ChipView
                 android:id="@+id/checklistFilterAll"
@@ -53,14 +62,32 @@
                 app:chipActive="false"
                 app:chipLabel="@string/checklist_filter_optional" />
 
-        </LinearLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="@string/checklist_claim_note"
+            android:textAppearance="@style/TextAppearance.Bag.Eyebrow" />
 
         <LinearLayout
             android:id="@+id/checklistCommonSections"
             android:layout_marginTop="@dimen/space_lg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            tools:visibility="gone" />
+
+        <include
+            android:id="@+id/checklistCommonPreviewSections"
+            layout="@layout/preview_checklist_common_sections"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <FrameLayout
             android:id="@+id/checklistCommonAddWrapper"
@@ -68,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_lg">
 
-            <include layout="@layout/molecule_dashed_add_card" />
+            <include layout="@layout/molecule_checklist_add_card" />
         </FrameLayout>
 
     </LinearLayout>
