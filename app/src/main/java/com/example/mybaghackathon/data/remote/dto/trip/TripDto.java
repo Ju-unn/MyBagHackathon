@@ -2,7 +2,7 @@ package com.example.mybaghackathon.data.remote.dto.trip;
 
 import com.google.gson.annotations.SerializedName;
 
-// trips 테이블 1건 응답. list.php/archive.php/detail.php의 trip(들) 필드에 대응
+// trips 테이블 1건 응답. list.php/detail.php의 trip(들) 필드에 대응
 public class TripDto {
 
     @SerializedName("trip_id")

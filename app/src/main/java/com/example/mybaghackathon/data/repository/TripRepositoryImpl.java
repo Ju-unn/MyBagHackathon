@@ -77,7 +77,7 @@ public class TripRepositoryImpl implements TripRepository {
     @Override
     public AppResult<List<Trip>> listArchivedTrips() {
         try {
-            Response<ApiResponseDto<TripListResponseDto>> response = tripApi.archive().execute();
+            Response<ApiResponseDto<TripListResponseDto>> response = tripApi.archive("past").execute();
             ApiResponseDto<TripListResponseDto> body = response.body();
             if (!response.isSuccessful() || body == null || !body.isSuccess()) {
                 return AppResult.failure(toError(response, body));

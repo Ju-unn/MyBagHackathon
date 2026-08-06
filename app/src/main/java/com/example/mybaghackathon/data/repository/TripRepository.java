@@ -19,10 +19,10 @@ public interface TripRepository {
             Map<String, String> itemScopeByName
     );
 
-    // 홈(S03) — 보관되지 않은 내 여행방 목록
+    // 홈(S03) — 진행중인 내 여행방 목록
     AppResult<List<Trip>> listMyTrips();
 
-    // 보관함(S14)
+    // 보관함(S13/S14) — 지난 여행 목록
     AppResult<List<Trip>> listArchivedTrips();
 
     // 방 상세(S09)
