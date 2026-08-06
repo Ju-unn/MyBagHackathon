@@ -42,8 +42,9 @@
     <string name="create_room_title">방 만들기</string>
     <string name="create_room_name_label">방 이름</string>
     <string name="create_room_name_hint">예) 도쿄 벚꽃 여행</string>
-    <string name="create_room_invite_label">초대 인원</string>
-    <string name="create_room_submit">방 만들기</string>
+    <string name="create_room_invite_label">여행 인원</string>
+    <string name="create_room_member_count_format">%1$d명</string>
+    <string name="create_room_submit">다음</string>
 
     <!-- S05 방 상세 -->
     <string name="room_detail_members">참여자</string>
