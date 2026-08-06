@@ -372,8 +372,7 @@ com.example.mybaghackathon
 │   ├── AnalysisResult.java
 │   ├── RestrictedItem.java
 │   ├── PackingItem.java
-│   ├── DefaultItem.java                   # ⚠️ 미사용 — 아래 "정리 필요" 참고
-│   ├── UserDefaultItem.java                # 실제 사용되는 "내 기본 물품" 모델
+│   ├── UserDefaultItem.java                # "내 기본 물품" 모델
 │   ├── NotificationSettings.java
 │   ├── Weather.java
 │   └── WeatherFeedback.java
@@ -388,11 +387,7 @@ com.example.mybaghackathon
 │   │   │   ├── AnalysisApi.java
 │   │   │   ├── PackingApi.java
 │   │   │   ├── WeatherApi.java
-│   │   │   ├── DefaultItemApi.java
-│   │   │   ├── CreationSessionApi.java    # ⚠️ 빈 인터페이스, 미사용 — 아래 참고
-│   │   │   ├── InviteApi.java             # ⚠️ 빈 인터페이스, 미사용
-│   │   │   ├── ProfileApi.java            # ⚠️ 빈 인터페이스, 미사용
-│   │   │   └── NotificationApi.java       # ⚠️ 빈 인터페이스, 미사용
+│   │   │   └── DefaultItemApi.java
 │   │   └── dto
 │   │       ├── common/ApiResponseDto.java
 │   │       ├── auth/{KakaoLoginRequestDto, AuthTokenDto}.java
@@ -405,14 +400,12 @@ com.example.mybaghackathon
 │   │       ├── packing/{ChecklistItemDto, ChecklistListResponseDto, ChecklistCreateRequestDto,
 │   │       │           ChecklistCreateResponseDto, ChecklistCheckResponseDto, ChecklistAssignRequestDto,
 │   │       │           ChecklistUpdateRequestDto, ChecklistItemIdRequestDto, ChecklistGenerateRequestDto,
-│   │       │           PackingItemDto, DefaultItemDto}.java   # 이 DefaultItemDto는 ⚠️ 중복(아래 참고)
+│   │       │           PackingItemDto}.java
 │   │       ├── defaultitem/{DefaultItemDto, DefaultItemCreateRequestDto, DefaultItemCreateResponseDto,
 │   │       │               DefaultItemUpdateRequestDto, DefaultItemIdRequestDto,
-│   │       │               DefaultItemListResponseDto}.java   # 실제 사용되는 쪽
+│   │       │               DefaultItemListResponseDto}.java
 │   │       ├── weather/{WeatherDto, WeatherForecastDto, WeatherFeedbackDto}.java
-│   │       ├── profile/ProfileDto.java
-│   │       ├── creation/CreationSessionDto.java   # ⚠️ 미사용
-│   │       └── notification/{NotificationSettingsDto, FcmTokenDto}.java
+│   │       └── notification/{NotificationSettingsDto, FcmTokenDto}.java   # NotificationSettingsDto는 S16용, 아직 미연결(FcmTokenDto만 실사용 중)
 │   ├── mapper
 │   │   ├── UserMapper.java
 │   │   ├── TripMapper.java
@@ -428,10 +421,7 @@ com.example.mybaghackathon
 │   │   ├── AnalysisRepository.java / AnalysisRepositoryImpl.java
 │   │   ├── PackingRepository.java / PackingRepositoryImpl.java   # 체크리스트 담당
 │   │   ├── WeatherRepository.java / WeatherRepositoryImpl.java
-│   │   ├── DefaultItemRepository.java / DefaultItemRepositoryImpl.java
-│   │   ├── CreationSessionRepository.java / CreationSessionRepositoryImpl.java   # ⚠️ Impl 빈 클래스, 미사용
-│   │   ├── ProfileRepository.java / ProfileRepositoryImpl.java                   # ⚠️ Impl 빈 클래스, 미사용
-│   │   └── NotificationRepository.java / NotificationRepositoryImpl.java         # ⚠️ Impl 빈 클래스, 미사용
+│   │   └── DefaultItemRepository.java / DefaultItemRepositoryImpl.java
 │   └── local
 │       └── TokenStorage.java
 ├── ui
@@ -481,14 +471,16 @@ com.example.mybaghackathon
 - `data.local`은 로그인 token처럼 기기에 보관해야 하는 값만 관리합니다.
 - `ui`는 S01~S16 화면 흐름과 오버레이, 그리고 `atoms`/`molecules`/`organisms` 공용 컴포넌트를 기능별 패키지로 구분합니다.
 
-### ⚠️ 정리가 필요한 것들
+### 정리된 죽은 코드 (2026-08-07)
 
-초기 기획 단계(README 초안)에서 미리 만들어둔 스캐폴딩 중 실제 서버 구현과 안 맞거나 아무도 참조하지 않는 코드가 남아있습니다. 삭제하거나 실제로 필요한지 재검토가 필요합니다.
+초기 기획 단계(README 초안)에서 미리 만들어둔 스캐폴딩 중 실제 서버 구현과 안 맞거나 아무도 참조하지 않던 코드 14개 파일을 삭제했습니다. 삭제 후 `compileDebugJavaWithJavac` `BUILD SUCCESSFUL` 확인 완료. 삭제 목록은 안드로이드팀 전달 문서(`안드로이드팀_전달사항.md`) 참고.
 
-- **`CreationSessionApi`/`CreationSessionRepository`, `InviteApi`, `ProfileApi`/`ProfileRepository`, `NotificationApi`/`NotificationRepository`** — 전부 메서드 없는 빈 클래스/인터페이스. 서버엔 "생성 세션"(`creation_sessions`) 리소스 자체가 없고(`upload_id`→`analysis_id`→`trip_id` 체이닝 방식으로 대체됨), 초대는 `TripApi.join()`으로, FCM 토큰 등록은 `AuthApi`로 이미 처리되고 있어서 이 4쌍은 예전 설계 유물로 보입니다.
-- **`model/DefaultItem.java`** — 아무 코드에서도 참조하지 않는 죽은 클래스입니다. 실제로 쓰이는 건 `model/UserDefaultItem.java`(서버 응답 필드에 맞춰 새로 만든 것)입니다.
-- **`data/remote/dto/packing/DefaultItemDto.java`** — `data/remote/dto/defaultitem/DefaultItemDto.java`와 이름이 같은 별개 클래스입니다. `DefaultItemMapper`가 실제로 쓰는 건 `defaultitem` 패키지 쪽이고, `packing` 패키지 쪽은 미사용으로 보입니다.
-- **`data/ChecklistItem.java`** — UI 임시 더미. 실제 연동 시 `model/PackingItem.java` + `packingRepository`로 교체 필요.
+- **`CreationSessionApi`/`CreationSessionRepository`(+Impl), `InviteApi`, `ProfileApi`/`ProfileRepository`(+Impl), `NotificationApi`/`NotificationRepository`(+Impl)** — 전부 메서드 없는 빈 클래스/인터페이스였음. 서버엔 "생성 세션"(`creation_sessions`) 리소스 자체가 없고(`upload_id`→`analysis_id`→`trip_id` 체이닝 방식으로 대체됨), 초대는 `TripApi.join()`으로, FCM 토큰 등록은 `AuthApi`로 이미 처리되고 있어서 예전 설계 유물이었음.
+- **`data/remote/dto/creation/CreationSessionDto.java`, `data/remote/dto/profile/ProfileDto.java`** — 위 죽은 Api/Repository에서만 쓰이던 DTO라 같이 삭제(빈 디렉터리도 함께 정리).
+- **`model/DefaultItem.java`** — 아무 코드에서도 참조하지 않던 죽은 클래스. 실제로 쓰이는 건 `model/UserDefaultItem.java`(서버 응답 필드에 맞춰 새로 만든 것).
+- **`data/remote/dto/packing/DefaultItemDto.java`** — `data/remote/dto/defaultitem/DefaultItemDto.java`와 이름이 같던 별개 클래스. `DefaultItemMapper`가 실제로 쓰는 `defaultitem` 패키지 쪽만 남김.
+
+**남겨둔 것**: `data/remote/dto/notification/NotificationSettingsDto.java`, `model/NotificationSettings.java`는 아직 미연결이지만 S16 화면·서버 `notification_settings` 테이블에 대응하는 정상 스캐폴딩이라 삭제하지 않았습니다. `data/ChecklistItem.java`도 UI 임시 더미로 계속 쓰이고 있어 남겨뒀습니다(실 연동 시 `model/PackingItem.java` + `packingRepository`로 교체 예정).
 
 ### 화면 연결 시 참고할 흐름
 
