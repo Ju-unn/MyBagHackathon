@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.FragmentArchiveBinding;
+import com.example.mybaghackathon.ui.createroom.CreateRoomActivity;
 import com.example.mybaghackathon.ui.organisms.TripRoomCardBinder;
 import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
 
@@ -24,9 +25,13 @@ import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
  *
  * 기능: 진행중/지난 여행 세그먼트 칩을 눌러 목록을 필터링하고, 각 여행방을
  * 카드로 inflate해 리스트에 추가한 뒤 클릭 시 RoomDetailActivity로 이동시킴
- * (F-JTDZJG).
+ * (F-JTDZJG). 선택한 세그먼트에 방이 하나도 없으면 EmptyState(NoArchive)를
+ * 보여주고 "방 만들기" 버튼으로 CreateRoomActivity를 연다.
  */
 public class TripArchiveFragment extends Fragment {
+
+    private static final String[] ACTIVE_TRIPS = {"도쿄 벚꽃 여행", "제주 가족 여행"};
+    private static final String[] PAST_TRIPS = {"부산 여름 여행", "강릉 워크숍"};
 
     private FragmentArchiveBinding binding;
     private LinearLayout list;
@@ -50,6 +55,12 @@ public class TripArchiveFragment extends Fragment {
         activeChip.setOnClickListener(v -> selectSegment(true));
         pastChip.setOnClickListener(v -> selectSegment(false));
 
+        binding.archiveEmptyState.emptyStateTitle.setText(R.string.archive_empty_title);
+        binding.archiveEmptyState.emptyStateDesc.setText(R.string.archive_empty_desc);
+        binding.archiveEmptyState.emptyStateAction.setText(R.string.create_room_submit);
+        binding.archiveEmptyState.emptyStateAction.setOnClickListener(
+                v -> startActivity(new Intent(getContext(), CreateRoomActivity.class)));
+
         selectSegment(true);
         return root;
     }
@@ -65,12 +76,13 @@ public class TripArchiveFragment extends Fragment {
         setSegmentSelected(pastChip, !active);
         list.removeAllViews();
 
-        if (active) {
-            addCard("도쿄 벚꽃 여행", true);
-            addCard("제주 가족 여행", true);
-        } else {
-            addCard("부산 여름 여행", false);
-            addCard("강릉 워크숍", false);
+        String[] trips = active ? ACTIVE_TRIPS : PAST_TRIPS;
+        boolean empty = trips.length == 0;
+        list.setVisibility(empty ? View.GONE : View.VISIBLE);
+        binding.archiveEmptyState.getRoot().setVisibility(empty ? View.VISIBLE : View.GONE);
+
+        for (String title : trips) {
+            addCard(title, active);
         }
     }
 

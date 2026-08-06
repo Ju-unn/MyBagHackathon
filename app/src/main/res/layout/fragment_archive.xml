@@ -57,5 +57,13 @@
             android:layout_marginTop="@dimen/space_lg"
             android:orientation="vertical" />
 
+        <include
+            android:id="@+id/archiveEmptyState"
+            layout="@layout/organism_empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:visibility="gone" />
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
