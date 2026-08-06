@@ -14,13 +14,13 @@
     <string name="action_cancel">취소</string>
     <string name="action_copy_link">링크 복사</string>
     <string name="action_share_kakao">카카오톡 공유</string>
-    <string name="action_kakao_login">카카오로 시작하기</string>
+    <string name="action_kakao_login">카카오 로그인</string>
 
     <!-- S01 스플래시 -->
     <string name="splash_loading">불러오는 중…</string>
 
     <!-- S02 로그인 -->
-    <string name="login_copy">사진 한 장이면\n짐 싸기 끝</string>
+    <string name="login_copy">사진 한 장이면\n짐 챙기기 끝</string>
     <string name="login_subcopy">여행 일정 사진만 올리면 AI가 준비물을 챙겨드려요</string>
     <string name="login_terms">계속 진행하면 이용약관 및 개인정보처리방침에 동의하는 것으로 간주됩니다</string>
 

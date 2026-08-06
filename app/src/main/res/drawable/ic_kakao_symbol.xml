@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 카카오 로그인 디자인 가이드 심볼 — kakao_login_original.psd의 벡터 패스를
+     그대로 추출한 것 (형태/비율 변경 없음)
+     https://developers.kakao.com/docs/ko/kakaologin/design-guide -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp"
+    android:height="22dp"
+    android:viewportWidth="38"
+    android:viewportHeight="37">
+    <path
+        android:fillColor="#000000"
+        android:pathData="M19.000,1.970 C9.058,1.970 1.000,8.225 1.000,15.943 C1.000,20.741 4.117,24.973 8.863,27.489 C8.863,27.489 6.866,34.819 6.866,34.819 C6.689,35.468 7.427,35.984 7.993,35.608 C7.993,35.608 16.747,29.803 16.747,29.803 C17.485,29.874 18.236,29.916 19.000,29.916 C28.941,29.916 37.000,23.659 37.000,15.943 C37.000,8.225 28.941,1.970 19.000,1.970 Z" />
+</vector>

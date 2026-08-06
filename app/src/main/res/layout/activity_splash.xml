@@ -1,69 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S01 스플래시 — 펜슬 디자인 기준: 배경은 브랜드색이 아니라 반전 배경(ink_900) -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- S01 스플래시 — pen.dev 원본 디자인 이미지를 풀블리드로 표시 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/bag_bg_inverse"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <!-- 상단 스페이서 — 중앙 블록을 화면 가운데로 밀어줌 -->
-    <View
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_splash" />
 
-    <!-- 중앙 블록: 로고 박스 + 앱 이름 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <FrameLayout
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:background="@drawable/bg_splash_logo">
-
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_luggage"
-                android:tint="@color/bag_text_on_brand" />
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/splashLogo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:text="@string/app_name"
-            android:textAppearance="@style/TextAppearance.Bag.DisplayL"
-            android:textColor="@color/bag_text_on_inverse" />
-
-    </LinearLayout>
-
-    <!-- 하단 스페이서 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- 하단 로딩 문구 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingBottom="@dimen/space_4xl">
-
-        <TextView
-            android:id="@+id/splashLoadingLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/splash_loading"
-            android:textColor="#80FFFFFF"
-            android:textSize="12sp" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>
