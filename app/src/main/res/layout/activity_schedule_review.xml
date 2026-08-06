@@ -25,46 +25,97 @@
                 android:id="@+id/reviewTopAppBar"
                 layout="@layout/organism_top_app_bar_large" />
 
-            <FrameLayout
-                android:id="@+id/reviewDestinationCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg">
-
-                <include layout="@layout/molecule_review_field_card" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/reviewDatesCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md">
-
-                <include layout="@layout/molecule_review_field_card" />
-            </FrameLayout>
-
+            <!-- Step1Badge -->
             <TextView
+                android:id="@+id/reviewStep1Badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_2xl"
-                android:text="@string/review_weather_heading"
-                android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+                android:background="@drawable/bg_pill_brand_subtle"
+                android:fontFamily="@font/pretendard_bold"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text="@string/review_step1_label"
+                android:textColor="@color/bag_text_brand"
+                android:textSize="11sp" />
 
+            <!-- ScheduleInfo — 여행지/숙소일정 카드 2개, 가로로 나란히 -->
             <LinearLayout
-                android:id="@+id/reviewWeatherList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:orientation="vertical"
-                android:background="@drawable/bg_card_surface_border"
-                android:padding="@dimen/space_lg" />
+                android:layout_marginTop="@dimen/space_2xl"
+                android:orientation="horizontal">
 
-            <!-- M8 WarningBanner — 반입 제한 경고 -->
+                <FrameLayout
+                    android:id="@+id/reviewDestinationCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <include layout="@layout/molecule_review_field_card" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/reviewDatesCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/space_md">
+
+                    <include layout="@layout/molecule_review_field_card" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!-- WeatherCard -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:background="@drawable/bg_card_lg_border"
+                android:orientation="vertical"
+                android:padding="@dimen/space_lg">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/review_weather_heading"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+
+                <LinearLayout
+                    android:id="@+id/reviewWeatherList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <!-- Step2Badge -->
+            <TextView
+                android:id="@+id/reviewStep2Badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:background="@drawable/bg_pill_brand_subtle"
+                android:fontFamily="@font/pretendard_bold"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text="@string/review_step2_label"
+                android:textColor="@color/bag_text_brand"
+                android:textSize="11sp" />
+
+            <!-- M8 WarningBanner — 반입 제한 경고, 제한 항목 있을 때만 노출 -->
             <FrameLayout
                 android:id="@+id/reviewRestrictionWarning"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md">
+                android:layout_marginTop="@dimen/space_2xl">
 
                 <include layout="@layout/molecule_warning_banner" />
             </FrameLayout>
@@ -73,37 +124,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_2xl"
+                android:textStyle="bold"
                 android:text="@string/review_items_heading"
-                android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+                android:textAppearance="@style/TextAppearance.Bag.TitleL" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xs"
+                android:text="@string/review_items_desc"
+                android:textAppearance="@style/TextAppearance.Bag.BodyM" />
 
             <LinearLayout
                 android:id="@+id/reviewItemSections"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:orientation="vertical" />
-
-            <TextView
-                android:id="@+id/reviewAddItemLink"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/touch_target_min"
-                android:gravity="center_vertical"
-                android:text="@string/review_add_item"
-                android:textAppearance="@style/TextAppearance.Bag.BodyLMedium"
-                android:textColor="@color/bag_text_brand" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_2xl"
-                android:text="@string/review_excluded_heading"
-                android:textAppearance="@style/TextAppearance.Bag.TitleS" />
-
-            <LinearLayout
-                android:id="@+id/reviewExcludedList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
+                android:layout_marginTop="@dimen/space_lg"
                 android:orientation="vertical" />
 
         </LinearLayout>
