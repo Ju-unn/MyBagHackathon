@@ -56,6 +56,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/feedbackTemperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/feedback_temperature"
@@ -102,6 +103,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/feedbackClothingDesc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/space_2xs"
@@ -139,6 +141,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/feedbackFoodDesc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/space_2xs"
@@ -176,6 +179,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/feedbackStayDesc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/space_2xs"
