@@ -94,18 +94,18 @@
 
     <!-- S08 일정 검토 -->
     <string name="review_title">일정 검토</string>
-    <string name="review_desc">분석된 내용을 확인하고 필요하면 수정하세요.</string>
+    <string name="review_step1_label">STEP 1 · 일정 확인</string>
+    <string name="review_step2_label">STEP 2 · 준비물 체크</string>
     <string name="review_destination_label">여행지</string>
     <string name="review_dates_label">숙소 일정</string>
     <string name="review_weather_heading">일정별 날씨</string>
+    <string name="review_restriction_warning">보조배터리 등 3개 항목에 반입 규정이 있어요</string>
     <string name="review_items_heading">추천 준비물</string>
+    <string name="review_items_desc">체크한 항목은 공용 체크리스트에 담겨요</string>
     <string name="review_priority_high">필수</string>
     <string name="review_priority_mid">중간</string>
     <string name="review_priority_low">선택</string>
-    <string name="review_add_item">+ 항목 직접 추가</string>
-    <string name="review_excluded_heading">안 가져가도 돼요</string>
-    <string name="review_generate">목록 아이템 생성</string>
-    <string name="review_empty_notice">사진에서 정보를 찾지 못했어요. 직접 입력해 주세요.</string>
+    <string name="review_generate">방 생성 완료</string>
 
     <!-- S09 날씨 피드백 -->
     <string name="feedback_title">이렇게 준비하세요</string>
