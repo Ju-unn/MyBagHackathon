@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S07 1차 결과 확인 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bag_bg_base"
+    android:orientation="vertical">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingEnd="@dimen/screen_margin">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/confirmTopAppBar"
+                layout="@layout/organism_top_app_bar_compact" />
+
+            <FrameLayout
+                android:id="@+id/confirmDestinationCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl">
+
+                <include layout="@layout/molecule_review_field_card" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/confirmScheduleCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md">
+
+                <include layout="@layout/molecule_review_field_card" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/confirmLodgingCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md">
+
+                <include layout="@layout/molecule_review_field_card" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/confirmTransportCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md">
+
+                <include layout="@layout/molecule_review_field_card" />
+            </FrameLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- BottomCTARow — 버튼 2개(다시 분석하기 / 다음), 상단 1dp 구분선 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bag_bg_base"
+        android:orientation="vertical">
+
+        <View style="@style/Widget.Bag.Divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/screen_margin"
+            android:paddingTop="@dimen/space_lg"
+            android:paddingEnd="@dimen/screen_margin"
+            android:paddingBottom="@dimen/space_2xl">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/confirmRetryButton"
+                style="@style/Widget.Bag.Button.Secondary.Outline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/schedule_confirm_retry" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/confirmNextButton"
+                style="@style/Widget.Bag.Button.Primary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/space_md"
+                android:text="@string/action_next" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

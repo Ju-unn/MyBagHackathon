@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S07 분석 중 -->
+<!-- S06 분석 중 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,48 +26,15 @@
             android:layout_height="56dp"
             android:indeterminateTint="@color/bag_brand_default" />
 
-        <!-- 첫 줄은 굵은 타이틀, 나머지 3줄은 회색 서브텍스트 -->
-        <LinearLayout
-            android:id="@+id/analyzingStepList"
-            android:layout_width="match_parent"
+        <!-- 한 번에 한 줄만 보여주고 페이드 아웃/인으로 다음 단계로 전환 (AnalyzingActivity에서 애니메이션) -->
+        <TextView
+            android:id="@+id/analyzingStepText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_2xl"
             android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/analyzingStepTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="사진에서 일정을 읽고 있어요"
-                android:textAppearance="@style/TextAppearance.Bag.BodyLMedium"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="숙소 지역과 국가를 확인하고 있어요"
-                android:textAppearance="@style/TextAppearance.Bag.BodyM"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="일정별 날씨를 가져오고 있어요"
-                android:textAppearance="@style/TextAppearance.Bag.BodyM"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="챙길 물품을 고르고 있어요"
-                android:textAppearance="@style/TextAppearance.Bag.BodyM"
-                android:gravity="center" />
-
-        </LinearLayout>
+            android:textAppearance="@style/TextAppearance.Bag.BodyLMedium"
+            android:textColor="@color/bag_text_primary" />
 
     </LinearLayout>
 
