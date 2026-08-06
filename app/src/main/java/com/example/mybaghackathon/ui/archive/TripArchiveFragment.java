@@ -15,15 +15,16 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.FragmentArchiveBinding;
-import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.example.mybaghackathon.ui.organisms.TripRoomCardBinder;
+import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
 
 /**
- * S13 · 보관함 — "공용 여행" 탭: 사용자가 속한 모든 방을 진행중/지난 여행으로
- * 구분해서 보여줌.
+ * S14 · MainActivity — TripArchiveFragment ("공용 여행" 탭): 사용자가 속한
+ * 모든 방을 진행중/지난 여행으로 구분해서 보여줌.
  *
  * 기능: 진행중/지난 여행 세그먼트 칩을 눌러 목록을 필터링하고, 각 여행방을
- * 카드로 inflate해 리스트에 추가한 뒤 클릭 시 체크리스트 화면으로 이동시킴.
+ * 카드로 inflate해 리스트에 추가한 뒤 클릭 시 RoomDetailActivity로 이동시킴
+ * (F-JTDZJG).
  */
 public class TripArchiveFragment extends Fragment {
 
@@ -92,7 +93,7 @@ public class TripArchiveFragment extends Fragment {
         } else {
             TripRoomCardBinder.bindPast(card, title);
         }
-        card.setOnClickListener(v -> startActivity(new Intent(getContext(), ChecklistActivity.class)));
+        card.setOnClickListener(v -> startActivity(new Intent(getContext(), RoomDetailActivity.class)));
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
