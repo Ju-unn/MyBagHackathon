@@ -5,8 +5,10 @@ import com.example.mybaghackathon.common.AppResult;
 import com.example.mybaghackathon.data.mapper.WeatherMapper;
 import com.example.mybaghackathon.data.remote.api.WeatherApi;
 import com.example.mybaghackathon.data.remote.dto.common.ApiResponseDto;
+import com.example.mybaghackathon.data.remote.dto.weather.WeatherFeedbackDto;
 import com.example.mybaghackathon.data.remote.dto.weather.WeatherForecastDto;
 import com.example.mybaghackathon.model.Weather;
+import com.example.mybaghackathon.model.WeatherFeedback;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +37,24 @@ public class WeatherRepositoryImpl implements WeatherRepository {
             }
 
             return AppResult.success(WeatherMapper.from(body.getData().getDays()));
+        } catch (IOException e) {
+            return AppResult.failure(networkError());
+        }
+    }
+
+    // 날씨 기반 옷차림/음식/숙소 GPT 조언 API 호출
+    @Override
+    public AppResult<WeatherFeedback> getFeedback(long tripId) {
+        try {
+            Response<ApiResponseDto<WeatherFeedbackDto>> response =
+                    weatherApi.getFeedback(tripId).execute();
+
+            ApiResponseDto<WeatherFeedbackDto> body = response.body();
+            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
+                return AppResult.failure(toError(response, body));
+            }
+
+            return AppResult.success(WeatherMapper.from(body.getData()));
         } catch (IOException e) {
             return AppResult.failure(networkError());
         }

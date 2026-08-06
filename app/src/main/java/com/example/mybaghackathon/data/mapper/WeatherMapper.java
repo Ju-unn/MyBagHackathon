@@ -1,7 +1,9 @@
 package com.example.mybaghackathon.data.mapper;
 
 import com.example.mybaghackathon.data.remote.dto.weather.WeatherDto;
+import com.example.mybaghackathon.data.remote.dto.weather.WeatherFeedbackDto;
 import com.example.mybaghackathon.model.Weather;
+import com.example.mybaghackathon.model.WeatherFeedback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,11 @@ public final class WeatherMapper {
             ));
         }
         return result;
+    }
+
+    // 날씨 기반 옷차림/음식/숙소 GPT 조언을 변환한다
+    public static WeatherFeedback from(WeatherFeedbackDto dto) {
+        return new WeatherFeedback(dto.getClothing(), dto.getFood(), dto.getAccommodationNotes());
     }
 
     // 서버 condition 문자열을 WeatherIconView(A9)의 타입 정수로 변환: 0=맑음 1=비 2=흐림 3=눈
