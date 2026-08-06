@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.recyclerview)
     implementation(libs.kakao.user)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
