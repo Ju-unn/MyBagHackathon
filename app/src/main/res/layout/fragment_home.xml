@@ -19,14 +19,21 @@
             android:id="@+id/homeTopAppBar"
             layout="@layout/organism_top_app_bar_large" />
 
-        <LinearLayout
-            android:id="@+id/homeTripList"
+        <include
+            android:id="@+id/homeEmptyState"
+            layout="@layout/organism_empty_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xl"
-            android:orientation="vertical"
-            android:showDividers="middle"
-            android:divider="@null" />
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/homeTripRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never" />
 
         <FrameLayout
             android:id="@+id/homeAddRoomWrapper"
