@@ -1,29 +1,40 @@
 package com.example.mybaghackathon.ui.upload;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityScheduleUploadBinding;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.analyzing.AnalyzingActivity;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.imageview.ShapeableImageView;
+
+import java.util.List;
 
 /**
- * S06 · 일정 업로드 — 사진 업로드 슬롯 2개(일정표 + 숙소 예약 확인서) +
- * 국내/해외 토글.
+ * S05 · 일정 사진 업로드 — 드롭존을 탭해 일정표·예약 확인 사진을 한 번에
+ * 여러 장 선택하고, 선택된 사진은 하단 미리보기 줄에 썸네일로 쌓인다.
  *
- * 기능: 업로드 안내 카드 2개(일정/숙소)의 문구를 채우고, 국내/해외 칩 토글,
- * "분석 시작" 버튼으로 AnalyzingActivity로 이동하는 화면.
+ * 기능: 시스템 포토 피커로 다중 이미지를 선택해 미리보기 줄에 채우고,
+ * "AI 분석 시작하기" 버튼으로 AnalyzingActivity로 이동하는 화면.
  */
 public class ScheduleUploadActivity extends AppCompatActivity {
 
     private ActivityScheduleUploadBinding binding;
+
+    private final ActivityResultLauncher<PickVisualMediaRequest> photoPicker =
+            registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(),
+                    this::onPhotosPicked);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,24 +47,11 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         binding.uploadTopAppBar.topAppBarDesc.setText(R.string.upload_desc);
         binding.uploadTopAppBar.topAppBarDesc.setVisibility(View.VISIBLE);
 
-        View scheduleCard = binding.uploadScheduleCard;
-        ((TextView) scheduleCard.findViewById(R.id.uploadGuideTitle)).setText(R.string.upload_guide_schedule_title);
-        ((TextView) scheduleCard.findViewById(R.id.uploadGuideDesc)).setText(R.string.upload_guide_schedule_desc);
+        binding.uploadDropzone.setOnClickListener(v -> photoPicker.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build()));
 
-        View hotelCard = binding.uploadHotelCard;
-        ((TextView) hotelCard.findViewById(R.id.uploadGuideTitle)).setText(R.string.upload_guide_hotel_title);
-        ((TextView) hotelCard.findViewById(R.id.uploadGuideDesc)).setText(R.string.upload_guide_hotel_desc);
-
-        TextView domestic = binding.uploadSegmentDomestic;
-        TextView intl = binding.uploadSegmentIntl;
-        domestic.setOnClickListener(v -> {
-            setSegmentSelected(domestic, true);
-            setSegmentSelected(intl, false);
-        });
-        intl.setOnClickListener(v -> {
-            setSegmentSelected(intl, true);
-            setSegmentSelected(domestic, false);
-        });
+        binding.uploadBottomCta.bottomCtaDivider.setVisibility(View.VISIBLE);
 
         MaterialButton startAnalysis = binding.uploadBottomCta.bottomCtaPrimary;
         startAnalysis.setText(R.string.upload_start_analysis);
@@ -63,14 +61,25 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         });
     }
 
-    private void setSegmentSelected(TextView segment, boolean selected) {
-        if (selected) {
-            segment.setBackgroundResource(R.drawable.bg_segment_selected);
-            segment.setTextAppearance(R.style.TextAppearance_Bag_TitleS);
-        } else {
-            segment.setBackground(null);
-            segment.setTextAppearance(R.style.TextAppearance_Bag_BodyM);
-            segment.setTextColor(ContextCompat.getColor(this, R.color.bag_text_tertiary_safe));
+    private void onPhotosPicked(List<Uri> uris) {
+        if (uris.isEmpty()) return;
+        LinearLayout previewRow = binding.uploadPreviewRow;
+        int size = dp(64);
+        int gap = dp(10);
+        for (Uri uri : uris) {
+            ShapeableImageView thumb = new ShapeableImageView(this);
+            thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            thumb.setShapeAppearanceModel(thumb.getShapeAppearanceModel().toBuilder()
+                    .setAllCornerSizes(dp(14))
+                    .build());
+            thumb.setImageURI(uri);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(size, size);
+            if (previewRow.getChildCount() > 0) lp.setMarginStart(gap);
+            previewRow.addView(thumb, lp);
         }
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
     }
 }
