@@ -35,9 +35,12 @@ public class ApiClient {
             return chain.proceed(authorized);
         };
 
+        // analyze.php/confirm.php는 서버에서 GPT를 호출할 수 있어(서버 타임아웃 60초, OPENAI_VISION_TIMEOUT)
+        // readTimeout을 그보다 여유 있게 잡음. writeTimeout도 사진 여러 장 업로드 대비 넉넉히 잡음.
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(70, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(authInterceptor)
                 .addInterceptor(logging)
                 .build();
