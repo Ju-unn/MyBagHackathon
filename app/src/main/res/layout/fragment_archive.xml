@@ -50,12 +50,21 @@
                 android:textColor="@color/bag_text_tertiary_safe" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/archiveTripList"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/archiveTripRecycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_lg"
-            android:orientation="vertical" />
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never" />
+
+        <include
+            android:id="@+id/archiveEmptyState"
+            layout="@layout/organism_empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:visibility="gone" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

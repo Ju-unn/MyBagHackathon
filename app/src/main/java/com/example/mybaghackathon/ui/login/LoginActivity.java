@@ -2,24 +2,26 @@ package com.example.mybaghackathon.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.MainActivity;
-import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.app.MyBagApplication;
+import com.example.mybaghackathon.data.repository.AuthRepository;
 import com.example.mybaghackathon.databinding.ActivityLoginBinding;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
+import com.kakao.sdk.auth.model.OAuthToken;
+import com.kakao.sdk.common.model.ClientError;
+import com.kakao.sdk.common.model.ClientErrorCause;
+import com.kakao.sdk.user.UserApiClient;
 
-/**
- * S02 · 로그인 — 카카오 로그인 버튼 하나만 있고, 누르면 MainActivity
- * (홈 탭)로 이동함.
- *
- * 기능: 카카오 로그인 버튼 클릭 시 바로 MainActivity로 넘어가는(실제 인증
- * 로직은 아직 없는) 로그인 화면.
- */
-public class LoginActivity extends AppCompatActivity {
+import kotlin.Unit;
+
+public class LoginActivity extends AppCompatActivity implements LoginContract.View {
 
     private ActivityLoginBinding binding;
+    private LoginContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +30,72 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
-        binding.loginKakaoButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        });
+        AuthRepository authRepository = ((MyBagApplication) getApplication()).getAppContainer().authRepository;
+        presenter = new LoginPresenter(this, authRepository);
+
+        binding.loginKakaoButton.setOnClickListener(v -> startKakaoLogin());
+    }
+
+    @Override
+    protected void onDestroy() {
+        presenter.onDestroy();
+        super.onDestroy();
+    }
+
+    private void startKakaoLogin() {
+        setLoading(true);
+
+        if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(this)) {
+            UserApiClient.getInstance().loginWithKakaoTalk(this, (token, error) -> {
+                if (error != null) {
+                    if (isCancelled(error)) {
+                        setLoading(false);
+                        return Unit.INSTANCE;
+                    }
+                    // 카카오톡 앱 로그인이 실패하면 카카오계정(웹) 로그인으로 대체
+                    UserApiClient.getInstance().loginWithKakaoAccount(this, this::onKakaoTokenResult);
+                } else {
+                    onKakaoTokenResult(token, null);
+                }
+                return Unit.INSTANCE;
+            });
+        } else {
+            UserApiClient.getInstance().loginWithKakaoAccount(this, this::onKakaoTokenResult);
+        }
+    }
+
+    private Unit onKakaoTokenResult(OAuthToken token, Throwable error) {
+        if (error != null) {
+            setLoading(false);
+            if (!isCancelled(error)) {
+                showError("카카오 로그인에 실패했습니다.");
+            }
+            return Unit.INSTANCE;
+        }
+        presenter.login(token.getAccessToken());
+        return Unit.INSTANCE;
+    }
+
+    private boolean isCancelled(Throwable error) {
+        return error instanceof ClientError
+                && ((ClientError) error).getReason() == ClientErrorCause.Cancelled;
+    }
+
+    // ===== LoginContract.View =====
+
+    @Override
+    public void setLoading(boolean loading) {
+        binding.loginKakaoButton.setEnabled(!loading);
+    }
+
+    @Override
+    public void showError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void navigateToMain() {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 }

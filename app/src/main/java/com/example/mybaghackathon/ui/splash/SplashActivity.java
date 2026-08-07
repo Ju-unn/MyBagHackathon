@@ -13,7 +13,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.example.mybaghackathon.MainActivity;
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.app.MyBagApplication;
 import com.example.mybaghackathon.databinding.ActivitySplashBinding;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.login.LoginActivity;
@@ -45,7 +47,11 @@ public class SplashActivity extends AppCompatActivity {
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (isFinishing()) return;
-            startActivity(new Intent(this, LoginActivity.class));
+
+            boolean isLoggedIn = ((MyBagApplication) getApplication())
+                    .getAppContainer().tokenStorage.isLoggedIn();
+            Intent next = new Intent(this, isLoggedIn ? MainActivity.class : LoginActivity.class);
+            startActivity(next);
             finish();
         }, SPLASH_DELAY_MS);
     }

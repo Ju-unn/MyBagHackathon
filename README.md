@@ -119,10 +119,10 @@
 
 ### 알림
 
-- WorkManager 기반 기기 내부 알림 대신, **서버가 FCM으로 발송**하는 방식으로 확정했습니다.
-- 담당자 본인 지정 시 트립의 다른 참여자에게 `CHECKLIST_ASSIGNED` 알림 발송 — 서버 구현·배포·검증 완료.
-- 출발 D-7·D-3·D-1 알림은 서버 crontab이 매일 09:00(KST) 대상자를 계산해 `DEPARTURE_D7`/`DEPARTURE_D3`/`DEPARTURE_D1` 알림 발송 — 서버 구현·배포·검증 완료.
-- 두 경우 다 FCM data 페이로드만 사용(`notification` 페이로드 아님) — **앱에서 `FcmMessagingService.onMessageReceived()`를 채워서 로컬 알림(채널·아이콘·딥링크)으로 표시하는 작업이 아직 남아있습니다.** 페이로드 필드는 안드로이드팀 전달 문서 참고.
+- WorkManager 기반 기기 내부 알림 대신 서버가 FCM으로 발송하는 방식으로 확정했습니다.
+- 담당자 본인을 지정하면 같은 트립의 다른 참여자에게 `CHECKLIST_ASSIGNED` 알림을 보냅니다.
+- 출발 D-7·D-3·D-1이 되면 서버 crontab이 매일 09시(KST)에 대상자를 계산해 `DEPARTURE_D7`/`DEPARTURE_D3`/`DEPARTURE_D1` 알림을 보냅니다.
+- 두 경우 다 FCM data 페이로드만 사용합니다(`notification` 페이로드 아님). 앱에서 `FcmMessagingService.onMessageReceived()`를 채워서 로컬 알림(채널·아이콘·딥링크)으로 표시하는 작업이 아직 남아있습니다. 페이로드 필드는 안드로이드팀 전달 문서를 참고하세요.
 
 ---
 
@@ -236,9 +236,9 @@
 
 현재 상태:
 
-- 서버 발송 로직 구현·배포·검증 완료 (담당자 지정 알림, 출발 D-7·D-3·D-1 알림)
-- 앱에서 토큰 등록(`POST /api/auth/fcm-token.php`)까지는 연결돼 있음
-- 앱에서 수신 후 실제 알림으로 표시하는 부분(`FcmMessagingService.onMessageReceived()`)은 미구현
+- 서버 발송 로직(담당자 지정 알림, 출발 D-7·D-3·D-1 알림)은 배포·검증까지 끝났습니다.
+- 앱에서 토큰 등록(`POST /api/auth/fcm-token.php`)은 연결돼 있습니다.
+- 수신 후 실제 알림으로 표시하는 부분(`FcmMessagingService.onMessageReceived()`)은 아직 안 만들었습니다.
 
 사용 목적:
 
@@ -332,7 +332,7 @@ EC2는 이미 구축되어 있으므로 실제 월 비용은 팀 AWS 계정에�
 - AWS EC2에서는 Apache2와 PHP REST API가 요청을 처리합니다.
 - PHP REST API는 MySQL에 데이터를 저장합니다.
 - PHP REST API는 필요한 경우 OpenAI, Open-Meteo, Kakao API를 호출합니다.
-- PHP 서버가 FCM으로 담당자 지정·출발 예정 알림을 발송합니다(구현 완료). 앱에서 수신해 로컬 알림으로 표시하는 부분만 남았습니다.
+- PHP 서버가 FCM으로 담당자 지정·출발 예정 알림을 발송합니다. 앱에서 수신해 로컬 알림으로 표시하는 부분만 남았습니다.
 
 ### 데이터 흐름
 
@@ -345,7 +345,7 @@ EC2는 이미 구축되어 있으므로 실제 월 비용은 팀 AWS 계정에�
 
 ---
 
-## 8. Android 패키지 구조 (2026-08-07 기준 실제 구조)
+## 8. Android 패키지 구조
 
 기본 패키지는 `com.example.mybaghackathon`입니다. UI는 S01~S16 화면 흐름을 기준으로 구성하고, 서버 연결 코드는 `data` 아래에서 Api·DTO·Mapper·Repository로 분리합니다. DI는 별도 프레임워크 없이 `app/AppContainer.java`가 생성자 조립으로 직접 처리합니다.
 
@@ -406,7 +406,7 @@ com.example.mybaghackathon
 │   │       │               DefaultItemUpdateRequestDto, DefaultItemIdRequestDto,
 │   │       │               DefaultItemListResponseDto}.java
 │   │       ├── weather/{WeatherDto, WeatherForecastDto, WeatherFeedbackDto}.java
-│   │       └── notification/{NotificationSettingsDto, NotificationSettingsUpdateRequestDto, FcmTokenDto}.java   # S16 데이터 레이어 연결 완료(2026-08-07), 화면(NotificationSettingsActivity) 연결만 남음
+│   │       └── notification/{NotificationSettingsDto, NotificationSettingsUpdateRequestDto, FcmTokenDto}.java   # 화면(NotificationSettingsActivity) 연결은 아직 남음
 │   ├── mapper
 │   │   ├── UserMapper.java
 │   │   ├── TripMapper.java
@@ -414,7 +414,7 @@ com.example.mybaghackathon
 │   │   ├── PackingItemMapper.java
 │   │   ├── WeatherMapper.java
 │   │   ├── DefaultItemMapper.java
-│   │   └── NotificationMapper.java                # 2026-08-07 구현 완료(기존 빈 스캐폴딩 재사용)
+│   │   └── NotificationMapper.java
 │   ├── repository
 │   │   ├── AuthRepository.java / AuthRepositoryImpl.java
 │   │   ├── TripRepository.java / TripRepositoryImpl.java
@@ -473,17 +473,6 @@ com.example.mybaghackathon
 - `data.local`은 로그인 token처럼 기기에 보관해야 하는 값만 관리합니다.
 - `ui`는 S01~S16 화면 흐름과 오버레이, 그리고 `atoms`/`molecules`/`organisms` 공용 컴포넌트를 기능별 패키지로 구분합니다.
 
-### 정리된 죽은 코드 (2026-08-07)
-
-초기 기획 단계(README 초안)에서 미리 만들어둔 스캐폴딩 중 실제 서버 구현과 안 맞거나 아무도 참조하지 않던 코드 14개 파일을 삭제했습니다. 삭제 후 `compileDebugJavaWithJavac` `BUILD SUCCESSFUL` 확인 완료. 삭제 목록은 안드로이드팀 전달 문서(`안드로이드팀_전달사항.md`) 참고.
-
-- **`CreationSessionApi`/`CreationSessionRepository`(+Impl), `InviteApi`, `ProfileApi`/`ProfileRepository`(+Impl), `NotificationApi`/`NotificationRepository`(+Impl)** — 전부 메서드 없는 빈 클래스/인터페이스였음. 서버엔 "생성 세션"(`creation_sessions`) 리소스 자체가 없고(`upload_id`→`analysis_id`→`trip_id` 체이닝 방식으로 대체됨), 초대는 `TripApi.join()`으로, FCM 토큰 등록은 `AuthApi`로 이미 처리되고 있어서 예전 설계 유물이었음.
-- **`data/remote/dto/creation/CreationSessionDto.java`, `data/remote/dto/profile/ProfileDto.java`** — 위 죽은 Api/Repository에서만 쓰이던 DTO라 같이 삭제(빈 디렉터리도 함께 정리).
-- **`model/DefaultItem.java`** — 아무 코드에서도 참조하지 않던 죽은 클래스. 실제로 쓰이는 건 `model/UserDefaultItem.java`(서버 응답 필드에 맞춰 새로 만든 것).
-- **`data/remote/dto/packing/DefaultItemDto.java`** — `data/remote/dto/defaultitem/DefaultItemDto.java`와 이름이 같던 별개 클래스. `DefaultItemMapper`가 실제로 쓰는 `defaultitem` 패키지 쪽만 남김.
-
-**남겨둔 것**: `data/remote/dto/notification/NotificationSettingsDto.java`, `model/NotificationSettings.java`는 그때는 아직 미연결이었지만 서버 `notification_settings` 테이블에 대응하는 정상 스캐폴딩이라 삭제하지 않았고, **2026-08-07 데이터 레이어(Api/Repository/Mapper) 연결까지 완료**했습니다(`AppContainer.notificationSettingsRepository`). S16 화면(`NotificationSettingsActivity`) 자체는 아직 토글 로직이 안 붙어 있어 화면 연결만 남았습니다. `data/ChecklistItem.java`도 UI 임시 더미로 계속 쓰이고 있어 남겨뒀습니다(실 연동 시 `model/PackingItem.java` + `packingRepository`로 교체 예정).
-
 ### 화면 연결 시 참고할 흐름
 
 - S08 "방 생성 완료" 시점에 `tripRepository.createTrip()`을 호출해 서버가 반환한 `trip_id`부터 이후 화면에서 `TripRepository`를 사용합니다. (별도 "생성 세션" 단계 없이, `upload_id`/`analysis_id`만으로 여기까지 진행됩니다.)
@@ -493,9 +482,9 @@ com.example.mybaghackathon
 
 ---
 
-## 9. EC2 PHP 서버 구조 — ⚠️ 초기 설계안, 실제 구현과 다릅니다
+## 9. EC2 PHP 서버 구조 (개발 전 계획안)
 
-> **이 섹션(9~10번)은 개발 시작 전 계획 단계에서 작성한 초안입니다.** 실제 서버는 "생성 세션"(`creation_sessions`) 리소스 없이 `upload_id`→`analysis_id`→`trip_id` 체이닝 방식으로 구현됐고, REST 라우팅(`/api/trips/{tripId}` 같은 경로 파라미터·PATCH/DELETE)이 아니라 `html/api/도메인/동작.php` 형태의 파일 기반 엔드포인트로 구현됐습니다. **최신 API 스펙은 `mybag` 백엔드 레포 루트의 `APIs.md`를, 서버 구현 히스토리는 백엔드팀이 관리하는 `내가방서버현황.md`를 참고하세요.** 아래 내용은 최초 기획 의도를 참고하는 용도로만 남겨둡니다.
+이 섹션은 개발 시작 전에 세운 계획이라 실제 구현과 다른 부분이 있습니다. 실제 서버는 "생성 세션" 리소스 없이 `upload_id → analysis_id → trip_id`를 체이닝하는 방식으로 갔고, 라우팅도 `/api/trips/{tripId}` 같은 경로 파라미터 대신 `html/api/도메인/동작.php` 형태의 파일 기반 엔드포인트로 구현했습니다. 최신 API 스펙은 `mybag` 백엔드 레포의 `APIs.md`, 서버 구현 히스토리는 `내가방서버현황.md`를 참고해주세요. 아래는 초기 설계 의도를 남겨두는 용도입니다.
 
 EC2 PHP 서버는 인증, 방 생성 전 임시 세션, 여러 장 업로드, AI 분석, 여행방 확정, 체크리스트 공유를 처리합니다. S04에서 실제 방을 바로 만들지 않고 S08의 목록 아이템 생성 시점에 방과 방장 권한을 확정하는 최신 흐름을 기준으로 합니다.
 
@@ -702,158 +691,241 @@ S16의 D-7, D-3, D-1 알림은 MVP에서 읽기 전용으로 표시합니다. �
 
 ---
 
-## 10. MySQL 데이터 구조 — ⚠️ 초기 설계안, 실제 구현과 다릅니다
+## 10. MySQL 데이터 구조
 
-> 9번 섹션과 동일하게 이 섹션도 계획 단계 초안입니다. 실제로는 "생성 세션" 테이블이 없고, `trip_uploads`/`ai_analyses`가 `trip_id NULL` 상태로 먼저 생성됐다가 방 생성 확정 시 `UPDATE`로 채워지는 방식입니다. `trips.status`로 진행중/지난 여행을 구분하는 방식도 폐기되고 `end_date` 기준 조회로 대체됐습니다. **실제 스키마는 백엔드 레포의 `내가방서버현황.md` 8번 섹션(`CREATE TABLE` 원문)을 참고하세요.**
-
-MySQL은 사용자, 방 생성 전 임시 세션, 확정된 여행방, 분석 결과, 체크리스트와 알림 데이터를 관리합니다. 이 문서에서는 데이터 영역과 관계만 정의하며 테이블별 상세 컬럼과 `CREATE TABLE` 문은 작성하지 않습니다.
+계획 단계에서는 "생성 세션"이라는 별도 테이블을 두는 안을 검토했지만, 실제로는 그런 중간 테이블 없이 `trip_uploads`/`ai_analyses`를 `trip_id NULL` 상태로 먼저 만들고 방 생성이 확정되는 시점에 `UPDATE`로 채우는 방식으로 구현했습니다. 아래는 서버에 실제로 올라가 있는 13개 테이블 구조입니다.
 
 ### 설계 기준
 
-- MySQL 8.0, InnoDB, `utf8mb4`를 사용합니다.
-- Android는 MySQL에 직접 접속하지 않고 EC2 PHP REST API를 통해서만 접근합니다.
-- S04에서 입력한 방 정보는 실제 여행방이 아니라 생성 세션으로 임시 보관합니다.
-- S08에서 목록 아이템 생성을 확정할 때 실제 여행방과 OWNER 권한을 생성합니다.
-- AI 원문과 사용자가 확정한 일정·숙소·준비물을 구분합니다.
-- 업로드 이미지는 MySQL BLOB으로 저장하지 않고 EC2 비공개 경로에 저장합니다.
-- 날짜·시간은 UTC로 저장하고 Android에서 사용자 시간대로 표시합니다.
-- 아카이브는 별도 데이터를 복사하지 않고 여행방 상태와 종료일을 기준으로 조회합니다.
-- 삭제 복구와 관계 보존이 필요한 데이터는 소프트 삭제를 사용합니다.
+- MySQL 8.0, InnoDB, `utf8mb4_unicode_ci`를 씁니다.
+- Android는 MySQL에 직접 붙지 않고 EC2 PHP REST API를 통해서만 접근합니다.
+- PK는 `BIGINT UNSIGNED AUTO_INCREMENT`, boolean은 `TINYINT(1)`, 시간은 전부 UTC `DATETIME`으로 저장합니다.
+- 업로드 이미지는 MySQL에 BLOB으로 넣지 않고 EC2 서버 경로에 파일로 저장한 뒤 경로만 저장합니다.
+- 삭제가 필요한 데이터 중 관계 보존이 중요한 건(체크리스트 항목, 초대 코드 등) 실제 DELETE 대신 상태 컬럼으로 소프트 삭제합니다.
+- 진행중/지난 여행 구분은 별도 상태값이 아니라 `end_date` 기준으로 조회합니다.
 
-### 데이터 관계
+### 테이블 관계
 
 ```text
-사용자
-├── 로그인 세션
-├── 기본 준비물
-├── 알림 설정 · MVP 읽기 전용
-├── FCM 기기 token · 구현 예정
-├── 방 생성 세션
-│   ├── 여러 장 업로드
-│   └── AI 분석 실행과 1차 결과
-└── 여행방 참여 관계
-    └── 확정된 여행방
-        ├── 참여자
-        ├── 초대 링크
-        ├── 확정 일정
-        ├── 확정 숙소
-        ├── AI 분석 이력
-        ├── 공용·개인 준비물
-        └── 날씨·의식주 피드백 캐시 · 필요 시
+users
+├── notification_settings (1:1, 가입 시 기본값 행 자동 생성)
+├── fcm_tokens (1:N)
+├── user_default_items (1:N, 프로필 "내 기본 물품")
+├── trips (owner_user_id, 1:N)
+└── trip_members (1:N, 여러 여행방에 참여자로 소속)
+
+trips
+├── trip_members (1:N, OWNER/MEMBER)
+├── trip_invites (1:N, 초대 코드)
+├── trip_uploads (1:N, 일정·숙소 캡처 이미지)
+├── ai_analyses (1:N, 분석 실행마다 새 행)
+├── packing_items (1:N, 체크리스트)
+└── notification_log (1:N, D-day 알림 중복 발송 방지)
 ```
 
-### 방 생성 전 데이터
+### CREATE TABLE
 
-S04에서 입력한 방 이름과 예상 인원은 생성 세션에 저장합니다. 생성 세션은 만든 사용자만 접근할 수 있으며 홈과 아카이브 목록에는 표시하지 않습니다.
+```sql
+-- 1. users
+CREATE TABLE users (
+  user_id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  kakao_user_id      VARCHAR(100)  NOT NULL,
+  email              VARCHAR(255)  NULL,
+  nickname           VARCHAR(50)   NOT NULL,
+  profile_image_url  VARCHAR(500)  NULL,
+  account_status     VARCHAR(20)   NOT NULL DEFAULT 'ACTIVE',   -- ACTIVE, WITHDRAWN, BLOCKED
+  last_login_at      DATETIME      NULL,
+  created_at         DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at         DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_kakao_user_id (kakao_user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 2. trips
+CREATE TABLE trips (
+  trip_id                BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  owner_user_id          BIGINT UNSIGNED NOT NULL,
+  trip_name              VARCHAR(100) NOT NULL,
+  expected_member_count  INT UNSIGNED NOT NULL DEFAULT 1,
+  trip_type              VARCHAR(20)  NULL,   -- DOMESTIC, OVERSEAS
+  destination_country    VARCHAR(100) NULL,
+  destination_city       VARCHAR(100) NULL,
+  start_date             DATE NULL,
+  end_date               DATE NULL,
+  status                 VARCHAR(20)  NOT NULL DEFAULT 'CREATED',
+  created_at             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_trips_owner FOREIGN KEY (owner_user_id) REFERENCES users(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 3. trip_members
+CREATE TABLE trip_members (
+  trip_member_id  BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  trip_id         BIGINT UNSIGNED NOT NULL,
+  user_id         BIGINT UNSIGNED NOT NULL,
+  role            VARCHAR(20) NOT NULL DEFAULT 'MEMBER',   -- OWNER, MEMBER
+  member_status   VARCHAR(20) NOT NULL DEFAULT 'JOINED',   -- JOINED, LEFT, KICKED (나가기/강퇴는 MVP 범위 밖)
+  joined_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  left_at         DATETIME NULL,
+  UNIQUE KEY uk_trip_user (trip_id, user_id),
+  CONSTRAINT fk_trip_members_trip FOREIGN KEY (trip_id) REFERENCES trips(trip_id) ON DELETE CASCADE,
+  CONSTRAINT fk_trip_members_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 4. trip_invites
+CREATE TABLE trip_invites (
+  invite_id           BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  trip_id             BIGINT UNSIGNED NOT NULL,
+  created_by_user_id  BIGINT UNSIGNED NOT NULL,
+  invite_code         VARCHAR(100) NOT NULL,
+  max_uses            INT UNSIGNED NULL,
+  used_count          INT UNSIGNED NOT NULL DEFAULT 0,
+  expires_at          DATETIME NULL,
+  is_active           TINYINT(1) NOT NULL DEFAULT 1,
+  UNIQUE KEY uk_invite_code (invite_code),
+  CONSTRAINT fk_trip_invites_trip FOREIGN KEY (trip_id) REFERENCES trips(trip_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 5. trip_uploads (사진 원본은 저장하지 않고 file_path만 저장)
+-- trip_id는 NULL 허용 — 업로드 시점엔 아직 방이 없고, 방 생성이 확정되면 UPDATE로 채워짐
+CREATE TABLE trip_uploads (
+  upload_id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  trip_id              BIGINT UNSIGNED NULL,
+  uploader_user_id     BIGINT UNSIGNED NOT NULL,
+  upload_type          VARCHAR(20) NOT NULL,   -- ITINERARY, ACCOMMODATION, EXTRA
+  file_path            VARCHAR(500) NOT NULL,
+  original_file_name   VARCHAR(255) NULL,
+  mime_type            VARCHAR(100) NULL,
+  file_size            BIGINT UNSIGNED NULL,
+  sort_order           INT UNSIGNED NOT NULL DEFAULT 0,
+  upload_status        VARCHAR(20) NOT NULL DEFAULT 'UPLOADED',   -- UPLOADING, UPLOADED, ANALYZED, FAILED, DELETED
+  created_at           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_trip_uploads_trip FOREIGN KEY (trip_id) REFERENCES trips(trip_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 6. ai_analyses (재분석해도 덮어쓰지 않고 새 행을 추가)
+CREATE TABLE ai_analyses (
+  analysis_id           BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  trip_id               BIGINT UNSIGNED NULL,
+  requested_by_user_id  BIGINT UNSIGNED NOT NULL,
+  status                VARCHAR(20) NOT NULL DEFAULT 'PENDING',  -- PENDING, PROCESSING, SUCCEEDED, FAILED, CANCELLED
+  input_upload_ids      JSON NULL,
+  result_json           JSON NULL,   -- { trip, accommodation, weather[], restrictions[] }
+  error_message         VARCHAR(500) NULL,
+  created_at            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_ai_analyses_trip FOREIGN KEY (trip_id) REFERENCES trips(trip_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. packing_items (물품 1개 = 담당자 1명)
+CREATE TABLE packing_items (
+  packing_item_id     BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  trip_id             BIGINT UNSIGNED NOT NULL,
+  analysis_id         BIGINT UNSIGNED NULL,
+  item_name           VARCHAR(100) NOT NULL,
+  category            VARCHAR(50) NULL,
+  priority            VARCHAR(20) NOT NULL DEFAULT 'OPTIONAL',   -- REQUIRED, RECOMMENDED, OPTIONAL
+  item_scope          VARCHAR(20) NOT NULL DEFAULT 'COMMON',     -- COMMON, PERSONAL
+  source              VARCHAR(20) NOT NULL,                      -- AI, USER, DEFAULT
+  restriction_type    VARCHAR(30) NULL,    -- PROHIBITED, CARRY_ON_ONLY, CHECKED_ONLY, LIMITED, CAUTION
+  restriction_reason  VARCHAR(500) NULL,
+  assignee_user_id    BIGINT UNSIGNED NULL,   -- NULL이면 미지정, 공용 물품도 미지정 가능
+  is_completed        TINYINT(1) NOT NULL DEFAULT 0,
+  item_status         VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',   -- ACTIVE, EXCLUDED, DELETED
+  sort_order          INT UNSIGNED NOT NULL DEFAULT 0,
+  created_at          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_packing_items_trip FOREIGN KEY (trip_id) REFERENCES trips(trip_id) ON DELETE CASCADE,
+  CONSTRAINT fk_packing_items_analysis FOREIGN KEY (analysis_id) REFERENCES ai_analyses(analysis_id),
+  CONSTRAINT fk_packing_items_assignee FOREIGN KEY (assignee_user_id) REFERENCES users(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 8. user_default_items (프로필 "내 기본 물품")
+CREATE TABLE user_default_items (
+  default_item_id   BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id            BIGINT UNSIGNED NOT NULL,
+  item_name          VARCHAR(100) NOT NULL,
+  category           VARCHAR(50) NULL,
+  default_priority   VARCHAR(20) NOT NULL DEFAULT 'OPTIONAL',
+  is_active          TINYINT(1) NOT NULL DEFAULT 1,
+  UNIQUE KEY uk_user_item (user_id, item_name),
+  CONSTRAINT fk_user_default_items_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 9. notification_settings (가입 시 users와 함께 기본값 행 생성, 전부 켜짐)
+CREATE TABLE notification_settings (
+  user_id                   BIGINT UNSIGNED PRIMARY KEY,
+  d7_enabled                TINYINT(1) NOT NULL DEFAULT 1,
+  d3_enabled                TINYINT(1) NOT NULL DEFAULT 1,
+  d1_enabled                TINYINT(1) NOT NULL DEFAULT 1,
+  assignment_enabled        TINYINT(1) NOT NULL DEFAULT 1,
+  checklist_change_enabled  TINYINT(1) NOT NULL DEFAULT 1,
+  weather_enabled           TINYINT(1) NOT NULL DEFAULT 1,
+  CONSTRAINT fk_notification_settings_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 10. fcm_tokens
+CREATE TABLE fcm_tokens (
+  fcm_token_id   BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id        BIGINT UNSIGNED NOT NULL,
+  token          VARCHAR(512) NOT NULL,
+  device_id      VARCHAR(255) NULL,
+  platform       VARCHAR(20) NOT NULL DEFAULT 'ANDROID',
+  is_active      TINYINT(1) NOT NULL DEFAULT 1,
+  last_seen_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_token (token),
+  CONSTRAINT fk_fcm_tokens_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 11. api_cache (호출 한도가 있는 외부 API 응답 캐싱, 현재 날씨 API가 사용)
+CREATE TABLE api_cache (
+  cache_id      BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  cache_key     VARCHAR(255) NOT NULL,
+  response_json JSON NOT NULL,
+  expires_at    DATETIME NOT NULL,
+  UNIQUE KEY uk_cache_key (cache_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 12. notification_log (D-7/D-3/D-1 알림 중복 발송 방지 + 배치가 하루 스킵돼도 캐치업)
+-- (trip_id, user_id, notify_type) 조합당 한 행만 존재 — 있으면 이미 보낸 것
+CREATE TABLE notification_log (
+  notification_log_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  trip_id      BIGINT UNSIGNED NOT NULL,
+  user_id      BIGINT UNSIGNED NOT NULL,
+  notify_type  VARCHAR(20) NOT NULL,  -- D7, D3, D1
+  sent_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_trip_user_type (trip_id, user_id, notify_type),
+  CONSTRAINT fk_notification_log_trip FOREIGN KEY (trip_id) REFERENCES trips(trip_id),
+  CONSTRAINT fk_notification_log_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 13. auth_sessions
+-- JWT를 stateless 30일 만료로 발급하는 방식이라 refresh token 갱신·폐기가 필요 없어서 현재는 생성만 해두고 미사용
+```
+
+### 체크리스트 동작
+
+- 물품은 공용(`COMMON`)·개인(`PERSONAL`) 스코프와 담당자 지정이 각각 별도 컬럼입니다. 공용 물품도 담당자 미지정 상태로 둘 수 있습니다.
+- 체크 여부(`is_completed`)는 실제로 컬럼에 저장하고, 진행률은 매번 계산합니다.
+- 항목 삭제는 물리 삭제가 아니라 `item_status = 'DELETED'`로 처리합니다.
+- 재분석을 실행하면 이전 AI 항목은 소프트 삭제되고 새 항목이 들어오지만, 사용자가 직접 추가한(`source = 'USER'`) 항목은 그대로 남습니다.
+- 현재는 물품 하나에 담당자 한 명만 지정할 수 있는 구조입니다. 여러 명 배정이 필요해지면 별도 매핑 테이블로 분리할 수 있습니다.
+
+### 알림
+
+- 담당자 지정, 출발 D-7·D-3·D-1 알림은 `notification_settings`의 사용자별 토글 값을 보고 발송 대상을 정합니다.
+- `notification_log`로 같은 트립·같은 사람·같은 타입 알림이 중복 발송되지 않게 막습니다.
+- 날씨 API 응답은 `api_cache`에 짧게 캐시해서 호출 횟수를 아낍니다.
+
+### 환경변수
 
 ```text
-생성 세션 상태
-├── DRAFT       방 정보 입력
-├── UPLOADING   이미지 업로드 중
-├── ANALYZING   AI 분석 중
-├── REVIEWING   S07·S08 검토 중
-├── CONFIRMED   실제 여행방 생성 완료
-├── FAILED      분석 또는 확정 실패
-└── EXPIRED     유효기간 만료
+DB_HOST, DB_USER, DB_PASS, DB_NAME
+JWT_SECRET
+KAKAO_REST_API_KEY, KAKAO_CLIENT_SECRET, KAKAO_REDIRECT_URI
+OPENAI_API_KEY, OPENAI_MODEL
+OPENWEATHER_API_KEY
+FCM_PROJECT_ID, FCM_SERVICE_ACCOUNT_PATH
 ```
 
-생성 세션에는 방 이름, 예상 인원, 생성자, 진행 상태, 만료 시점만 보관합니다. 실제 방장 권한과 여행방 참여 관계는 S08 확정 전까지 만들지 않습니다.
-
-### 업로드와 AI 분석 데이터
-
-- 일정표, 항공권, 캘린더 캡처, 숙소 확인서와 추가 이미지를 여러 장 관리합니다.
-- 국내·해외 여부는 사용자가 직접 선택하지 않고 분석 결과의 국가와 이동수단으로 판단합니다.
-- 분석 실행마다 별도 이력을 남겨 재분석과 실패 원인을 구분합니다.
-- S07의 1차 결과는 여행지, 날짜, 숙소, 이동수단을 우선 확인합니다.
-- S08에서 사용자가 수정·확정한 값은 AI 원문과 분리하여 저장합니다.
-- 생성 세션이 만료되거나 취소되면 임시 업로드와 분석 데이터는 보관 정책에 따라 삭제합니다.
-
-### 여행방 확정 데이터
-
-S08에서 사용자가 목록 아이템 생성을 누르면 다음 데이터를 하나의 트랜잭션으로 확정합니다.
-
-```text
-생성 세션 검증
-→ 실제 여행방 생성
-→ 생성자를 OWNER로 등록
-→ 일정 저장
-→ 숙소 저장
-→ 준비물 저장
-→ 공용·개인 분류 반영
-→ 분석 상태 확정
-→ 생성 세션 완료
-```
-
-하나라도 실패하면 전체 작업을 취소하여 방만 존재하거나 체크리스트만 누락되는 상태를 방지합니다.
-
-### 여행방과 참여자
-
-- 여행방은 방장, 여행명, 예상 인원, 국내·해외 자동 판단 결과, 국가·도시, 여행 기간과 상태를 관리합니다.
-- 생성 세션 단계의 데이터는 홈에 표시하지 않고 확정된 여행방만 홈과 아카이브에서 조회합니다.
-- 방장은 일정 업로드·재분석, 초대 링크 발급과 참여자 관리 권한을 가집니다.
-- 일반 참여자는 공유된 여행 정보와 체크리스트를 조회하고 자신의 담당 항목을 관리합니다.
-- 같은 사용자가 같은 여행방에 중복 참여하지 않도록 제한합니다.
-
-### 일정과 숙소
-
-- 일정은 날짜, 시간, 국가·도시, 장소, 활동 내용과 정렬 순서를 관리합니다.
-- 숙소는 숙소명, 주소, 체크인·체크아웃과 위치 정보를 관리합니다.
-- 일정과 숙소는 AI 분석 원문이 아니라 사용자가 S08에서 검토·확정한 값을 기준으로 저장합니다.
-- 예약번호와 투숙객 이름처럼 앱 기능에 필요하지 않은 개인정보는 저장하지 않습니다.
-
-### 체크리스트
-
-```text
-공용 준비물
-→ 참여자 2명 이상일 때 S11에 표시
-→ 담당자 지정·해제 가능
-→ 완료 상태와 진행률 관리
-
-개인 준비물
-→ S12 내 목록에 표시
-→ 목록에 남아있는 항목은 챙길 물품
-→ 가져가지 않을 항목은 슬라이드 삭제
-
-분담 현황
-→ 참여자 2명 이상일 때 S13에 표시
-→ 담당자별 항목과 미지정 항목을 그룹화
-```
-
-- 준비물의 공용·개인 분류와 담당자 지정은 서로 다른 값으로 관리합니다.
-- v/x 최종 확정 상태는 저장하지 않습니다.
-- 내 목록에서 삭제한 항목은 실행취소 시간을 지원할 수 있도록 우선 소프트 삭제합니다.
-- 공용 체크리스트의 체크 상태와 진행률을 위한 완료 정보는 유지합니다.
-- 현재 UI는 준비물 한 개에 담당자 한 명을 지정하는 구조입니다.
-
-### 기본 물품
-
-- 프로필에서 관리하는 기본 물품은 특정 여행의 준비물과 분리합니다.
-- 새 여행방 체크리스트를 생성할 때 활성화된 기본 물품을 개인 준비물 후보로 복사할 수 있습니다.
-- 기본 물품 변경이 과거 여행의 준비물에 영향을 주지 않도록 복사 후 별도 데이터로 관리합니다.
-
-### 날씨와 알림
-
-- Open-Meteo 결과는 요청 시 조회하고 짧게 캐시하는 것을 기본으로 합니다.
-- 여러 사용자의 반복 요청으로 응답 속도가 문제가 될 때만 여행별 날씨 캐시를 추가합니다.
-- S16의 D-7, D-3, D-1 알림 설정은 MVP에서 읽기 전용으로 표시합니다.
-- 사용자별 알림 커스터마이징과 FCM token 저장은 구현 예정으로 구분합니다.
-- 출발일이 확정되지 않은 여행방에는 D-day 알림을 보내지 않습니다.
-
-### API Key와 비밀값
-
-```text
-EC2 환경변수
-├── DB_HOST
-├── DB_NAME
-├── DB_USER
-├── DB_PASSWORD
-├── KAKAO_REST_API_KEY
-├── OPENAI_API_KEY
-├── OPEN_METEO_BASE_URL
-└── FCM_SERVICE_ACCOUNT_PATH · 구현 예정
-```
-
-API Key, DB 비밀번호, 로그인 token 원문은 MySQL 데이터, Android 소스 또는 GitHub README에 저장하지 않습니다.
+API Key, DB 비밀번호, 로그인 토큰 원문은 MySQL, Android 소스, GitHub README 어디에도 저장하지 않습니다.
 
 ---
 
