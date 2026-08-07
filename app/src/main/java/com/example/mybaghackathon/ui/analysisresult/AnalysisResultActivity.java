@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ActivityAnalysisResultBinding;
+import com.example.mybaghackathon.model.PackingItem;
+import com.example.mybaghackathon.model.RestrictedItem;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.analyzing.AnalyzingActivity;
 import com.example.mybaghackathon.ui.review.ScheduleReviewActivity;
@@ -17,6 +19,7 @@ import com.example.mybaghackathon.ui.upload.ScheduleUploadActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +33,14 @@ public class AnalysisResultActivity extends AppCompatActivity {
     private ActivityAnalysisResultBinding binding;
     private long analysisId;
     private long[] uploadIds;
+    private String roomName;
+    private int memberCount;
+    private ArrayList<RestrictedItem> restrictedItems;
+    private ArrayList<PackingItem> recommendedItems;
+    private String destinationCountry;
+    private String destinationCity;
+    private String startDate;
+    private String endDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +55,16 @@ public class AnalysisResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         analysisId = intent.getLongExtra(AnalyzingActivity.EXTRA_ANALYSIS_ID, -1);
         uploadIds = intent.getLongArrayExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS);
-        String destinationCountry = intent.getStringExtra(AnalyzingActivity.EXTRA_DESTINATION_COUNTRY);
-        String destinationCity = intent.getStringExtra(AnalyzingActivity.EXTRA_DESTINATION_CITY);
-        String startDate = intent.getStringExtra(AnalyzingActivity.EXTRA_START_DATE);
-        String endDate = intent.getStringExtra(AnalyzingActivity.EXTRA_END_DATE);
+        destinationCountry = intent.getStringExtra(AnalyzingActivity.EXTRA_DESTINATION_COUNTRY);
+        destinationCity = intent.getStringExtra(AnalyzingActivity.EXTRA_DESTINATION_CITY);
+        startDate = intent.getStringExtra(AnalyzingActivity.EXTRA_START_DATE);
+        endDate = intent.getStringExtra(AnalyzingActivity.EXTRA_END_DATE);
         String transportMode = intent.getStringExtra(AnalyzingActivity.EXTRA_TRANSPORT_MODE);
         String accommodationName = intent.getStringExtra(AnalyzingActivity.EXTRA_ACCOMMODATION_NAME);
+        roomName = intent.getStringExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME);
+        memberCount = intent.getIntExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, 0);
+        restrictedItems = (ArrayList<RestrictedItem>) intent.getSerializableExtra(AnalyzingActivity.EXTRA_RESTRICTED_ITEMS);
+        recommendedItems = (ArrayList<PackingItem>) intent.getSerializableExtra(AnalyzingActivity.EXTRA_RECOMMENDED_ITEMS);
 
         bindField(binding.confirmDestinationCard, R.string.schedule_confirm_destination_label,
                 formatDestination(destinationCity, destinationCountry));
@@ -63,12 +78,22 @@ public class AnalysisResultActivity extends AppCompatActivity {
         binding.confirmRetryButton.setOnClickListener(v -> {
             Intent retry = new Intent(this, AnalyzingActivity.class);
             retry.putExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS, uploadIds);
+            retry.putExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME, roomName);
+            retry.putExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, memberCount);
             startActivity(retry);
             finish();
         });
         binding.confirmNextButton.setOnClickListener(v -> {
             Intent next = new Intent(this, ScheduleReviewActivity.class);
             next.putExtra(AnalyzingActivity.EXTRA_ANALYSIS_ID, analysisId);
+            next.putExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME, roomName);
+            next.putExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, memberCount);
+            next.putExtra(AnalyzingActivity.EXTRA_RESTRICTED_ITEMS, restrictedItems);
+            next.putExtra(AnalyzingActivity.EXTRA_RECOMMENDED_ITEMS, recommendedItems);
+            next.putExtra(AnalyzingActivity.EXTRA_DESTINATION_COUNTRY, destinationCountry);
+            next.putExtra(AnalyzingActivity.EXTRA_DESTINATION_CITY, destinationCity);
+            next.putExtra(AnalyzingActivity.EXTRA_START_DATE, startDate);
+            next.putExtra(AnalyzingActivity.EXTRA_END_DATE, endDate);
             startActivity(next);
             finish();
         });

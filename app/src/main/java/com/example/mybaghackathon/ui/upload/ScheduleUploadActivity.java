@@ -43,6 +43,8 @@ public class ScheduleUploadActivity extends AppCompatActivity {
 
     public static final String EXTRA_UPLOAD_IDS = "upload_ids";
     public static final String EXTRA_SELECTED_URIS = "selected_uris";
+    public static final String EXTRA_ROOM_NAME = "room_name";
+    public static final String EXTRA_MEMBER_COUNT = "member_count";
 
     // 사진 종류는 사용자가 직접 고르지 않는다 — 일정표·숙소예약·항공권 등 섞인 사진을
     // 그대로 올리면 AI가 분석해서 구분한다(S07/S08 결과 화면 참고). 그래서 업로드
@@ -51,6 +53,8 @@ public class ScheduleUploadActivity extends AppCompatActivity {
 
     private ActivityScheduleUploadBinding binding;
     private UploadRepository uploadRepository;
+    private String roomName;
+    private int memberCount;
     private final List<Uri> selectedUris = new ArrayList<>();
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -66,6 +70,9 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
         uploadRepository = ((MyBagApplication) getApplication()).getAppContainer().uploadRepository;
+
+        roomName = getIntent().getStringExtra(EXTRA_ROOM_NAME);
+        memberCount = getIntent().getIntExtra(EXTRA_MEMBER_COUNT, 0);
 
         binding.uploadTopAppBar.topAppBarTitle.setText(R.string.upload_title);
         binding.uploadTopAppBar.topAppBarDesc.setText(R.string.upload_desc);
@@ -154,6 +161,8 @@ public class ScheduleUploadActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AnalyzingActivity.class);
             intent.putExtra(EXTRA_UPLOAD_IDS, uploadIds);
             intent.putParcelableArrayListExtra(EXTRA_SELECTED_URIS, new ArrayList<>(selectedUris));
+            intent.putExtra(EXTRA_ROOM_NAME, roomName);
+            intent.putExtra(EXTRA_MEMBER_COUNT, memberCount);
             startActivity(intent);
             finish();
         } else {

@@ -5,6 +5,8 @@
     <string name="restriction_cabin_only">기내만 가능</string>
     <string name="restriction_checked_only">위탁만 가능</string>
     <string name="restriction_prohibited">반입 금지</string>
+    <string name="restriction_limited">반입 제한</string>
+    <string name="restriction_caution">주의 필요</string>
 
     <!-- 공통 액션 -->
     <string name="action_add">추가</string>
@@ -106,7 +108,14 @@
     <string name="review_destination_label">여행지</string>
     <string name="review_dates_label">숙소 일정</string>
     <string name="review_weather_heading">일정별 날씨</string>
+    <string name="weather_condition_sun">맑음</string>
+    <string name="weather_condition_rain">비</string>
+    <string name="weather_condition_cloud">흐림</string>
+    <string name="weather_condition_snow">눈</string>
     <string name="review_restriction_warning">보조배터리 등 3개 항목에 반입 규정이 있어요</string>
+    <string name="review_restriction_warning_single">%1$s 항목에 반입 규정이 있어요</string>
+    <string name="review_restriction_warning_multiple">%1$s 등 %2$d개 항목에 반입 규정이 있어요</string>
+    <string name="review_restriction_dialog_title">반입 규정 안내</string>
     <string name="review_items_heading">추천 준비물</string>
     <string name="review_items_desc">체크한 항목은 공용 체크리스트에 담겨요</string>
     <string name="review_priority_high">필수</string>

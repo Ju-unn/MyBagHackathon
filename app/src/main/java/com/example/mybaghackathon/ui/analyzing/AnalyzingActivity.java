@@ -16,6 +16,8 @@ import com.example.mybaghackathon.common.AppResult;
 import com.example.mybaghackathon.data.repository.AnalysisRepository;
 import com.example.mybaghackathon.databinding.ActivityAnalyzingBinding;
 import com.example.mybaghackathon.model.AnalysisResult;
+import com.example.mybaghackathon.model.PackingItem;
+import com.example.mybaghackathon.model.RestrictedItem;
 import com.example.mybaghackathon.model.TripSchedule;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.analysisresult.AnalysisResultActivity;
@@ -39,6 +41,8 @@ public class AnalyzingActivity extends AppCompatActivity {
     public static final String EXTRA_END_DATE = "end_date";
     public static final String EXTRA_TRANSPORT_MODE = "transport_mode";
     public static final String EXTRA_ACCOMMODATION_NAME = "accommodation_name";
+    public static final String EXTRA_RESTRICTED_ITEMS = "restricted_items";
+    public static final String EXTRA_RECOMMENDED_ITEMS = "recommended_items";
 
     private static final int[] STEPS = {
             R.string.analyzing_step1, R.string.analyzing_step2,
@@ -53,6 +57,8 @@ public class AnalyzingActivity extends AppCompatActivity {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private long[] uploadIdsArray; // 성공 시 S07로 다시 넘겨줘서, "다시 분석하기" 때 재사용할 수 있게 보관
     private ArrayList<Uri> selectedUris; // 취소 시 S05로 되돌려줄 사진 목록
+    private String roomName;
+    private int memberCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +76,8 @@ public class AnalyzingActivity extends AppCompatActivity {
         binding.analyzingCancel.setOnClickListener(v -> {
             Intent intent = new Intent(this, ScheduleUploadActivity.class);
             intent.putParcelableArrayListExtra(ScheduleUploadActivity.EXTRA_SELECTED_URIS, selectedUris);
+            intent.putExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME, roomName);
+            intent.putExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, memberCount);
             startActivity(intent);
             finish();
         });
@@ -80,6 +88,8 @@ public class AnalyzingActivity extends AppCompatActivity {
     private void startAnalysis() {
         uploadIdsArray = getIntent().getLongArrayExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS);
         selectedUris = getIntent().getParcelableArrayListExtra(ScheduleUploadActivity.EXTRA_SELECTED_URIS);
+        roomName = getIntent().getStringExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME);
+        memberCount = getIntent().getIntExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, 0);
         List<Long> uploadIds = new ArrayList<>();
         if (uploadIdsArray != null) {
             for (long id : uploadIdsArray) {
@@ -111,6 +121,10 @@ public class AnalyzingActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_END_DATE, schedule.getEndDate());
             intent.putExtra(EXTRA_TRANSPORT_MODE, schedule.getTransportMode());
             intent.putExtra(EXTRA_ACCOMMODATION_NAME, data.getAccommodationName());
+            intent.putExtra(EXTRA_RESTRICTED_ITEMS, new ArrayList<RestrictedItem>(data.getRestrictedItems()));
+            intent.putExtra(EXTRA_RECOMMENDED_ITEMS, new ArrayList<PackingItem>(data.getRecommendedItems()));
+            intent.putExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME, roomName);
+            intent.putExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, memberCount);
             startActivity(intent);
             finish();
         } else {
