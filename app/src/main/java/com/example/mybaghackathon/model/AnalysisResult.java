@@ -4,53 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 여러 장의 여행 자료를 분석한 한 번의 AI 실행 결과를 나타내는 모델입니다.
+ * GPT Vision 일정 분석 결과 한 건을 나타내는 모델입니다. (analyze.php/confirm.php 응답 1:1 대응)
  *
- * <p>분석 상태와 구조화된 일정, 숙소, 추천 준비물을 함께 보관합니다. 분석 실패
- * 시에는 errorCode와 errorMessage를 사용하고, 결과 목록이 null이면 빈 목록으로
- * 처리합니다.</p>
+ * <p>여행 전체를 대표하는 단일 {@link TripSchedule} + 숙소명 문자열 + 반입 제한 목록 +
+ * 추천 준비물 목록으로 구성됩니다. 방 생성 전이라 tripId는 없습니다.</p>
  */
 public class AnalysisResult {
 
     private long analysisId;
-    private long tripId;
-    private String status;
-    private String modelName;
-    private String promptVersion;
-    private List<TripSchedule> schedules = new ArrayList<>();
-    private List<Accommodation> accommodations = new ArrayList<>();
-    private List<PackingItem> suggestedItems = new ArrayList<>();
-    private String errorCode;
-    private String errorMessage;
-    private String completedAt;
+    private TripSchedule schedule;
+    private String accommodationName;
+    private List<RestrictedItem> restrictedItems = new ArrayList<>();
+    private List<PackingItem> recommendedItems = new ArrayList<>();
 
     public AnalysisResult() {
     }
 
     public AnalysisResult(
             long analysisId,
-            long tripId,
-            String status,
-            String modelName,
-            String promptVersion,
-            List<TripSchedule> schedules,
-            List<Accommodation> accommodations,
-            List<PackingItem> suggestedItems,
-            String errorCode,
-            String errorMessage,
-            String completedAt
+            TripSchedule schedule,
+            String accommodationName,
+            List<RestrictedItem> restrictedItems,
+            List<PackingItem> recommendedItems
     ) {
         this.analysisId = analysisId;
-        this.tripId = tripId;
-        this.status = status;
-        this.modelName = modelName;
-        this.promptVersion = promptVersion;
-        setSchedules(schedules);
-        setAccommodations(accommodations);
-        setSuggestedItems(suggestedItems);
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
-        this.completedAt = completedAt;
+        this.schedule = schedule;
+        this.accommodationName = accommodationName;
+        setRestrictedItems(restrictedItems);
+        setRecommendedItems(recommendedItems);
     }
 
     public long getAnalysisId() {
@@ -61,89 +42,39 @@ public class AnalysisResult {
         this.analysisId = analysisId;
     }
 
-    public long getTripId() {
-        return tripId;
+    public TripSchedule getSchedule() {
+        return schedule;
     }
 
-    public void setTripId(long tripId) {
-        this.tripId = tripId;
+    public void setSchedule(TripSchedule schedule) {
+        this.schedule = schedule;
     }
 
-    public String getStatus() {
-        return status;
+    public String getAccommodationName() {
+        return accommodationName;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setAccommodationName(String accommodationName) {
+        this.accommodationName = accommodationName;
     }
 
-    public String getModelName() {
-        return modelName;
+    public List<RestrictedItem> getRestrictedItems() {
+        return restrictedItems;
     }
 
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
-    }
-
-    public String getPromptVersion() {
-        return promptVersion;
-    }
-
-    public void setPromptVersion(String promptVersion) {
-        this.promptVersion = promptVersion;
-    }
-
-    public List<TripSchedule> getSchedules() {
-        return schedules;
-    }
-
-    public void setSchedules(List<TripSchedule> schedules) {
-        this.schedules = schedules == null
+    public void setRestrictedItems(List<RestrictedItem> restrictedItems) {
+        this.restrictedItems = restrictedItems == null
                 ? new ArrayList<>()
-                : new ArrayList<>(schedules);
+                : new ArrayList<>(restrictedItems);
     }
 
-    public List<Accommodation> getAccommodations() {
-        return accommodations;
+    public List<PackingItem> getRecommendedItems() {
+        return recommendedItems;
     }
 
-    public void setAccommodations(List<Accommodation> accommodations) {
-        this.accommodations = accommodations == null
+    public void setRecommendedItems(List<PackingItem> recommendedItems) {
+        this.recommendedItems = recommendedItems == null
                 ? new ArrayList<>()
-                : new ArrayList<>(accommodations);
-    }
-
-    public List<PackingItem> getSuggestedItems() {
-        return suggestedItems;
-    }
-
-    public void setSuggestedItems(List<PackingItem> suggestedItems) {
-        this.suggestedItems = suggestedItems == null
-                ? new ArrayList<>()
-                : new ArrayList<>(suggestedItems);
-    }
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-
-    public String getCompletedAt() {
-        return completedAt;
-    }
-
-    public void setCompletedAt(String completedAt) {
-        this.completedAt = completedAt;
+                : new ArrayList<>(recommendedItems);
     }
 }

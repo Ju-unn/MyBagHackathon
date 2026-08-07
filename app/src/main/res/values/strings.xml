@@ -154,6 +154,8 @@
     <string name="archive_title">공용 여행</string>
     <string name="archive_segment_active">진행 중</string>
     <string name="archive_segment_past">지난 여행</string>
+    <string name="archive_empty_title">아직 함께한 여행이 없어요</string>
+    <string name="archive_empty_desc">방을 만들면 이곳에 모여요</string>
 
     <!-- S14 프로필 -->
     <string name="profile_name">김민지</string>

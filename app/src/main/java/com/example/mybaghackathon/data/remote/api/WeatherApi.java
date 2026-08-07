@@ -1,6 +1,7 @@
 package com.example.mybaghackathon.data.remote.api;
 
 import com.example.mybaghackathon.data.remote.dto.common.ApiResponseDto;
+import com.example.mybaghackathon.data.remote.dto.weather.WeatherFeedbackDto;
 import com.example.mybaghackathon.data.remote.dto.weather.WeatherForecastDto;
 
 import retrofit2.Call;
@@ -34,4 +35,23 @@ public interface WeatherApi {
             @Query("start_date") String startDate,
             @Query("end_date") String endDate
     );
+
+    /**
+     * 여행방 목적지·기간·날씨 기반 옷차림/음식/숙소 GPT 조언 조회 (S10 WeatherFeedbackActivity)
+     *
+     * 요청: GET /api/weather/feedback.php?trip_id=2
+     *
+     * 응답:
+     * {
+     *   "success": true,
+     *   "message": "조회 성공",
+     *   "data": {
+     *     "clothing": "...",
+     *     "food": "...",
+     *     "accommodation_notes": "..."
+     *   }
+     * }
+     */
+    @GET("api/weather/feedback.php")
+    Call<ApiResponseDto<WeatherFeedbackDto>> getFeedback(@Query("trip_id") long tripId);
 }

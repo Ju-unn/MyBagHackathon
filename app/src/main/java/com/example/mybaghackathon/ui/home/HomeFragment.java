@@ -133,15 +133,15 @@ public class HomeFragment extends Fragment {
 
     private List<Trip> mockTrips() {
         List<Trip> trips = new ArrayList<>();
-        trips.add(new Trip(1L, 100L, "도쿄 벚꽃 여행", 3, null, "JP", "일본", "도쿄",
+        trips.add(new Trip(1L, 100L, "도쿄 벚꽃 여행", 3, "OVERSEAS", "일본", "도쿄",
                 "2026-08-18", "2026-08-22", TRIP_STATUS_ACTIVE, null,
                 Arrays.asList(
                         new TripMember(1L, "민", null, "MEMBER", "ACTIVE", null),
                         new TripMember(2L, "유", null, "MEMBER", "ACTIVE", null),
                         new TripMember(3L, "김", null, "OWNER", "ACTIVE", null))));
-        trips.add(new Trip(2L, 100L, "제주 가족 여행", 2, null, "KR", "대한민국", "제주",
+        trips.add(new Trip(2L, 100L, "제주 가족 여행", 2, "DOMESTIC", "대한민국", "제주",
                 "2026-09-05", "2026-09-08", TRIP_STATUS_UPCOMING, null, Collections.emptyList()));
-        trips.add(new Trip(3L, 100L, "부산 여름 여행", 2, null, "KR", "대한민국", "부산",
+        trips.add(new Trip(3L, 100L, "부산 여름 여행", 2, "DOMESTIC", "대한민국", "부산",
                 "2026-07-01", "2026-07-03", TRIP_STATUS_COMPLETED, null, Collections.emptyList())); // 홈에서는 필터링됨
         return trips;
     }

@@ -1,180 +1,87 @@
 package com.example.mybaghackathon.model;
 
 /**
- * 사용자가 검토하고 확정한 여행 일정 한 건을 나타내는 모델입니다.
+ * 여행 일정을 나타내는 모델입니다. (README 8번 "최종 일정 Model" 통일 방침)
+ *
+ * <p>GPT Vision 분석(analyze.php/confirm.php)이 여행 전체를 대표하는 목적지 1개 +
+ * 기간 1쌍만 반환하므로, 날짜별 세부 항목이 아니라 여행 전체 기준 플랫한 정보로
+ * 구성합니다. 방 생성(trips/create.php) 이후에는 {@code trips} 테이블의
+ * destination_country/city, start_date/end_date와 동일한 값입니다.</p>
  */
 public class TripSchedule {
 
-    private long scheduleId;
-    private long tripId;
-    private String scheduleDate;
-    private String startTime;
-    private String endTime;
-    private String countryCode;
-    private String countryName;
-    private String cityName;
-    private String placeName;
-    private String activityText;
-    private Double latitude;
-    private Double longitude;
-    private int sortOrder;
-    private String source;
-    private boolean confirmed;
+    private String destinationCountry;
+    private String destinationCity;
+    private String startDate;
+    private String endDate;
+    private String transportMode;
+    private Boolean isOverseas;
 
     public TripSchedule() {
     }
 
     public TripSchedule(
-            long scheduleId,
-            long tripId,
-            String scheduleDate,
-            String startTime,
-            String endTime,
-            String countryCode,
-            String countryName,
-            String cityName,
-            String placeName,
-            String activityText,
-            Double latitude,
-            Double longitude,
-            int sortOrder,
-            String source,
-            boolean confirmed
+            String destinationCountry,
+            String destinationCity,
+            String startDate,
+            String endDate,
+            String transportMode,
+            Boolean isOverseas
     ) {
-        this.scheduleId = scheduleId;
-        this.tripId = tripId;
-        this.scheduleDate = scheduleDate;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.countryCode = countryCode;
-        this.countryName = countryName;
-        this.cityName = cityName;
-        this.placeName = placeName;
-        this.activityText = activityText;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.sortOrder = sortOrder;
-        this.source = source;
-        this.confirmed = confirmed;
+        this.destinationCountry = destinationCountry;
+        this.destinationCity = destinationCity;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.transportMode = transportMode;
+        this.isOverseas = isOverseas;
     }
 
-    public long getScheduleId() {
-        return scheduleId;
+    public String getDestinationCountry() {
+        return destinationCountry;
     }
 
-    public void setScheduleId(long scheduleId) {
-        this.scheduleId = scheduleId;
+    public void setDestinationCountry(String destinationCountry) {
+        this.destinationCountry = destinationCountry;
     }
 
-    public long getTripId() {
-        return tripId;
+    public String getDestinationCity() {
+        return destinationCity;
     }
 
-    public void setTripId(long tripId) {
-        this.tripId = tripId;
+    public void setDestinationCity(String destinationCity) {
+        this.destinationCity = destinationCity;
     }
 
-    public String getScheduleDate() {
-        return scheduleDate;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setScheduleDate(String scheduleDate) {
-        this.scheduleDate = scheduleDate;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
-    public String getStartTime() {
-        return startTime;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
-    public String getEndTime() {
-        return endTime;
+    // AIR, OTHER 중 하나 (또는 null — 사진에서 못 읽었을 때)
+    public String getTransportMode() {
+        return transportMode;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
+    public void setTransportMode(String transportMode) {
+        this.transportMode = transportMode;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    public Boolean getIsOverseas() {
+        return isOverseas;
     }
 
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
-    }
-
-    public String getCountryName() {
-        return countryName;
-    }
-
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-
-    public String getCityName() {
-        return cityName;
-    }
-
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
-
-    public String getPlaceName() {
-        return placeName;
-    }
-
-    public void setPlaceName(String placeName) {
-        this.placeName = placeName;
-    }
-
-    public String getActivityText() {
-        return activityText;
-    }
-
-    public void setActivityText(String activityText) {
-        this.activityText = activityText;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public int getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(int sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public boolean isConfirmed() {
-        return confirmed;
-    }
-
-    public void setConfirmed(boolean confirmed) {
-        this.confirmed = confirmed;
+    public void setIsOverseas(Boolean isOverseas) {
+        this.isOverseas = isOverseas;
     }
 }

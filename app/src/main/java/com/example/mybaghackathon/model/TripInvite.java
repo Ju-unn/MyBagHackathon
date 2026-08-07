@@ -1,43 +1,30 @@
 package com.example.mybaghackathon.model;
 
 /**
- * 여행방에 동행자를 초대할 때 사용하는 공유 정보를 나타내는 모델입니다.
+ * 방 생성(trips/create.php) 응답으로 받는 초대 정보를 나타내는 모델입니다.
  *
- * <p>inviteCode는 서버가 참여 요청을 검증할 때 사용하고, inviteUrl은 Android
- * 공유 화면에서 전달할 전체 링크입니다. expiresAt은 ISO 8601 형식의 문자열을
- * 사용합니다.</p>
+ * <p>서버는 만료 시각·사용 횟수 제한 없이 코드 하나만 발급하므로, 지금은
+ * tripId와 inviteCode만 존재합니다. 만료/횟수 제한이 생기면 그때 필드를 추가합니다.</p>
  */
 public class TripInvite {
 
-    private long inviteId;
+    private long tripId;
     private String inviteCode;
-    private String inviteUrl;
-    private String expiresAt;
-    private boolean active;
 
     public TripInvite() {
     }
 
-    public TripInvite(
-            long inviteId,
-            String inviteCode,
-            String inviteUrl,
-            String expiresAt,
-            boolean active
-    ) {
-        this.inviteId = inviteId;
+    public TripInvite(long tripId, String inviteCode) {
+        this.tripId = tripId;
         this.inviteCode = inviteCode;
-        this.inviteUrl = inviteUrl;
-        this.expiresAt = expiresAt;
-        this.active = active;
     }
 
-    public long getInviteId() {
-        return inviteId;
+    public long getTripId() {
+        return tripId;
     }
 
-    public void setInviteId(long inviteId) {
-        this.inviteId = inviteId;
+    public void setTripId(long tripId) {
+        this.tripId = tripId;
     }
 
     public String getInviteCode() {
@@ -46,29 +33,5 @@ public class TripInvite {
 
     public void setInviteCode(String inviteCode) {
         this.inviteCode = inviteCode;
-    }
-
-    public String getInviteUrl() {
-        return inviteUrl;
-    }
-
-    public void setInviteUrl(String inviteUrl) {
-        this.inviteUrl = inviteUrl;
-    }
-
-    public String getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(String expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 }

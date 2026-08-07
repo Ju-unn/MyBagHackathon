@@ -7,7 +7,9 @@ import java.util.List;
  * 여행방의 기본 정보와 참여자 목록을 나타내는 앱 내부 모델입니다.
  *
  * <p>날짜는 서버 API 규칙에 따라 yyyy-MM-dd 형식의 문자열로 보관합니다.
- * tripType과 status는 서버가 전달한 상태 문자열을 그대로 사용합니다.</p>
+ * tripType과 status는 서버가 전달한 상태 문자열을 그대로 사용합니다.
+ * destinationCountry/destinationCity는 국가 코드 없이 GPT 분석이 뽑은 텍스트 그대로입니다
+ * (예: "일본"/"오사카") — trips.destination_country/city와 1:1 대응.</p>
  */
 public class Trip {
 
@@ -16,13 +18,12 @@ public class Trip {
     private String tripName;
     private Integer expectedMemberCount;
     private String tripType;
-    private String countryCode;
-    private String countryName;
-    private String representativeCity;
+    private String destinationCountry;
+    private String destinationCity;
     private String startDate;
     private String endDate;
     private String status;
-    private String analysisConfirmedAt;
+    private String createdAt;
     private List<TripMember> members = new ArrayList<>();
 
     public Trip() {
@@ -34,13 +35,12 @@ public class Trip {
             String tripName,
             Integer expectedMemberCount,
             String tripType,
-            String countryCode,
-            String countryName,
-            String representativeCity,
+            String destinationCountry,
+            String destinationCity,
             String startDate,
             String endDate,
             String status,
-            String analysisConfirmedAt,
+            String createdAt,
             List<TripMember> members
     ) {
         this.tripId = tripId;
@@ -48,13 +48,12 @@ public class Trip {
         this.tripName = tripName;
         this.expectedMemberCount = expectedMemberCount;
         this.tripType = tripType;
-        this.countryCode = countryCode;
-        this.countryName = countryName;
-        this.representativeCity = representativeCity;
+        this.destinationCountry = destinationCountry;
+        this.destinationCity = destinationCity;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
-        this.analysisConfirmedAt = analysisConfirmedAt;
+        this.createdAt = createdAt;
         setMembers(members);
     }
 
@@ -98,28 +97,20 @@ public class Trip {
         this.tripType = tripType;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    public String getDestinationCountry() {
+        return destinationCountry;
     }
 
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+    public void setDestinationCountry(String destinationCountry) {
+        this.destinationCountry = destinationCountry;
     }
 
-    public String getCountryName() {
-        return countryName;
+    public String getDestinationCity() {
+        return destinationCity;
     }
 
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-
-    public String getRepresentativeCity() {
-        return representativeCity;
-    }
-
-    public void setRepresentativeCity(String representativeCity) {
-        this.representativeCity = representativeCity;
+    public void setDestinationCity(String destinationCity) {
+        this.destinationCity = destinationCity;
     }
 
     public String getStartDate() {
@@ -146,12 +137,12 @@ public class Trip {
         this.status = status;
     }
 
-    public String getAnalysisConfirmedAt() {
-        return analysisConfirmedAt;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
-    public void setAnalysisConfirmedAt(String analysisConfirmedAt) {
-        this.analysisConfirmedAt = analysisConfirmedAt;
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
     public List<TripMember> getMembers() {

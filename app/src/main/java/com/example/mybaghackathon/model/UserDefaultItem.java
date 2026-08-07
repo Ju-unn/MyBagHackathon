@@ -1,31 +1,23 @@
 package com.example.mybaghackathon.model;
 
 /**
- * 사용자가 프로필에서 관리하고 새 여행에 재사용하는 기본 준비물 모델입니다.
+ * 프로필 "내 기본 물품" 한 건을 나타내는 앱 내부 모델입니다.
  */
-public class DefaultItem {
+public class UserDefaultItem {
 
     private long defaultItemId;
-    private long userId;
     private String itemName;
     private String category;
-    private boolean active;
+    private String priority;
 
-    public DefaultItem() {
+    public UserDefaultItem() {
     }
 
-    public DefaultItem(
-            long defaultItemId,
-            long userId,
-            String itemName,
-            String category,
-            boolean active
-    ) {
+    public UserDefaultItem(long defaultItemId, String itemName, String category, String priority) {
         this.defaultItemId = defaultItemId;
-        this.userId = userId;
         this.itemName = itemName;
         this.category = category;
-        this.active = active;
+        this.priority = priority;
     }
 
     public long getDefaultItemId() {
@@ -34,14 +26,6 @@ public class DefaultItem {
 
     public void setDefaultItemId(long defaultItemId) {
         this.defaultItemId = defaultItemId;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
     }
 
     public String getItemName() {
@@ -60,11 +44,11 @@ public class DefaultItem {
         this.category = category;
     }
 
-    public boolean isActive() {
-        return active;
+    public String getPriority() {
+        return priority;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 }
