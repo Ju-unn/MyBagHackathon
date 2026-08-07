@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:textStyle="bold"
         android:text="@string/bs_edit_item_title"
         android:textAppearance="@style/TextAppearance.Bag.TitleM" />
 

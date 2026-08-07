@@ -5,8 +5,8 @@
 생성한 준비물은 같은 여행방에 참여한 동행자들과 공유하며, 담당자와 준비 상태를 함께 관리합니다.
 
 > 이 문서는 Manyfast의 기능명세서와 유저플로우를 기준으로 작성했습니다.  
-> Android는 **Java + XML Layout + MVP(Model-View-Presenter)** 패턴을 사용합니다.  
-> 서버는 구축이 완료된 **AWS EC2 + Apache2 + PHP + MySQL** 환경을 사용합니다.
+> Android는 **Java + XML Layout**을 사용합니다. (초기 설계에서는 MVP 패턴을 계획했으나, 실제 구현은 Fragment/Activity가 `AppContainer`로 조립된 Repository를 직접 호출하는 구조입니다. 별도 Presenter 계층은 없습니다.)  
+> 서버는 구축이 완료된 **AWS EC2 + Apache2 + PHP + MySQL** 환경을 사용합니다. 서버 API는 이 문서(9~10번 섹션)가 아니라 **`mybag` 백엔드 레포의 `APIs.md`**를 최신 기준으로 참고하세요.
 
 ---
 
@@ -16,7 +16,7 @@
 
 - 사용할 API와 선정 이유
 - API 및 서버 예상 비용
-- Android Java MVP 구조
+- Android Java 구조
 - AWS EC2 서버와 Android 앱의 연결 구조
 - 전체 패키지 분리
 - 주요 클래스 이름과 책임
@@ -34,7 +34,7 @@
 - XML 화면 디자인 완성본
 - 전체 국가·항공사의 반입 규정 수집
 - 배포 자동화와 운영 모니터링 상세 설정
-- FCM 푸시 알림 연동
+- FCM 푸시 알림 앱 수신·표시 (서버 발송 로직은 구현 완료, 8번 섹션 `service` 참고)
 
 ---
 
@@ -69,8 +69,8 @@
 - Open-Meteo Forecast API
 - Open-Meteo Geocoding API
 - Kakao Login API
-- 국토교통부·한국교통안전공단 반입 제한 공공데이터
-- Firebase Cloud Messaging - 추후 연결 예정
+- 국토교통부·한국교통안전공단 반입 제한 공공데이터 - 미착수(현재는 GPT가 반입 제한 항목을 추론)
+- Firebase Cloud Messaging - **서버 발송 로직 구현 완료**(담당자 지정 알림, 출발 D-7·D-3·D-1 알림). 앱에서 실제로 수신해 알림으로 표시하는 부분은 미구현
 
 ---
 
@@ -119,8 +119,10 @@
 
 ### 알림
 
-- MVP에서는 WorkManager로 기기 내부 D-day 알림을 구현합니다.
-- 담당자 지정과 공용 목록 변경 푸시는 FCM 연결 후 구현합니다.
+- WorkManager 기반 기기 내부 알림 대신, **서버가 FCM으로 발송**하는 방식으로 확정했습니다.
+- 담당자 본인 지정 시 트립의 다른 참여자에게 `CHECKLIST_ASSIGNED` 알림 발송 — 서버 구현·배포·검증 완료.
+- 출발 D-7·D-3·D-1 알림은 서버 crontab이 매일 09:00(KST) 대상자를 계산해 `DEPARTURE_D7`/`DEPARTURE_D3`/`DEPARTURE_D1` 알림 발송 — 서버 구현·배포·검증 완료.
+- 두 경우 다 FCM data 페이로드만 사용(`notification` 페이로드 아님) — **앱에서 `FcmMessagingService.onMessageReceived()`를 채워서 로컬 알림(채널·아이콘·딥링크)으로 표시하는 작업이 아직 남아있습니다.** 페이로드 필드는 안드로이드팀 전달 문서 참고.
 
 ---
 
@@ -234,13 +236,15 @@
 
 현재 상태:
 
-- 구현 예정
+- 서버 발송 로직 구현·배포·검증 완료 (담당자 지정 알림, 출발 D-7·D-3·D-1 알림)
+- 앱에서 토큰 등록(`POST /api/auth/fcm-token.php`)까지는 연결돼 있음
+- 앱에서 수신 후 실제 알림으로 표시하는 부분(`FcmMessagingService.onMessageReceived()`)은 미구현
 
-추후 사용 목적:
+사용 목적:
 
-- 여행 D-day 푸시 알림
-- 준비물 담당자 지정 알림
-- 공용 체크리스트 변경 알림
+- 준비물 담당자 지정 알림 (`CHECKLIST_ASSIGNED`)
+- 출발 예정 D-7·D-3·D-1 알림 (`DEPARTURE_D7`/`DEPARTURE_D3`/`DEPARTURE_D1`)
+- 공용 체크리스트 변경 알림 — 미구현, 필요 여부 팀 결정 남음
 
 ---
 
@@ -328,7 +332,7 @@ EC2는 이미 구축되어 있으므로 실제 월 비용은 팀 AWS 계정에�
 - AWS EC2에서는 Apache2와 PHP REST API가 요청을 처리합니다.
 - PHP REST API는 MySQL에 데이터를 저장합니다.
 - PHP REST API는 필요한 경우 OpenAI, Open-Meteo, Kakao API를 호출합니다.
-- FCM은 추후 PHP 서버와 연결합니다.
+- PHP 서버가 FCM으로 담당자 지정·출발 예정 알림을 발송합니다(구현 완료). 앱에서 수신해 로컬 알림으로 표시하는 부분만 남았습니다.
 
 ### 데이터 흐름
 
@@ -341,174 +345,157 @@ EC2는 이미 구축되어 있으므로 실제 월 비용은 팀 AWS 계정에�
 
 ---
 
-## 8. Android 패키지 구조
+## 8. Android 패키지 구조 (2026-08-07 기준 실제 구조)
 
-기본 패키지는 실제 프로젝트와 동일한 `com.example.mybaghackathon`을 사용합니다. UI는 최종 S01~S16 흐름을 기준으로 구성하고, 서버 연결 코드는 `data` 아래에서 API·DTO·Mapper·Repository로 분리합니다.
+기본 패키지는 `com.example.mybaghackathon`입니다. UI는 S01~S16 화면 흐름을 기준으로 구성하고, 서버 연결 코드는 `data` 아래에서 Api·DTO·Mapper·Repository로 분리합니다. DI는 별도 프레임워크 없이 `app/AppContainer.java`가 생성자 조립으로 직접 처리합니다.
 
 ```text
 com.example.mybaghackathon
 ├── MainActivity.java
 ├── app
 │   ├── MyBagApplication.java
-│   └── AppContainer.java
+│   └── AppContainer.java                  # Repository·Api 조립하는 DI 컨테이너
 ├── common
-│   ├── AppResult.java
+│   ├── AppResult.java                     # 성공/실패 래퍼 (Repository 반환 타입)
 │   ├── AppError.java
 │   └── Constants.java
+├── service
+│   └── FcmMessagingService.java           # FCM 토큰 갱신·수신 진입점. 로컬 알림 표시는 미구현
 ├── model
 │   ├── User.java
 │   ├── Trip.java
 │   ├── TripMember.java
 │   ├── TripInvite.java
 │   ├── TripUpload.java
-│   ├── AnalysisResult.java
 │   ├── TripSchedule.java
 │   ├── Accommodation.java
+│   ├── AnalysisResult.java
+│   ├── RestrictedItem.java
 │   ├── PackingItem.java
-│   ├── DefaultItem.java
+│   ├── UserDefaultItem.java                # "내 기본 물품" 모델
 │   ├── NotificationSettings.java
 │   ├── Weather.java
 │   └── WeatherFeedback.java
 ├── data
+│   ├── ChecklistItem.java                 # UI 확인용 더미 데이터, 실 연동 시 model/PackingItem으로 교체 예정
 │   ├── remote
 │   │   ├── api
 │   │   │   ├── ApiClient.java
 │   │   │   ├── AuthApi.java
-│   │   │   ├── CreationSessionApi.java
 │   │   │   ├── TripApi.java
-│   │   │   ├── InviteApi.java
 │   │   │   ├── UploadApi.java
 │   │   │   ├── AnalysisApi.java
 │   │   │   ├── PackingApi.java
 │   │   │   ├── WeatherApi.java
-│   │   │   ├── ProfileApi.java
-│   │   │   └── NotificationApi.java
+│   │   │   ├── DefaultItemApi.java
+│   │   │   └── NotificationSettingsApi.java
 │   │   └── dto
-│   │       ├── common
-│   │       │   └── ApiResponseDto.java
-│   │       ├── auth
-│   │       │   ├── KakaoLoginRequestDto.java
-│   │       │   └── AuthTokenDto.java
-│   │       ├── creation
-│   │       │   └── CreationSessionDto.java
-│   │       ├── trip
-│   │       │   ├── TripDto.java
-│   │       │   ├── TripMemberDto.java
-│   │       │   └── TripInviteDto.java
-│   │       ├── upload
-│   │       │   └── TripUploadDto.java
-│   │       ├── analysis
-│   │       │   ├── AnalysisRequestDto.java
-│   │       │   └── AnalysisResponseDto.java
-│   │       ├── packing
-│   │       │   ├── PackingItemDto.java
-│   │       │   └── DefaultItemDto.java
-│   │       ├── weather
-│   │       │   ├── WeatherDto.java
-│   │       │   └── WeatherFeedbackDto.java
-│   │       ├── profile
-│   │       │   └── ProfileDto.java
-│   │       └── notification
-│   │           ├── NotificationSettingsDto.java
-│   │           └── FcmTokenDto.java
+│   │       ├── common/ApiResponseDto.java
+│   │       ├── auth/{KakaoLoginRequestDto, AuthTokenDto}.java
+│   │       ├── trip/{TripDto, TripMemberDto, TripInviteDto, TripCreateRequestDto,
+│   │       │         TripDetailResponseDto, TripJoinRequestDto, TripJoinResponseDto,
+│   │       │         TripListResponseDto, TripMembersResponseDto}.java
+│   │       ├── upload/TripUploadDto.java
+│   │       ├── analysis/{AnalysisRequestDto, AnalysisResponseDto, ConfirmRequestDto,
+│   │       │            RestrictedItemDto}.java
+│   │       ├── packing/{ChecklistItemDto, ChecklistListResponseDto, ChecklistCreateRequestDto,
+│   │       │           ChecklistCreateResponseDto, ChecklistCheckResponseDto, ChecklistAssignRequestDto,
+│   │       │           ChecklistUpdateRequestDto, ChecklistItemIdRequestDto, ChecklistGenerateRequestDto,
+│   │       │           PackingItemDto}.java
+│   │       ├── defaultitem/{DefaultItemDto, DefaultItemCreateRequestDto, DefaultItemCreateResponseDto,
+│   │       │               DefaultItemUpdateRequestDto, DefaultItemIdRequestDto,
+│   │       │               DefaultItemListResponseDto}.java
+│   │       ├── weather/{WeatherDto, WeatherForecastDto, WeatherFeedbackDto}.java
+│   │       └── notification/{NotificationSettingsDto, NotificationSettingsUpdateRequestDto, FcmTokenDto}.java   # S16 데이터 레이어 연결 완료(2026-08-07), 화면(NotificationSettingsActivity) 연결만 남음
 │   ├── mapper
 │   │   ├── UserMapper.java
 │   │   ├── TripMapper.java
 │   │   ├── AnalysisMapper.java
 │   │   ├── PackingItemMapper.java
 │   │   ├── WeatherMapper.java
-│   │   └── NotificationMapper.java
+│   │   ├── DefaultItemMapper.java
+│   │   └── NotificationMapper.java                # 2026-08-07 구현 완료(기존 빈 스캐폴딩 재사용)
 │   ├── repository
-│   │   ├── AuthRepository.java
-│   │   ├── AuthRepositoryImpl.java
-│   │   ├── CreationSessionRepository.java
-│   │   ├── CreationSessionRepositoryImpl.java
-│   │   ├── TripRepository.java
-│   │   ├── TripRepositoryImpl.java
-│   │   ├── UploadRepository.java
-│   │   ├── UploadRepositoryImpl.java
-│   │   ├── AnalysisRepository.java
-│   │   ├── AnalysisRepositoryImpl.java
-│   │   ├── PackingRepository.java
-│   │   ├── PackingRepositoryImpl.java
-│   │   ├── WeatherRepository.java
-│   │   ├── WeatherRepositoryImpl.java
-│   │   ├── ProfileRepository.java
-│   │   ├── ProfileRepositoryImpl.java
-│   │   ├── NotificationRepository.java
-│   │   └── NotificationRepositoryImpl.java
+│   │   ├── AuthRepository.java / AuthRepositoryImpl.java
+│   │   ├── TripRepository.java / TripRepositoryImpl.java
+│   │   ├── UploadRepository.java / UploadRepositoryImpl.java
+│   │   ├── AnalysisRepository.java / AnalysisRepositoryImpl.java
+│   │   ├── PackingRepository.java / PackingRepositoryImpl.java   # 체크리스트 담당
+│   │   ├── WeatherRepository.java / WeatherRepositoryImpl.java
+│   │   ├── DefaultItemRepository.java / DefaultItemRepositoryImpl.java
+│   │   └── NotificationSettingsRepository.java / NotificationSettingsRepositoryImpl.java
 │   └── local
 │       └── TokenStorage.java
 ├── ui
 │   ├── EdgeToEdgeUtil.java
-│   ├── splash
-│   │   └── SplashActivity.java
-│   ├── login
-│   │   └── LoginActivity.java
-│   ├── home
-│   │   └── HomeFragment.java
-│   ├── createroom
-│   │   └── CreateRoomActivity.java
-│   ├── upload
-│   │   └── ScheduleUploadActivity.java
-│   ├── analyzing
-│   │   └── AnalyzingActivity.java
-│   ├── analysisresult
-│   │   └── AnalysisResultActivity.java
-│   ├── review
-│   │   └── ScheduleReviewActivity.java
-│   ├── roomdetail
-│   │   └── RoomDetailActivity.java
-│   ├── feedback
-│   │   └── WeatherFeedbackActivity.java
-│   ├── checklist
+│   ├── splash/SplashActivity.java
+│   ├── login/LoginActivity.java            # 카카오 SDK 실제 연동 전, 임시로 바로 MainActivity 이동
+│   ├── home/
+│   │   ├── HomeFragment.java               # S03, 더미 데이터
+│   │   ├── TripRoomUiModel.java
+│   │   └── adapter/TripRoomAdapter.java
+│   ├── createroom/CreateRoomActivity.java  # S04
+│   ├── upload/ScheduleUploadActivity.java  # S05
+│   ├── analyzing/AnalyzingActivity.java    # S06
+│   ├── analysisresult/AnalysisResultActivity.java  # S07
+│   ├── review/ScheduleReviewActivity.java  # S08
+│   ├── roomdetail/RoomDetailActivity.java  # S09, 아직 하드코딩 상태 + ChecklistActivity로 trip_id 미전달
+│   ├── feedback/WeatherFeedbackActivity.java  # S10
+│   ├── checklist/
 │   │   ├── ChecklistActivity.java
-│   │   ├── ChecklistCommonFragment.java
-│   │   ├── ChecklistMineFragment.java
-│   │   └── ChecklistAssignmentFragment.java
-│   ├── archive
-│   │   └── TripArchiveFragment.java
-│   ├── profile
-│   │   └── ProfileFragment.java
-│   ├── settings
-│   │   └── NotificationSettingsActivity.java
-│   ├── overlay
-│   │   ├── AddItemSheet.java
-│   │   ├── EditItemSheet.java
-│   │   └── InviteShareSheet.java
-│   ├── atoms
-│   ├── molecules
-│   └── organisms
+│   │   ├── ChecklistCommonFragment.java    # S11
+│   │   ├── ChecklistMineFragment.java      # S12
+│   │   └── ChecklistAssignmentFragment.java  # S13
+│   ├── archive/TripArchiveFragment.java    # S14, 탭 UI는 있고 데이터는 더미
+│   ├── profile/ProfileFragment.java        # S15
+│   ├── settings/NotificationSettingsActivity.java  # S16
+│   ├── overlay/{AddItemSheet, EditItemSheet, InviteShareSheet}.java
+│   ├── atoms/{AvatarView, CheckboxView, ChipView, DDayBadgeView, IconButtonView,
+│   │         PriorityDotView, RestrictionTagView, WeatherIconView}.java
+│   ├── molecules/AvatarStackHelper.java
+│   └── organisms/TripRoomCardBinder.java
 └── util
     ├── ImageCompressor.java
     ├── DateUtils.java
+    ├── PrefsManager.java
     └── ReminderScheduler.java
 ```
 
 ### 패키지별 책임
 
-- `model`은 Android 화면과 Presenter가 사용하는 앱 내부 데이터를 정의합니다.
+- `app`은 `AppContainer`로 `TokenStorage → ApiClient → 각 Api → Repository` 순으로 조립·보관합니다. 별도 DI 프레임워크(Dagger/Hilt) 없이 생성자 주입만 사용합니다.
+- `service`는 FCM 백그라운드 서비스입니다. UI 패키지가 아니라 최상위에 독립적으로 있습니다.
+- `model`은 화면이 실제로 사용하는 앱 내부 데이터를 정의합니다. Presenter가 아니라 Fragment/Activity가 직접 사용합니다.
 - `data.remote.api`는 EC2 PHP REST API의 Retrofit 요청을 정의합니다.
 - `data.remote.dto`는 서버의 요청·응답 JSON 형식을 기능별로 구분합니다.
 - `data.mapper`는 서버 DTO를 Android Model로 변환합니다.
-- `data.repository`는 Presenter가 사용할 데이터 접근 규칙과 구현체를 제공합니다.
+- `data.repository`는 화면이 사용할 데이터 접근 규칙과 구현체를 제공하며, `AppContainer`에 조립된 것만 실제로 쓰입니다.
 - `data.local`은 로그인 token처럼 기기에 보관해야 하는 값만 관리합니다.
-- `ui`는 최종 화면 흐름 S01~S16과 오버레이를 기능별 패키지로 구분합니다.
+- `ui`는 S01~S16 화면 흐름과 오버레이, 그리고 `atoms`/`molecules`/`organisms` 공용 컴포넌트를 기능별 패키지로 구분합니다.
 
-### 최종 흐름에 따른 구조 규칙
+### 정리된 죽은 코드 (2026-08-07)
 
-- S04의 방 이름과 예상 인원은 실제 여행방이 생성되기 전까지 생성 세션의 임시 상태로 관리합니다.
-- S05~S08은 `CreationSessionRepository`를 통해 업로드·분석·결과 확정을 처리합니다.
-- S08에서 목록 아이템 생성을 확정한 뒤 서버가 반환한 `tripId`부터 `TripRepository`를 사용합니다.
+초기 기획 단계(README 초안)에서 미리 만들어둔 스캐폴딩 중 실제 서버 구현과 안 맞거나 아무도 참조하지 않던 코드 14개 파일을 삭제했습니다. 삭제 후 `compileDebugJavaWithJavac` `BUILD SUCCESSFUL` 확인 완료. 삭제 목록은 안드로이드팀 전달 문서(`안드로이드팀_전달사항.md`) 참고.
+
+- **`CreationSessionApi`/`CreationSessionRepository`(+Impl), `InviteApi`, `ProfileApi`/`ProfileRepository`(+Impl), `NotificationApi`/`NotificationRepository`(+Impl)** — 전부 메서드 없는 빈 클래스/인터페이스였음. 서버엔 "생성 세션"(`creation_sessions`) 리소스 자체가 없고(`upload_id`→`analysis_id`→`trip_id` 체이닝 방식으로 대체됨), 초대는 `TripApi.join()`으로, FCM 토큰 등록은 `AuthApi`로 이미 처리되고 있어서 예전 설계 유물이었음.
+- **`data/remote/dto/creation/CreationSessionDto.java`, `data/remote/dto/profile/ProfileDto.java`** — 위 죽은 Api/Repository에서만 쓰이던 DTO라 같이 삭제(빈 디렉터리도 함께 정리).
+- **`model/DefaultItem.java`** — 아무 코드에서도 참조하지 않던 죽은 클래스. 실제로 쓰이는 건 `model/UserDefaultItem.java`(서버 응답 필드에 맞춰 새로 만든 것).
+- **`data/remote/dto/packing/DefaultItemDto.java`** — `data/remote/dto/defaultitem/DefaultItemDto.java`와 이름이 같던 별개 클래스. `DefaultItemMapper`가 실제로 쓰는 `defaultitem` 패키지 쪽만 남김.
+
+**남겨둔 것**: `data/remote/dto/notification/NotificationSettingsDto.java`, `model/NotificationSettings.java`는 그때는 아직 미연결이었지만 서버 `notification_settings` 테이블에 대응하는 정상 스캐폴딩이라 삭제하지 않았고, **2026-08-07 데이터 레이어(Api/Repository/Mapper) 연결까지 완료**했습니다(`AppContainer.notificationSettingsRepository`). S16 화면(`NotificationSettingsActivity`) 자체는 아직 토글 로직이 안 붙어 있어 화면 연결만 남았습니다. `data/ChecklistItem.java`도 UI 임시 더미로 계속 쓰이고 있어 남겨뒀습니다(실 연동 시 `model/PackingItem.java` + `packingRepository`로 교체 예정).
+
+### 화면 연결 시 참고할 흐름
+
+- S08 "방 생성 완료" 시점에 `tripRepository.createTrip()`을 호출해 서버가 반환한 `trip_id`부터 이후 화면에서 `TripRepository`를 사용합니다. (별도 "생성 세션" 단계 없이, `upload_id`/`analysis_id`만으로 여기까지 진행됩니다.)
 - S09는 날씨 팁과 체크리스트로 이동하는 여행방 허브 화면입니다.
 - S10은 S09에서 진입하고 뒤로 가기로 복귀하며 체크리스트로 직접 이동하지 않습니다.
 - 참여자가 1명이면 `ChecklistMineFragment`만 표시하고, 2명 이상이면 체크리스트 3개 탭을 표시합니다.
-- 기존 `data/ChecklistItem.java`는 UI 확인용 임시 데이터이며 실제 연동 시 `model/PackingItem.java`로 교체합니다.
-- `Itinerary.java`와 `TripSchedule.java`는 중복 사용하지 않고 최종 일정 Model을 `TripSchedule.java`로 통일합니다.
 
 ---
 
-## 9. EC2 PHP 서버 구조
+## 9. EC2 PHP 서버 구조 — ⚠️ 초기 설계안, 실제 구현과 다릅니다
+
+> **이 섹션(9~10번)은 개발 시작 전 계획 단계에서 작성한 초안입니다.** 실제 서버는 "생성 세션"(`creation_sessions`) 리소스 없이 `upload_id`→`analysis_id`→`trip_id` 체이닝 방식으로 구현됐고, REST 라우팅(`/api/trips/{tripId}` 같은 경로 파라미터·PATCH/DELETE)이 아니라 `html/api/도메인/동작.php` 형태의 파일 기반 엔드포인트로 구현됐습니다. **최신 API 스펙은 `mybag` 백엔드 레포 루트의 `APIs.md`를, 서버 구현 히스토리는 백엔드팀이 관리하는 `내가방서버현황.md`를 참고하세요.** 아래 내용은 최초 기획 의도를 참고하는 용도로만 남겨둡니다.
 
 EC2 PHP 서버는 인증, 방 생성 전 임시 세션, 여러 장 업로드, AI 분석, 여행방 확정, 체크리스트 공유를 처리합니다. S04에서 실제 방을 바로 만들지 않고 S08의 목록 아이템 생성 시점에 방과 방장 권한을 확정하는 최신 흐름을 기준으로 합니다.
 
@@ -715,7 +702,9 @@ S16의 D-7, D-3, D-1 알림은 MVP에서 읽기 전용으로 표시합니다. �
 
 ---
 
-## 10. MySQL 데이터 구조
+## 10. MySQL 데이터 구조 — ⚠️ 초기 설계안, 실제 구현과 다릅니다
+
+> 9번 섹션과 동일하게 이 섹션도 계획 단계 초안입니다. 실제로는 "생성 세션" 테이블이 없고, `trip_uploads`/`ai_analyses`가 `trip_id NULL` 상태로 먼저 생성됐다가 방 생성 확정 시 `UPDATE`로 채워지는 방식입니다. `trips.status`로 진행중/지난 여행을 구분하는 방식도 폐기되고 `end_date` 기준 조회로 대체됐습니다. **실제 스키마는 백엔드 레포의 `내가방서버현황.md` 8번 섹션(`CREATE TABLE` 원문)을 참고하세요.**
 
 MySQL은 사용자, 방 생성 전 임시 세션, 확정된 여행방, 분석 결과, 체크리스트와 알림 데이터를 관리합니다. 이 문서에서는 데이터 영역과 관계만 정의하며 테이블별 상세 컬럼과 `CREATE TABLE` 문은 작성하지 않습니다.
 

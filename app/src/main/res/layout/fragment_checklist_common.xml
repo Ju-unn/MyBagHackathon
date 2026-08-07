@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_md"
             android:text="@string/checklist_claim_note"
-            android:textAppearance="@style/TextAppearance.Bag.Eyebrow" />
+            android:textAppearance="@style/TextAppearance.Bag.Caption" />
 
         <LinearLayout
             android:id="@+id/checklistCommonSections"

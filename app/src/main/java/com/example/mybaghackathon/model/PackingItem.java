@@ -14,9 +14,12 @@ public class PackingItem {
     private String source;
     private String restrictionType;
     private String restrictionReason;
-    private TripMember assignee;
+    // 담당자 user_id만 들고 있음(서버가 이 값만 줌) — 화면에서 이미 들고 있는 멤버 목록과 대조해 TripMember를 구한다
+    private Long assigneeUserId;
     private boolean completed;
     private String completedAt;
+    // ACTIVE, EXCLUDED, DELETED 중 하나 — 델타 조회(since)에서 삭제 여부 판단에 씀
+    private String itemStatus;
     private int sortOrder;
 
     public PackingItem() {
@@ -32,9 +35,10 @@ public class PackingItem {
             String source,
             String restrictionType,
             String restrictionReason,
-            TripMember assignee,
+            Long assigneeUserId,
             boolean completed,
             String completedAt,
+            String itemStatus,
             int sortOrder
     ) {
         this.packingItemId = packingItemId;
@@ -46,9 +50,10 @@ public class PackingItem {
         this.source = source;
         this.restrictionType = restrictionType;
         this.restrictionReason = restrictionReason;
-        this.assignee = assignee;
+        this.assigneeUserId = assigneeUserId;
         this.completed = completed;
         this.completedAt = completedAt;
+        this.itemStatus = itemStatus;
         this.sortOrder = sortOrder;
     }
 
@@ -124,12 +129,12 @@ public class PackingItem {
         this.restrictionReason = restrictionReason;
     }
 
-    public TripMember getAssignee() {
-        return assignee;
+    public Long getAssigneeUserId() {
+        return assigneeUserId;
     }
 
-    public void setAssignee(TripMember assignee) {
-        this.assignee = assignee;
+    public void setAssigneeUserId(Long assigneeUserId) {
+        this.assigneeUserId = assigneeUserId;
     }
 
     public boolean isCompleted() {
@@ -146,6 +151,14 @@ public class PackingItem {
 
     public void setCompletedAt(String completedAt) {
         this.completedAt = completedAt;
+    }
+
+    public String getItemStatus() {
+        return itemStatus;
+    }
+
+    public void setItemStatus(String itemStatus) {
+        this.itemStatus = itemStatus;
     }
 
     public int getSortOrder() {

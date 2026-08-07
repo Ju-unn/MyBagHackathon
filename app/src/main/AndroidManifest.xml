@@ -66,21 +66,6 @@
             android:name=".ui.roomdetail.RoomDetailActivity"
             android:exported="false" />
 
-        <!-- S10 날씨·의식주 팁 -->
-        <activity
-            android:name=".ui.feedback.WeatherFeedbackActivity"
-            android:exported="false" />
-
-        <!-- S11~S13 체크리스트 -->
-        <activity
-            android:name=".ui.checklist.ChecklistActivity"
-            android:exported="false" />
-
-        <!-- S16 알림 설정 -->
-        <activity
-            android:name=".ui.settings.NotificationSettingsActivity"
-            android:exported="false" />
-
         <!-- 카카오톡 앱으로 로그인 시 인가 코드를 돌려받는 리다이렉트 액티비티 -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"

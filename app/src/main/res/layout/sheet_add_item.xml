@@ -13,6 +13,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textStyle="bold"
         android:gravity="center"
         android:text="@string/bs_add_item_title"
         android:textAppearance="@style/TextAppearance.Bag.TitleM" />
@@ -36,6 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_lg"
+        android:textStyle="bold"
         android:text="@string/bs_add_item_priority_label"
         android:textAppearance="@style/TextAppearance.Bag.LabelL" />
 
@@ -75,6 +77,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_2xl"
-        android:text="@string/action_save" />
+        android:text="@string/action_add" />
 
 </LinearLayout>

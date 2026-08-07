@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/space_md"
                 android:text="@string/checklist_assignment_summary"
-                android:textAppearance="@style/TextAppearance.Bag.BodyM" />
+                android:textAppearance="@style/TextAppearance.Bag.BodyMMedium" />
 
         </LinearLayout>
 
@@ -48,7 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_2xl"
             android:text="@string/checklist_unassigned"
-            android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+            android:textAppearance="@style/TextAppearance.Bag.TitleS"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/checklistUnassignedList"
@@ -62,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_2xl"
             android:text="@string/checklist_assignment_hint"
-            android:textAppearance="@style/TextAppearance.Bag.LabelS" />
+            android:textAppearance="@style/TextAppearance.Bag.Caption" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

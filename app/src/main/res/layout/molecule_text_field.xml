@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- M5 · TextField — 상태 = 기본/포커스/에러/비활성.
-     레이블은 항상 필드 위에 표시됨 (placeholder만 쓰지 않음). -->
+     레이블은 이 몰큘 밖(화면 쪽)에서 붙이고, 여기는 입력 박스만 담당.
+     박스 안 텍스트는 플로팅 hint가 아니라 고정 placeholder. -->
 <com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/textFieldLayout"
     style="@style/Widget.Bag.TextField"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:hint="@string/create_room_name_label">
+    app:hintEnabled="false">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/textFieldInput"
         android:layout_width="match_parent"
         android:layout_height="@dimen/text_field_height"
-        android:textAppearance="@style/TextAppearance.Bag.BodyL"
-        tools:text="예) 도쿄 벚꽃 여행" />
+        android:hint="@string/create_room_name_hint"
+        android:textAppearance="@style/TextAppearance.Bag.BodyL" />
 </com.google.android.material.textfield.TextInputLayout>
