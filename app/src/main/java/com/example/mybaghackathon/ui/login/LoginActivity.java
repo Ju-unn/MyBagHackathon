@@ -2,7 +2,6 @@ package com.example.mybaghackathon.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,10 +18,6 @@ import com.kakao.sdk.user.UserApiClient;
 
 import kotlin.Unit;
 
-/**
- * S02 · 로그인 — 카카오 SDK로 access token을 받아오는 View 역할만 담당하고,
- * 실제 서버 로그인 처리는 LoginPresenter에 위임한다(MVP).
- */
 public class LoginActivity extends AppCompatActivity implements LoginContract.View {
 
     private ActivityLoginBinding binding;

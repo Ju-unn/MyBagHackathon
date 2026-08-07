@@ -19,17 +19,17 @@
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
+            android:exported="false" />
+
+        <!-- S01 스플래시 -->
+        <activity
+            android:name=".ui.splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- S01 스플래시 -->
-        <activity
-            android:name=".ui.splash.SplashActivity"
-            android:exported="false" />
 
         <!-- S02 로그인 -->
         <activity
@@ -66,7 +66,15 @@
             android:name=".ui.roomdetail.RoomDetailActivity"
             android:exported="false" />
 
+        <!-- S15 프로필 -->
+        <activity
+            android:name=".ui.profile.ProfileItemsActivity"
+            android:exported="false" />
 
+        <!-- S16 알림 설정 -->
+        <activity
+            android:name=".ui.settings.NotificationSettingsActivity"
+            android:exported="false" />
 
         <!-- 카카오톡 앱으로 로그인 시 인가 코드를 돌려받는 리다이렉트 액티비티 -->
         <activity
