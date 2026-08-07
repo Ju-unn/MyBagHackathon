@@ -1,6 +1,7 @@
 package com.example.mybaghackathon.ui.analyzing;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +16,7 @@ import com.example.mybaghackathon.common.AppResult;
 import com.example.mybaghackathon.data.repository.AnalysisRepository;
 import com.example.mybaghackathon.databinding.ActivityAnalyzingBinding;
 import com.example.mybaghackathon.model.AnalysisResult;
+import com.example.mybaghackathon.model.TripSchedule;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.analysisresult.AnalysisResultActivity;
 import com.example.mybaghackathon.ui.upload.ScheduleUploadActivity;
@@ -31,6 +33,12 @@ import java.util.concurrent.Executors;
 public class AnalyzingActivity extends AppCompatActivity {
 
     public static final String EXTRA_ANALYSIS_ID = "analysis_id";
+    public static final String EXTRA_DESTINATION_COUNTRY = "destination_country";
+    public static final String EXTRA_DESTINATION_CITY = "destination_city";
+    public static final String EXTRA_START_DATE = "start_date";
+    public static final String EXTRA_END_DATE = "end_date";
+    public static final String EXTRA_TRANSPORT_MODE = "transport_mode";
+    public static final String EXTRA_ACCOMMODATION_NAME = "accommodation_name";
 
     private static final int[] STEPS = {
             R.string.analyzing_step1, R.string.analyzing_step2,
@@ -43,6 +51,8 @@ public class AnalyzingActivity extends AppCompatActivity {
     private TextView stepText;
     private AnalysisRepository analysisRepository;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private long[] uploadIdsArray; // 성공 시 S07로 다시 넘겨줘서, "다시 분석하기" 때 재사용할 수 있게 보관
+    private ArrayList<Uri> selectedUris; // 취소 시 S05로 되돌려줄 사진 목록
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +67,19 @@ public class AnalyzingActivity extends AppCompatActivity {
         stepText.setAlpha(0f);
         showStep(0);
 
+        binding.analyzingCancel.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ScheduleUploadActivity.class);
+            intent.putParcelableArrayListExtra(ScheduleUploadActivity.EXTRA_SELECTED_URIS, selectedUris);
+            startActivity(intent);
+            finish();
+        });
+
         startAnalysis();
     }
 
     private void startAnalysis() {
-        long[] uploadIdsArray = getIntent().getLongArrayExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS);
+        uploadIdsArray = getIntent().getLongArrayExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS);
+        selectedUris = getIntent().getParcelableArrayListExtra(ScheduleUploadActivity.EXTRA_SELECTED_URIS);
         List<Long> uploadIds = new ArrayList<>();
         if (uploadIdsArray != null) {
             for (long id : uploadIdsArray) {
@@ -81,8 +99,18 @@ public class AnalyzingActivity extends AppCompatActivity {
         stepText.animate().cancel();
 
         if (result.isSuccess()) {
+            AnalysisResult data = result.getData();
+            TripSchedule schedule = data.getSchedule();
+
             Intent intent = new Intent(this, AnalysisResultActivity.class);
-            intent.putExtra(EXTRA_ANALYSIS_ID, result.getData().getAnalysisId());
+            intent.putExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS, uploadIdsArray);
+            intent.putExtra(EXTRA_ANALYSIS_ID, data.getAnalysisId());
+            intent.putExtra(EXTRA_DESTINATION_COUNTRY, schedule.getDestinationCountry());
+            intent.putExtra(EXTRA_DESTINATION_CITY, schedule.getDestinationCity());
+            intent.putExtra(EXTRA_START_DATE, schedule.getStartDate());
+            intent.putExtra(EXTRA_END_DATE, schedule.getEndDate());
+            intent.putExtra(EXTRA_TRANSPORT_MODE, schedule.getTransportMode());
+            intent.putExtra(EXTRA_ACCOMMODATION_NAME, data.getAccommodationName());
             startActivity(intent);
             finish();
         } else {

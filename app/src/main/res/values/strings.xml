@@ -87,6 +87,10 @@
     <string name="schedule_confirm_schedule_label">일정</string>
     <string name="schedule_confirm_lodging_label">숙소</string>
     <string name="schedule_confirm_transport_label">이동수단</string>
+    <string name="value_unknown">정보 없음</string>
+    <string name="accommodation_none">숙소 없음</string>
+    <string name="transport_mode_air">항공권</string>
+    <string name="transport_mode_other">기타</string>
     <string name="schedule_confirm_retry">다시 분석하기</string>
 
     <!-- S06 분석 중 -->

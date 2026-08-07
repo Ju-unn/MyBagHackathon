@@ -42,6 +42,7 @@ import java.util.concurrent.Executors;
 public class ScheduleUploadActivity extends AppCompatActivity {
 
     public static final String EXTRA_UPLOAD_IDS = "upload_ids";
+    public static final String EXTRA_SELECTED_URIS = "selected_uris";
 
     // 사진 종류는 사용자가 직접 고르지 않는다 — 일정표·숙소예약·항공권 등 섞인 사진을
     // 그대로 올리면 AI가 분석해서 구분한다(S07/S08 결과 화면 참고). 그래서 업로드
@@ -79,11 +80,20 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         MaterialButton startAnalysis = binding.uploadBottomCta.bottomCtaPrimary;
         startAnalysis.setText(R.string.upload_start_analysis);
         startAnalysis.setOnClickListener(v -> onStartAnalysis(startAnalysis));
+
+        // S06에서 "취소" 눌러서 돌아온 경우, 아까 고르던 사진 목록을 그대로 복원
+        ArrayList<Uri> restoredUris = getIntent().getParcelableArrayListExtra(EXTRA_SELECTED_URIS);
+        if (restoredUris != null) {
+            addPhotos(restoredUris);
+        }
     }
 
     private void onPhotosPicked(List<Uri> uris) {
         if (uris.isEmpty()) return;
+        addPhotos(uris);
+    }
 
+    private void addPhotos(List<Uri> uris) {
         LinearLayout previewRow = binding.uploadPreviewRow;
         int size = dp(64);
         int gap = dp(10);
@@ -143,6 +153,7 @@ public class ScheduleUploadActivity extends AppCompatActivity {
             }
             Intent intent = new Intent(this, AnalyzingActivity.class);
             intent.putExtra(EXTRA_UPLOAD_IDS, uploadIds);
+            intent.putParcelableArrayListExtra(EXTRA_SELECTED_URIS, new ArrayList<>(selectedUris));
             startActivity(intent);
             finish();
         } else {
