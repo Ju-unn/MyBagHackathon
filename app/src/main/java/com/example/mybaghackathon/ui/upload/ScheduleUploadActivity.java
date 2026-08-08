@@ -1,9 +1,12 @@
 package com.example.mybaghackathon.ui.upload;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
@@ -46,6 +50,8 @@ public class ScheduleUploadActivity extends AppCompatActivity {
     public static final String EXTRA_ROOM_NAME = "room_name";
     public static final String EXTRA_MEMBER_COUNT = "member_count";
 
+    private static final int MAX_PHOTOS = 5;
+
     // 사진 종류는 사용자가 직접 고르지 않는다 — 일정표·숙소예약·항공권 등 섞인 사진을
     // 그대로 올리면 AI가 분석해서 구분한다(S07/S08 결과 화면 참고). 그래서 업로드
     // 시점엔 전부 ITINERARY로 보내는 게 의도된 동작.
@@ -78,9 +84,15 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         binding.uploadTopAppBar.topAppBarDesc.setText(R.string.upload_desc);
         binding.uploadTopAppBar.topAppBarDesc.setVisibility(View.VISIBLE);
 
-        binding.uploadDropzone.setOnClickListener(v -> photoPicker.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build()));
+        binding.uploadDropzone.setOnClickListener(v -> {
+            if (selectedUris.size() >= MAX_PHOTOS) {
+                Toast.makeText(this, R.string.upload_error_max_photos, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            photoPicker.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
+        });
 
         binding.uploadBottomCta.bottomCtaDivider.setVisibility(View.VISIBLE);
 
@@ -102,22 +114,75 @@ public class ScheduleUploadActivity extends AppCompatActivity {
 
     private void addPhotos(List<Uri> uris) {
         LinearLayout previewRow = binding.uploadPreviewRow;
-        int size = dp(64);
-        int gap = dp(10);
+        boolean skippedSome = false;
         for (Uri uri : uris) {
             if (selectedUris.contains(uri)) continue; // 이미 고른 사진은 중복 추가하지 않음
+            if (selectedUris.size() >= MAX_PHOTOS) {
+                skippedSome = true;
+                continue;
+            }
             selectedUris.add(uri);
-
-            ShapeableImageView thumb = new ShapeableImageView(this);
-            thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            thumb.setShapeAppearanceModel(thumb.getShapeAppearanceModel().toBuilder()
-                    .setAllCornerSizes(dp(14))
-                    .build());
-            thumb.setImageURI(uri);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(size, size);
-            if (previewRow.getChildCount() > 0) lp.setMarginStart(gap);
-            previewRow.addView(thumb, lp);
+            addThumbnail(previewRow, uri);
         }
+        if (skippedSome) {
+            Toast.makeText(this, R.string.upload_error_max_photos, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // 썸네일(탭하면 확대) + 우측 상단 삭제 배지가 있는 미리보기 타일 하나를 추가한다
+    private void addThumbnail(LinearLayout previewRow, Uri uri) {
+        int size = dp(64);
+        int gap = dp(10);
+
+        FrameLayout wrapper = new FrameLayout(this);
+        LinearLayout.LayoutParams wrapperLp = new LinearLayout.LayoutParams(size, size);
+        if (previewRow.getChildCount() > 0) wrapperLp.setMarginStart(gap);
+
+        ShapeableImageView thumb = new ShapeableImageView(this);
+        thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        thumb.setShapeAppearanceModel(thumb.getShapeAppearanceModel().toBuilder()
+                .setAllCornerSizes(dp(14))
+                .build());
+        thumb.setImageURI(uri);
+        thumb.setLayoutParams(new FrameLayout.LayoutParams(size, size));
+        thumb.setOnClickListener(v -> showPhotoPreview(uri));
+        wrapper.addView(thumb);
+
+        ImageView deleteBadge = new ImageView(this);
+        int badgeSize = dp(20);
+        FrameLayout.LayoutParams badgeLp = new FrameLayout.LayoutParams(badgeSize, badgeSize);
+        badgeLp.gravity = Gravity.TOP | Gravity.END;
+        badgeLp.topMargin = dp(2);
+        badgeLp.rightMargin = dp(2);
+        deleteBadge.setLayoutParams(badgeLp);
+        deleteBadge.setBackgroundResource(R.drawable.bg_photo_delete_badge);
+        deleteBadge.setImageResource(R.drawable.ic_close_small);
+        deleteBadge.setColorFilter(Color.WHITE);
+        int iconPadding = dp(4);
+        deleteBadge.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        deleteBadge.setOnClickListener(v -> removePhoto(uri, wrapper, previewRow));
+        wrapper.addView(deleteBadge);
+
+        previewRow.addView(wrapper, wrapperLp);
+    }
+
+    private void removePhoto(Uri uri, View wrapper, LinearLayout previewRow) {
+        selectedUris.remove(uri);
+        previewRow.removeView(wrapper);
+    }
+
+    private void showPhotoPreview(Uri uri) {
+        ImageView fullImage = new ImageView(this);
+        fullImage.setAdjustViewBounds(true);
+        fullImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        fullImage.setImageURI(uri);
+        int padding = dp(8);
+        fullImage.setPadding(padding, padding, padding, padding);
+
+        new AlertDialog.Builder(this)
+                .setView(fullImage)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 
     private void onStartAnalysis(MaterialButton button) {
