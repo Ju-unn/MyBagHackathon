@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,30 +15,43 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.app.AppContainer;
+import com.example.mybaghackathon.app.MyBagApplication;
 import com.example.mybaghackathon.databinding.FragmentArchiveBinding;
+import com.example.mybaghackathon.model.Trip;
+import com.example.mybaghackathon.model.TripMember;
 import com.example.mybaghackathon.ui.archive.adapter.ArchiveTripAdapter;
 import com.example.mybaghackathon.ui.createroom.CreateRoomActivity;
 import com.example.mybaghackathon.ui.molecules.AvatarStackHelper;
 import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
+import com.example.mybaghackathon.util.DateUtils;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * S14 · MainActivity — TripArchiveFragment ("공용 여행" 탭): 사용자가 속한
  * 모든 방을 진행중/지난 여행으로 구분해서 RecyclerView로 보여줌.
  *
- * 기능: 진행중/지난 여행 세그먼트 칩을 눌러 목록을 필터링하고, 각 여행방을
- * 카드로 바인딩해 리스트에 보여준 뒤 클릭 시 RoomDetailActivity로 이동시킴
- * (F-JTDZJG). 선택한 세그먼트에 방이 하나도 없으면 EmptyState(NoArchive)를
- * 보여주고 "방 만들기" 버튼으로 CreateRoomActivity를 연다.
+ * 기능: ArchivePresenter가 불러온 목록으로 진행중/지난 여행 세그먼트 칩을 눌러
+ * 목록을 전환하고, 각 여행방을 카드로 바인딩해 리스트에 보여준 뒤 클릭 시
+ * RoomDetailActivity로 이동시킨다(F-JTDZJG). 선택한 세그먼트에 방이 하나도
+ * 없으면 EmptyState(NoArchive)를 보여주고 "방 만들기" 버튼으로
+ * CreateRoomActivity를 연다.
  */
-public class TripArchiveFragment extends Fragment {
+public class TripArchiveFragment extends Fragment implements ArchiveContract.View {
+
+    private static final int[] AVATAR_COLORS = {
+            R.color.bag_avatar_2, R.color.bag_avatar_1, R.color.bag_avatar_4, R.color.bag_avatar_3
+    };
 
     private FragmentArchiveBinding binding;
     private ArchiveTripAdapter adapter;
+    private ArchiveContract.Presenter presenter;
     private TextView activeChip;
     private TextView pastChip;
+    private boolean showingOngoing = true;
 
     @Nullable
     @Override
@@ -45,6 +59,9 @@ public class TripArchiveFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         binding = FragmentArchiveBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        AppContainer appContainer = ((MyBagApplication) requireActivity().getApplication()).getAppContainer();
+        presenter = new ArchivePresenter(this, appContainer.tripRepository, appContainer.packingRepository);
 
         binding.archiveTopAppBar.topAppBarTitle.setText(R.string.archive_title);
         binding.archiveTopAppBar.topAppBarAction.setVisibility(View.GONE);
@@ -76,19 +93,23 @@ public class TripArchiveFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        if (presenter != null) {
+            presenter.onDestroy();
+        }
         binding = null;
+        super.onDestroyView();
     }
 
-    private void selectSegment(boolean active) {
-        setSegmentSelected(activeChip, active);
-        setSegmentSelected(pastChip, !active);
+    private void selectSegment(boolean ongoing) {
+        showingOngoing = ongoing;
+        setSegmentSelected(activeChip, ongoing);
+        setSegmentSelected(pastChip, !ongoing);
 
-        List<ArchiveTripUiModel> trips = active ? ongoingTrips() : pastTrips();
-        boolean empty = trips.isEmpty();
-        binding.archiveTripRecycler.setVisibility(empty ? View.GONE : View.VISIBLE);
-        binding.archiveEmptyState.getRoot().setVisibility(empty ? View.VISIBLE : View.GONE);
-        adapter.submitList(trips);
+        if (ongoing) {
+            presenter.loadOngoingTrips();
+        } else {
+            presenter.loadPastTrips();
+        }
     }
 
     private void setSegmentSelected(TextView segment, boolean selected) {
@@ -102,19 +123,69 @@ public class TripArchiveFragment extends Fragment {
         }
     }
 
-    private List<ArchiveTripUiModel> ongoingTrips() {
-        List<AvatarStackHelper.Entry> avatars = Arrays.asList(
-                new AvatarStackHelper.Entry("김", ContextCompat.getColor(requireContext(), R.color.bag_avatar_1)),
-                new AvatarStackHelper.Entry("민", ContextCompat.getColor(requireContext(), R.color.bag_avatar_2)),
-                new AvatarStackHelper.Entry("유", ContextCompat.getColor(requireContext(), R.color.bag_avatar_3)));
-        return Arrays.asList(
-                ArchiveTripUiModel.ongoing(1L, "도쿄 벚꽃 여행", "D-12", avatars, 68),
-                ArchiveTripUiModel.planned(2L, "오사카 미식 여행", "D-45"));
+    // ===== ArchiveContract.View =====
+
+    @Override
+    public void showOngoingTrips(List<Trip> trips, Map<Long, Integer> progressByTripId) {
+        if (binding == null || !showingOngoing) {
+            return;
+        }
+        List<ArchiveTripUiModel> uiModels = new ArrayList<>();
+        for (Trip trip : trips) {
+            uiModels.add(toOngoingUiModel(trip, progressByTripId));
+        }
+        bindTrips(uiModels);
     }
 
-    private List<ArchiveTripUiModel> pastTrips() {
-        return Arrays.asList(
-                ArchiveTripUiModel.past(3L, "부산 여름 여행"),
-                ArchiveTripUiModel.past(4L, "오사카 벚꽃 여행"));
+    @Override
+    public void showPastTrips(List<Trip> trips) {
+        if (binding == null || showingOngoing) {
+            return;
+        }
+        List<ArchiveTripUiModel> uiModels = new ArrayList<>();
+        for (Trip trip : trips) {
+            uiModels.add(ArchiveTripUiModel.past(trip.getTripId(), trip.getTripName()));
+        }
+        bindTrips(uiModels);
+    }
+
+    @Override
+    public void showError(String message) {
+        if (getContext() == null) {
+            return;
+        }
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void bindTrips(List<ArchiveTripUiModel> trips) {
+        boolean empty = trips.isEmpty();
+        binding.archiveTripRecycler.setVisibility(empty ? View.GONE : View.VISIBLE);
+        binding.archiveEmptyState.getRoot().setVisibility(empty ? View.VISIBLE : View.GONE);
+        adapter.submitList(trips);
+    }
+
+    /** 오늘이 여행 기간 안이면(=진행중) Ongoing 카드, 아니면 Planned 카드로 그린다. */
+    private ArchiveTripUiModel toOngoingUiModel(Trip trip, Map<Long, Integer> progressByTripId) {
+        String ddayText = DateUtils.formatDday(trip.getStartDate());
+        if (DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate())) {
+            int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
+            return ArchiveTripUiModel.ongoing(trip.getTripId(), trip.getTripName(), ddayText,
+                    toAvatarEntries(trip.getMembers()), progress);
+        }
+        return ArchiveTripUiModel.planned(trip.getTripId(), trip.getTripName(), ddayText);
+    }
+
+    private List<AvatarStackHelper.Entry> toAvatarEntries(List<TripMember> members) {
+        List<AvatarStackHelper.Entry> entries = new ArrayList<>();
+        if (members == null) {
+            return entries;
+        }
+        for (int i = 0; i < members.size(); i++) {
+            String nickname = members.get(i).getNickname();
+            String initial = nickname == null || nickname.isEmpty() ? "" : nickname.substring(0, 1);
+            int color = ContextCompat.getColor(requireContext(), AVATAR_COLORS[i % AVATAR_COLORS.length]);
+            entries.add(new AvatarStackHelper.Entry(initial, color));
+        }
+        return entries;
     }
 }
