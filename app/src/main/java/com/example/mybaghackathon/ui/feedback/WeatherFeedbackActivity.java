@@ -88,6 +88,13 @@ public class WeatherFeedbackActivity extends AppCompatActivity
     }
 
     @Override
+    public void showPending(String message) {
+        if (canUpdateUi()) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
     public void showError(String message) {
         if (canUpdateUi()) {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
