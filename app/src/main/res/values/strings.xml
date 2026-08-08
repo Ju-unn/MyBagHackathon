@@ -5,6 +5,8 @@
     <string name="restriction_cabin_only">기내만 가능</string>
     <string name="restriction_checked_only">위탁만 가능</string>
     <string name="restriction_prohibited">반입 금지</string>
+    <string name="restriction_limited">반입 제한</string>
+    <string name="restriction_caution">주의 필요</string>
 
     <!-- 공통 액션 -->
     <string name="action_add">추가</string>
@@ -12,6 +14,7 @@
     <string name="action_delete">삭제</string>
     <string name="action_edit">수정</string>
     <string name="action_cancel">취소</string>
+    <string name="action_confirm">확인</string>
     <string name="action_next">다음</string>
     <string name="action_copy_link">링크 복사</string>
     <string name="action_share_kakao">카카오톡 공유</string>
@@ -79,6 +82,7 @@
     <string name="upload_dropzone_desc">일정표·예약 확인 사진을 한꺼번에 선택하세요</string>
     <string name="upload_start_analysis">AI 분석 시작하기</string>
     <string name="upload_error_no_photos">사진을 1장 이상 선택해주세요</string>
+    <string name="upload_error_max_photos">사진은 최대 5장까지 선택할 수 있어요</string>
     <string name="upload_error_compress_failed">사진을 처리하는 중 문제가 생겼어요. 다시 시도해주세요</string>
 
     <!-- S07 1차 결과 확인 -->
@@ -91,6 +95,9 @@
     <string name="accommodation_none">숙소 없음</string>
     <string name="transport_mode_air">항공권</string>
     <string name="transport_mode_other">기타</string>
+    <string name="schedule_confirm_invalid_date">날짜는 YYYY-MM-DD 형식으로 입력해주세요</string>
+    <string name="schedule_confirm_start_date_hint">시작일 (YYYY-MM-DD)</string>
+    <string name="schedule_confirm_end_date_hint">종료일 (YYYY-MM-DD)</string>
     <string name="schedule_confirm_retry">다시 분석하기</string>
 
     <!-- S06 분석 중 -->
@@ -106,12 +113,22 @@
     <string name="review_destination_label">여행지</string>
     <string name="review_dates_label">숙소 일정</string>
     <string name="review_weather_heading">일정별 날씨</string>
+    <string name="review_weather_disclaimer">AI 데이터의 기반으로 정리한 날씨 정보라 실제와 다를 수 있어요.\n출발 전 최신 기상 예보를 다시 확인해주세요.</string>
+    <string name="review_restriction_disclaimer">AI 데이터의 기반으로 정리한 반입 규정이라 실제와 다를 수 있어요.\n출발 전 항공사 반입 규정을 다시 확인해주세요.</string>
+    <string name="weather_condition_sun">맑음</string>
+    <string name="weather_condition_rain">비</string>
+    <string name="weather_condition_cloud">흐림</string>
+    <string name="weather_condition_snow">눈</string>
     <string name="review_restriction_warning">보조배터리 등 3개 항목에 반입 규정이 있어요</string>
+    <string name="review_restriction_warning_single">%1$s 항목에 반입 규정이 있어요</string>
+    <string name="review_restriction_warning_multiple">%1$s 등 %2$d개 항목에 반입 규정이 있어요</string>
+    <string name="review_restriction_dialog_title">반입 규정 안내</string>
     <string name="review_items_heading">추천 준비물</string>
     <string name="review_items_desc">체크한 항목은 공용 체크리스트에 담겨요</string>
     <string name="review_priority_high">필수</string>
     <string name="review_priority_mid">중간</string>
     <string name="review_priority_low">선택</string>
+    <string name="review_priority_count_format">%1$s · %2$d</string>
     <string name="review_generate">방 생성 완료</string>
 
     <!-- S09 날씨 피드백 -->

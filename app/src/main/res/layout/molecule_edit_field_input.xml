@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- EditFieldSheet 안에서 필드 개수만큼 코드로 추가되는 입력 행 하나 -->
+<com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/editFieldInputLayout"
+    style="@style/Widget.Bag.TextField"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/space_md">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editFieldInput"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/text_field_height"
+        android:textAppearance="@style/TextAppearance.Bag.BodyL" />
+</com.google.android.material.textfield.TextInputLayout>

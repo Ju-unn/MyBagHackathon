@@ -1,9 +1,15 @@
 package com.example.mybaghackathon.ui.upload;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -43,6 +49,10 @@ public class ScheduleUploadActivity extends AppCompatActivity {
 
     public static final String EXTRA_UPLOAD_IDS = "upload_ids";
     public static final String EXTRA_SELECTED_URIS = "selected_uris";
+    public static final String EXTRA_ROOM_NAME = "room_name";
+    public static final String EXTRA_MEMBER_COUNT = "member_count";
+
+    private static final int MAX_PHOTOS = 5;
 
     // 사진 종류는 사용자가 직접 고르지 않는다 — 일정표·숙소예약·항공권 등 섞인 사진을
     // 그대로 올리면 AI가 분석해서 구분한다(S07/S08 결과 화면 참고). 그래서 업로드
@@ -51,11 +61,13 @@ public class ScheduleUploadActivity extends AppCompatActivity {
 
     private ActivityScheduleUploadBinding binding;
     private UploadRepository uploadRepository;
+    private String roomName;
+    private int memberCount;
     private final List<Uri> selectedUris = new ArrayList<>();
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private final ActivityResultLauncher<PickVisualMediaRequest> photoPicker =
-            registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(),
+            registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(MAX_PHOTOS),
                     this::onPhotosPicked);
 
     @Override
@@ -67,13 +79,22 @@ public class ScheduleUploadActivity extends AppCompatActivity {
 
         uploadRepository = ((MyBagApplication) getApplication()).getAppContainer().uploadRepository;
 
+        roomName = getIntent().getStringExtra(EXTRA_ROOM_NAME);
+        memberCount = getIntent().getIntExtra(EXTRA_MEMBER_COUNT, 0);
+
         binding.uploadTopAppBar.topAppBarTitle.setText(R.string.upload_title);
         binding.uploadTopAppBar.topAppBarDesc.setText(R.string.upload_desc);
         binding.uploadTopAppBar.topAppBarDesc.setVisibility(View.VISIBLE);
 
-        binding.uploadDropzone.setOnClickListener(v -> photoPicker.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build()));
+        binding.uploadDropzone.setOnClickListener(v -> {
+            if (selectedUris.size() >= MAX_PHOTOS) {
+                Toast.makeText(this, R.string.upload_error_max_photos, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            photoPicker.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
+        });
 
         binding.uploadBottomCta.bottomCtaDivider.setVisibility(View.VISIBLE);
 
@@ -95,22 +116,107 @@ public class ScheduleUploadActivity extends AppCompatActivity {
 
     private void addPhotos(List<Uri> uris) {
         LinearLayout previewRow = binding.uploadPreviewRow;
-        int size = dp(64);
-        int gap = dp(10);
+        boolean skippedSome = false;
         for (Uri uri : uris) {
             if (selectedUris.contains(uri)) continue; // 이미 고른 사진은 중복 추가하지 않음
+            if (selectedUris.size() >= MAX_PHOTOS) {
+                skippedSome = true;
+                continue;
+            }
             selectedUris.add(uri);
-
-            ShapeableImageView thumb = new ShapeableImageView(this);
-            thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            thumb.setShapeAppearanceModel(thumb.getShapeAppearanceModel().toBuilder()
-                    .setAllCornerSizes(dp(14))
-                    .build());
-            thumb.setImageURI(uri);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(size, size);
-            if (previewRow.getChildCount() > 0) lp.setMarginStart(gap);
-            previewRow.addView(thumb, lp);
+            addThumbnail(previewRow, uri);
         }
+        if (skippedSome) {
+            Toast.makeText(this, R.string.upload_error_max_photos, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // 썸네일(탭하면 확대) + 우측 상단 삭제 배지가 있는 미리보기 타일 하나를 추가한다
+    private void addThumbnail(LinearLayout previewRow, Uri uri) {
+        int size = dp(64);
+        int gap = dp(10);
+
+        FrameLayout wrapper = new FrameLayout(this);
+        LinearLayout.LayoutParams wrapperLp = new LinearLayout.LayoutParams(size, size);
+        if (previewRow.getChildCount() > 0) wrapperLp.setMarginStart(gap);
+
+        ShapeableImageView thumb = new ShapeableImageView(this);
+        thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        thumb.setShapeAppearanceModel(thumb.getShapeAppearanceModel().toBuilder()
+                .setAllCornerSizes(dp(14))
+                .build());
+        thumb.setImageURI(uri);
+        thumb.setLayoutParams(new FrameLayout.LayoutParams(size, size));
+        thumb.setOnClickListener(v -> showPhotoPreview(uri));
+        wrapper.addView(thumb);
+
+        ImageView deleteBadge = new ImageView(this);
+        int badgeSize = dp(20);
+        FrameLayout.LayoutParams badgeLp = new FrameLayout.LayoutParams(badgeSize, badgeSize);
+        badgeLp.gravity = Gravity.TOP | Gravity.END;
+        badgeLp.topMargin = dp(2);
+        badgeLp.rightMargin = dp(2);
+        deleteBadge.setLayoutParams(badgeLp);
+        deleteBadge.setBackgroundResource(R.drawable.bg_photo_delete_badge);
+        deleteBadge.setImageResource(R.drawable.ic_close_small);
+        deleteBadge.setColorFilter(Color.WHITE);
+        int iconPadding = dp(4);
+        deleteBadge.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        deleteBadge.setOnClickListener(v -> removePhoto(uri, wrapper, previewRow));
+        wrapper.addView(deleteBadge);
+
+        previewRow.addView(wrapper, wrapperLp);
+    }
+
+    private void removePhoto(Uri uri, View wrapper, LinearLayout previewRow) {
+        selectedUris.remove(uri);
+        previewRow.removeView(wrapper);
+    }
+
+    private void showPhotoPreview(Uri uri) {
+        Dialog dialog = new Dialog(this, R.style.Theme_Bag_FullscreenDialog);
+        dialog.setContentView(buildPhotoPreviewLayout(dialog, uri));
+        dialog.show();
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+    }
+
+    // 어두운 스크림 + 꽉 찬 사진 + 우측 상단 원형 닫기 버튼으로 구성된 전체화면 미리보기
+    private View buildPhotoPreviewLayout(Dialog dialog, Uri uri) {
+        FrameLayout root = new FrameLayout(this);
+        root.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        root.setBackgroundColor(0xF2000000);
+        root.setOnClickListener(v -> dialog.dismiss());
+
+        ImageView fullImage = new ImageView(this);
+        fullImage.setAdjustViewBounds(true);
+        fullImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        fullImage.setImageURI(uri);
+        FrameLayout.LayoutParams imageLp = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        imageLp.setMargins(dp(24), dp(64), dp(24), dp(64));
+        fullImage.setLayoutParams(imageLp);
+        root.addView(fullImage);
+
+        ImageView closeButton = new ImageView(this);
+        int closeSize = dp(36);
+        FrameLayout.LayoutParams closeLp = new FrameLayout.LayoutParams(closeSize, closeSize);
+        closeLp.gravity = Gravity.TOP | Gravity.END;
+        closeLp.topMargin = dp(20);
+        closeLp.rightMargin = dp(20);
+        closeButton.setLayoutParams(closeLp);
+        closeButton.setBackgroundResource(R.drawable.bg_photo_preview_close);
+        closeButton.setImageResource(R.drawable.ic_close_small);
+        closeButton.setColorFilter(getColor(R.color.bag_text_primary));
+        int iconPadding = dp(8);
+        closeButton.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        closeButton.setOnClickListener(v -> dialog.dismiss());
+        root.addView(closeButton);
+
+        return root;
     }
 
     private void onStartAnalysis(MaterialButton button) {
@@ -154,6 +260,8 @@ public class ScheduleUploadActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AnalyzingActivity.class);
             intent.putExtra(EXTRA_UPLOAD_IDS, uploadIds);
             intent.putParcelableArrayListExtra(EXTRA_SELECTED_URIS, new ArrayList<>(selectedUris));
+            intent.putExtra(EXTRA_ROOM_NAME, roomName);
+            intent.putExtra(EXTRA_MEMBER_COUNT, memberCount);
             startActivity(intent);
             finish();
         } else {
