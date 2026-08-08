@@ -100,7 +100,6 @@
     <string name="schedule_confirm_invalid_date">날짜는 YYYY-MM-DD 형식으로 입력해주세요</string>
     <string name="schedule_confirm_start_date_hint">시작일 (YYYY-MM-DD)</string>
     <string name="schedule_confirm_end_date_hint">종료일 (YYYY-MM-DD)</string>
-    <string name="schedule_confirm_retry">다시 분석하기</string>
 
     <!-- S06 분석 중 -->
     <string name="analyzing_step1">사진에서 일정을 읽고 있어요</string>
