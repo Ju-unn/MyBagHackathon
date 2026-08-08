@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 서버가 아직 HTTP라 cleartext 허용. Phase 10 HTTPS 전환 후 이 파일과 Manifest의 networkSecurityConfig 참조를 제거할 것 -->
-<network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">13.124.218.86</domain>
-    </domain-config>
-</network-security-config>
