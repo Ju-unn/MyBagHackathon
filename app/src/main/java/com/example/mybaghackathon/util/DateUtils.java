@@ -51,4 +51,34 @@ public final class DateUtils {
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar;
     }
+
+    /** 오늘이 "yyyy-MM-dd" 시작일~종료일 사이(포함)인지 여부. 파싱 실패/빈 값이면 false. */
+    public static boolean isTravelingNow(String startDate, String endDate) {
+        if (startDate == null || startDate.isEmpty() || endDate == null || endDate.isEmpty()) {
+            return false;
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat(ISO_DATE_PATTERN, Locale.KOREA);
+        format.setLenient(false);
+        try {
+            Date start = format.parse(startDate);
+            Date end = format.parse(endDate);
+            if (start == null || end == null) {
+                return false;
+            }
+
+            Calendar today = truncateToDate(Calendar.getInstance());
+            Calendar startCal = truncateToDate(calendarOf(start));
+            Calendar endCal = truncateToDate(calendarOf(end));
+            return !today.before(startCal) && !today.after(endCal);
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    private static Calendar calendarOf(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
+    }
 }

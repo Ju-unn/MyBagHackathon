@@ -37,6 +37,7 @@
     <string name="home_upload_needed">일정 사진 업로드 필요</string>
     <string name="home_empty_title">함께할 여행방이 없어요</string>
     <string name="home_empty_desc">방을 만들고 여행을 준비해보아요</string>
+    <string name="empty_state_create_room">방 만들기</string>
     <string name="checklist_progress_format">체크리스트 %1$d%% 완료</string>
     <string name="nav_home">홈</string>
     <string name="nav_trips">공용 여행</string>
@@ -49,6 +50,7 @@
     <string name="create_room_invite_label">여행 인원</string>
     <string name="create_room_member_count_format">%1$d명</string>
     <string name="create_room_submit">다음</string>
+    <string name="create_room_name_required">방 이름을 입력하세요</string>
 
     <!-- S05 방 상세 -->
     <string name="room_detail_schedule_title">일정 정보</string>
@@ -195,7 +197,7 @@
 
     <!-- S15 내 기본 물품 전체보기 -->
     <string name="profile_items_title">내 기본 물품</string>
-    <string name="profile_items_swipe_hint">스와이프하면 수정하거나 삭제할 수 있어요</string>
+    <string name="profile_items_swipe_hint">물품을 선택하면 수정하거나 삭제할 수 있어요</string>
 
     <!-- S15 알림 설정 -->
     <string name="notif_title">알림 설정</string>

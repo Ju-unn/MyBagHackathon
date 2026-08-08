@@ -1,8 +1,12 @@
 package com.example.mybaghackathon.ui.createroom;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -39,6 +43,14 @@ public class CreateRoomActivity extends AppCompatActivity {
         title.setText(R.string.create_room_title);
         binding.createRoomTopBar.topAppBarBack.setOnClickListener(v -> finish());
 
+        binding.createRoomNameField.textFieldInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard(v);
+                return true;
+            }
+            return false;
+        });
+
         updateMemberCountLabel();
         binding.createRoomMemberMinus.setOnClickListener(v -> {
             if (memberCount <= MEMBER_COUNT_MIN) return;
@@ -58,6 +70,11 @@ public class CreateRoomActivity extends AppCompatActivity {
                     ? ""
                     : binding.createRoomNameField.textFieldInput.getText().toString().trim();
 
+            if (roomName.isEmpty()) {
+                Toast.makeText(this, R.string.create_room_name_required, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             Intent intent = new Intent(this, ScheduleUploadActivity.class);
             intent.putExtra("room_name", roomName);
             intent.putExtra("member_count", memberCount);
@@ -68,5 +85,12 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     private void updateMemberCountLabel() {
         binding.createRoomMemberCount.setText(getString(R.string.create_room_member_count_format, memberCount));
+    }
+
+    private void hideKeyboard(TextView view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }
