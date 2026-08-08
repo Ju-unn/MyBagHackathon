@@ -15,11 +15,7 @@ import androidx.core.content.ContextCompat;
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.app.AppContainer;
 import com.example.mybaghackathon.app.MyBagApplication;
-import com.example.mybaghackathon.common.AppResult;
 import com.example.mybaghackathon.data.mapper.WeatherMapper;
-import com.example.mybaghackathon.data.repository.PackingRepository;
-import com.example.mybaghackathon.data.repository.TripRepository;
-import com.example.mybaghackathon.data.repository.WeatherRepository;
 import com.example.mybaghackathon.databinding.ActivityRoomDetailBinding;
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.model.Trip;
@@ -38,162 +34,71 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-/**
- * S09 · 방 상세 화면.
- *
- * <p>trip_id가 전달되면 여행방, 참여자, 날씨 예보, 반입 제한 정보를 서버에서
- * 조회합니다. trip_id가 없는 디자인 미리보기 진입에서는 XML 샘플 값을 유지합니다.</p>
- */
-public class RoomDetailActivity extends AppCompatActivity {
+/** S09 방 상세 화면. 화면 표시와 사용자 입력 전달만 담당한다. */
+public class RoomDetailActivity extends AppCompatActivity implements RoomDetailContract.View {
 
     public static final String EXTRA_TRIP_ID = "trip_id";
     public static final String EXTRA_ROOM_NAME = "room_name";
     public static final String EXTRA_IS_HOST = "is_host";
     public static final String EXTRA_INVITE_CODE = "invite_code";
 
-    private static final String DEFAULT_ROOM_NAME = "제주 가족 여행";
+    private static final String DEFAULT_ROOM_NAME = "여행방";
     private static final String INVITE_URL_BASE = "https://mybag.app/invite/";
 
     private ActivityRoomDetailBinding binding;
-    private TripRepository tripRepository;
-    private WeatherRepository weatherRepository;
-    private PackingRepository packingRepository;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
-    private long tripId = -1L;
-    private boolean isHost;
-    private int memberCount = 3;
-    private String inviteCode;
+    private RoomDetailContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityRoomDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
+
         AppContainer container = ((MyBagApplication) getApplication()).getAppContainer();
-        tripRepository = container.tripRepository;
-        weatherRepository = container.weatherRepository;
-        packingRepository = container.packingRepository;
+        presenter = new RoomDetailPresenter(
+                this,
+                container.tripRepository,
+                container.weatherRepository,
+                container.packingRepository,
+                container.tokenStorage.getUserId()
+        );
 
-        readArguments();
         bindActions();
-        showPreviewMembers();
-
-        if (tripId > 0L) {
-            loadRoomData();
-        }
+        readArguments();
     }
 
     private void readArguments() {
-        tripId = getIntent().getLongExtra(EXTRA_TRIP_ID, -1L);
-        isHost = getIntent().getBooleanExtra(EXTRA_IS_HOST, true);
-        inviteCode = getIntent().getStringExtra(EXTRA_INVITE_CODE);
-
+        long tripId = getIntent().getLongExtra(EXTRA_TRIP_ID, -1L);
+        boolean initialHost = getIntent().getBooleanExtra(EXTRA_IS_HOST, false);
+        String inviteCode = getIntent().getStringExtra(EXTRA_INVITE_CODE);
         String roomName = getIntent().getStringExtra(EXTRA_ROOM_NAME);
-        if (!hasText(roomName)) {
-            roomName = DEFAULT_ROOM_NAME;
-        }
-        binding.roomDetailTopBar.topAppBarCompactTitle.setText(roomName);
-        updateHostUi();
+
+        binding.roomDetailTopBar.topAppBarCompactTitle.setText(
+                hasText(roomName) ? roomName.trim() : DEFAULT_ROOM_NAME);
+        updateHostUi(initialHost);
+        presenter.loadRoom(tripId, initialHost, inviteCode);
     }
 
     private void bindActions() {
         binding.roomDetailTopBar.topAppBarBack.setOnClickListener(v -> finish());
-        binding.roomDetailInviteButton.setOnClickListener(v -> showInviteSheet());
+        binding.roomDetailInviteButton.setOnClickListener(v -> presenter.onInviteClicked());
 
         MaterialButton viewTips = binding.roomDetailBottomCta.bottomCtaSecondary;
         viewTips.setText(R.string.room_detail_view_tips);
-        viewTips.setOnClickListener(v -> {
-            Intent intent = new Intent(this, WeatherFeedbackActivity.class);
-            intent.putExtra(WeatherFeedbackActivity.EXTRA_TRIP_ID, tripId);
-            startActivity(intent);
-        });
+        viewTips.setOnClickListener(v -> presenter.onTipsClicked());
 
         MaterialButton viewChecklist = binding.roomDetailBottomCta.bottomCtaPrimary;
         viewChecklist.setText(R.string.room_detail_view_checklist);
-        viewChecklist.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ChecklistActivity.class);
-            intent.putExtra(ChecklistActivity.EXTRA_TRIP_ID, tripId);
-            intent.putExtra(ChecklistActivity.EXTRA_MEMBER_COUNT, memberCount);
-            intent.putExtra(ChecklistActivity.EXTRA_IS_HOST, isHost);
-            startActivity(intent);
-        });
+        viewChecklist.setOnClickListener(v -> presenter.onChecklistClicked());
     }
 
-    private void showInviteSheet() {
-        if (!hasText(inviteCode)) {
-            Toast.makeText(this, "초대 코드를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String inviteUrl = INVITE_URL_BASE + Uri.encode(inviteCode.trim());
-        InviteShareSheet.newInstance(inviteUrl)
-                .show(getSupportFragmentManager(), "invite_share");
-    }
-
-    private void showPreviewMembers() {
-        LinearLayout memberList = binding.roomDetailMemberList;
-        addMember(memberList, "나", true, R.color.bag_avatar_2);
-        addMember(memberList, "민지", false, R.color.bag_avatar_1);
-        addMember(memberList, "유진", false, R.color.bag_avatar_4);
-    }
-
-    private void loadRoomData() {
-        executor.execute(() -> {
-            AppResult<Trip> tripResult = tripRepository.getTripDetail(tripId);
-            if (!tripResult.isSuccess() || tripResult.getData() == null) {
-                runOnUiThread(() -> handleTripFailure(tripResult));
-                return;
-            }
-
-            Trip trip = tripResult.getData();
-            AppResult<List<Weather>> weatherResult = null;
-            if (hasText(trip.getDestinationCity())
-                    && hasText(trip.getStartDate())
-                    && hasText(trip.getEndDate())) {
-                weatherResult = weatherRepository.getForecast(
-                        trip.getDestinationCity(), trip.getStartDate(), trip.getEndDate());
-            }
-            AppResult<List<PackingItem>> packingResult = packingRepository.listItems(tripId, null);
-
-            AppResult<List<Weather>> finalWeatherResult = weatherResult;
-            runOnUiThread(() -> bindRoomData(trip, finalWeatherResult, packingResult));
-        });
-    }
-
-    private void handleTripFailure(AppResult<Trip> result) {
+    @Override
+    public void showTrip(Trip trip, boolean isHost) {
         if (!canUpdateUi()) {
             return;
         }
-        String message = result.getError() == null
-                ? "여행방 정보를 불러오지 못했습니다."
-                : result.getError().getMessage();
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void bindRoomData(
-            Trip trip,
-            AppResult<List<Weather>> weatherResult,
-            AppResult<List<PackingItem>> packingResult
-    ) {
-        if (!canUpdateUi()) {
-            return;
-        }
-
-        bindTrip(trip);
-        if (weatherResult != null && weatherResult.isSuccess()) {
-            bindWeather(weatherResult.getData());
-        }
-        if (packingResult.isSuccess()) {
-            bindRestriction(packingResult.getData());
-        }
-    }
-
-    private void bindTrip(Trip trip) {
         if (hasText(trip.getTripName())) {
             binding.roomDetailTopBar.topAppBarCompactTitle.setText(trip.getTripName());
         }
@@ -201,36 +106,15 @@ public class RoomDetailActivity extends AppCompatActivity {
                 joinNonEmpty(" ", trip.getDestinationCountry(), trip.getDestinationCity()));
         binding.roomDetailDatesValue.setText(
                 joinNonEmpty(" ~ ", trip.getStartDate(), trip.getEndDate()));
-
-        int currentUserId = ((MyBagApplication) getApplication())
-                .getAppContainer()
-                .tokenStorage
-                .getUserId();
-        if (currentUserId > 0) {
-            isHost = trip.getOwnerUserId() == currentUserId;
-            updateHostUi();
-        }
-
-        List<TripMember> members = trip.getMembers();
-        memberCount = members.size();
-        binding.roomDetailMemberList.removeAllViews();
-        List<Integer> avatarColors = Arrays.asList(
-                R.color.bag_avatar_2,
-                R.color.bag_avatar_1,
-                R.color.bag_avatar_4
-        );
-        for (int index = 0; index < members.size(); index++) {
-            TripMember member = members.get(index);
-            addMember(
-                    binding.roomDetailMemberList,
-                    displayName(member),
-                    "OWNER".equalsIgnoreCase(member.getRole()),
-                    avatarColors.get(index % avatarColors.size())
-            );
-        }
+        updateHostUi(isHost);
+        showMembers(trip.getMembers());
     }
 
-    private void bindWeather(List<Weather> weatherList) {
+    @Override
+    public void showWeather(List<Weather> weatherList) {
+        if (!canUpdateUi()) {
+            return;
+        }
         View[] rows = {
                 binding.roomDetailWeatherRow1,
                 binding.roomDetailWeatherRow2,
@@ -268,7 +152,11 @@ public class RoomDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void bindRestriction(List<PackingItem> items) {
+    @Override
+    public void showPackingRestrictions(List<PackingItem> items) {
+        if (!canUpdateUi()) {
+            return;
+        }
         PackingItem restrictedItem = null;
         if (items != null) {
             for (PackingItem item : items) {
@@ -284,24 +172,75 @@ public class RoomDetailActivity extends AppCompatActivity {
             return;
         }
 
-        String warning = joinNonEmpty(
-                ": ", restrictedItem.getItemName(), restrictedItem.getRestrictionReason());
-        binding.roomDetailRestrictionText.setText(warning);
+        binding.roomDetailRestrictionText.setText(joinNonEmpty(
+                ": ", restrictedItem.getItemName(), restrictedItem.getRestrictionReason()));
         binding.roomDetailRestrictionWarning.setVisibility(View.VISIBLE);
     }
 
-    private void updateHostUi() {
+    @Override
+    public void showError(String message) {
+        if (canUpdateUi()) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void openWeatherFeedback(long tripId) {
+        Intent intent = new Intent(this, WeatherFeedbackActivity.class);
+        intent.putExtra(WeatherFeedbackActivity.EXTRA_TRIP_ID, tripId);
+        startActivity(intent);
+    }
+
+    @Override
+    public void openChecklist(long tripId, int memberCount, boolean isHost) {
+        Intent intent = new Intent(this, ChecklistActivity.class);
+        intent.putExtra(ChecklistActivity.EXTRA_TRIP_ID, tripId);
+        intent.putExtra(ChecklistActivity.EXTRA_MEMBER_COUNT, memberCount);
+        intent.putExtra(ChecklistActivity.EXTRA_IS_HOST, isHost);
+        startActivity(intent);
+    }
+
+    @Override
+    public void showInviteShare(String inviteCode) {
+        String inviteUrl = INVITE_URL_BASE + Uri.encode(inviteCode);
+        InviteShareSheet.newInstance(inviteUrl)
+                .show(getSupportFragmentManager(), "invite_share");
+    }
+
+    private void showMembers(List<TripMember> members) {
+        binding.roomDetailMemberList.removeAllViews();
+        if (members == null) {
+            return;
+        }
+        List<Integer> avatarColors = Arrays.asList(
+                R.color.bag_avatar_2,
+                R.color.bag_avatar_1,
+                R.color.bag_avatar_4
+        );
+        for (int index = 0; index < members.size(); index++) {
+            TripMember member = members.get(index);
+            addMember(
+                    binding.roomDetailMemberList,
+                    displayName(member),
+                    "OWNER".equalsIgnoreCase(member.getRole()),
+                    avatarColors.get(index % avatarColors.size())
+            );
+        }
+    }
+
+    private void updateHostUi(boolean isHost) {
         binding.roomDetailHostInviteArea.setVisibility(isHost ? View.VISIBLE : View.GONE);
     }
 
     private void addMember(LinearLayout list, String name, boolean host, int avatarColorRes) {
+        String safeName = hasText(name) ? name.trim() : "여행자";
         View row = LayoutInflater.from(this)
                 .inflate(R.layout.molecule_member_list_item, list, false);
-        ((TextView) row.findViewById(R.id.memberName)).setText(name);
+        ((TextView) row.findViewById(R.id.memberName)).setText(safeName);
 
         com.example.mybaghackathon.ui.atoms.AvatarView avatar =
                 row.findViewById(R.id.memberAvatar);
-        avatar.setInitial(name.substring(0, 1));
+        avatar.setInitial(safeName.substring(0, 1));
         avatar.setAvatarColor(ContextCompat.getColor(this, avatarColorRes));
         row.findViewById(R.id.memberHostBadge)
                 .setVisibility(host ? View.VISIBLE : View.GONE);
@@ -369,7 +308,9 @@ public class RoomDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        executor.shutdownNow();
+        if (presenter != null) {
+            presenter.onDestroy();
+        }
         binding = null;
         super.onDestroy();
     }
