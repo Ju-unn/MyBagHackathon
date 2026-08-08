@@ -50,7 +50,6 @@ public class AnalyzingActivity extends AppCompatActivity implements AnalyzingCon
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TextView stepText;
     private AnalyzingContract.Presenter presenter;
-    private long[] uploadIdsArray; // 성공 시 S07로 다시 넘겨줘서, "다시 분석하기" 때 재사용할 수 있게 보관
     private ArrayList<String> selectedPhotoPaths; // 취소 시 S05로 되돌려줄 사진 캐시 파일 경로 목록
     private String roomName;
     private int memberCount;
@@ -78,7 +77,7 @@ public class AnalyzingActivity extends AppCompatActivity implements AnalyzingCon
             finish();
         });
 
-        uploadIdsArray = getIntent().getLongArrayExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS);
+        long[] uploadIdsArray = getIntent().getLongArrayExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS);
         selectedPhotoPaths = getIntent().getStringArrayListExtra(ScheduleUploadActivity.EXTRA_SELECTED_URIS);
         roomName = getIntent().getStringExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME);
         memberCount = getIntent().getIntExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, 0);
@@ -103,7 +102,6 @@ public class AnalyzingActivity extends AppCompatActivity implements AnalyzingCon
         TripSchedule schedule = data.getSchedule();
 
         Intent intent = new Intent(this, AnalysisResultActivity.class);
-        intent.putExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS, uploadIdsArray);
         intent.putExtra(EXTRA_ANALYSIS_ID, data.getAnalysisId());
         intent.putExtra(EXTRA_DESTINATION_COUNTRY, schedule.getDestinationCountry());
         intent.putExtra(EXTRA_DESTINATION_CITY, schedule.getDestinationCity());

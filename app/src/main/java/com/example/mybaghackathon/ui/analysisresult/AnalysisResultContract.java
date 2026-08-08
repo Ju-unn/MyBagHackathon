@@ -16,14 +16,13 @@ public interface AnalysisResultContract {
         void showInvalidDateError();
         void setConfirming(boolean confirming);
         void showConfirmError(String message);
-        void navigateToRetry(long[] uploadIds, String roomName, int memberCount);
         void navigateToReview(long analysisId, String roomName, int memberCount,
                                ArrayList<RestrictedItem> restrictedItems, ArrayList<PackingItem> recommendedItems,
                                String destinationCountry, String destinationCity, String startDate, String endDate);
     }
 
     interface Presenter {
-        void init(long analysisId, long[] uploadIds, String roomName, int memberCount,
+        void init(long analysisId, String roomName, int memberCount,
                   ArrayList<RestrictedItem> restrictedItems, ArrayList<PackingItem> recommendedItems,
                   String destinationCountry, String destinationCity, String startDate, String endDate,
                   String accommodationName, String transportMode);
@@ -38,7 +37,6 @@ public interface AnalysisResultContract {
         boolean onScheduleEdited(String newStart, String newEnd);
         void onLodgingEdited(String value);
         void onTransportEdited(String value);
-        void onRetryClicked();
         void onNextClicked();
         void onDestroy();
     }

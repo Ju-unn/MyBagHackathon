@@ -57,12 +57,10 @@ public class AnalysisResultActivity extends AppCompatActivity implements Analysi
         binding.confirmTransportCard.findViewById(R.id.reviewFieldEdit)
                 .setOnClickListener(v -> showTransportEditDialog());
 
-        binding.confirmRetryButton.setOnClickListener(v -> presenter.onRetryClicked());
         binding.confirmNextButton.setOnClickListener(v -> presenter.onNextClicked());
 
         Intent intent = getIntent();
         long analysisId = intent.getLongExtra(AnalyzingActivity.EXTRA_ANALYSIS_ID, -1);
-        long[] uploadIds = intent.getLongArrayExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS);
         String destinationCountry = intent.getStringExtra(AnalyzingActivity.EXTRA_DESTINATION_COUNTRY);
         String destinationCity = intent.getStringExtra(AnalyzingActivity.EXTRA_DESTINATION_CITY);
         String startDate = intent.getStringExtra(AnalyzingActivity.EXTRA_START_DATE);
@@ -78,7 +76,7 @@ public class AnalysisResultActivity extends AppCompatActivity implements Analysi
         ArrayList<PackingItem> recommendedItems =
                 (ArrayList<PackingItem>) intent.getSerializableExtra(AnalyzingActivity.EXTRA_RECOMMENDED_ITEMS);
 
-        presenter.init(analysisId, uploadIds, roomName, memberCount, restrictedItems, recommendedItems,
+        presenter.init(analysisId, roomName, memberCount, restrictedItems, recommendedItems,
                 destinationCountry, destinationCity, startDate, endDate, accommodationName, transportMode);
     }
 
@@ -120,22 +118,11 @@ public class AnalysisResultActivity extends AppCompatActivity implements Analysi
     @Override
     public void setConfirming(boolean confirming) {
         binding.confirmNextButton.setEnabled(!confirming);
-        binding.confirmRetryButton.setEnabled(!confirming);
     }
 
     @Override
     public void showConfirmError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void navigateToRetry(long[] uploadIds, String roomName, int memberCount) {
-        Intent retry = new Intent(this, AnalyzingActivity.class);
-        retry.putExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS, uploadIds);
-        retry.putExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME, roomName);
-        retry.putExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, memberCount);
-        startActivity(retry);
-        finish();
     }
 
     @Override

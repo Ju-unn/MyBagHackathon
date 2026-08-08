@@ -34,7 +34,6 @@ public class AnalysisResultPresenter implements AnalysisResultContract.Presenter
     private volatile boolean destroyed = false;
 
     private long analysisId;
-    private long[] uploadIds;
     private String roomName;
     private int memberCount;
     private ArrayList<RestrictedItem> restrictedItems;
@@ -54,12 +53,11 @@ public class AnalysisResultPresenter implements AnalysisResultContract.Presenter
     }
 
     @Override
-    public void init(long analysisId, long[] uploadIds, String roomName, int memberCount,
+    public void init(long analysisId, String roomName, int memberCount,
                       ArrayList<RestrictedItem> restrictedItems, ArrayList<PackingItem> recommendedItems,
                       String destinationCountry, String destinationCity, String startDate, String endDate,
                       String accommodationName, String transportMode) {
         this.analysisId = analysisId;
-        this.uploadIds = uploadIds;
         this.roomName = roomName;
         this.memberCount = memberCount;
         this.restrictedItems = restrictedItems;
@@ -137,13 +135,8 @@ public class AnalysisResultPresenter implements AnalysisResultContract.Presenter
         view.showTransport(transportMode);
     }
 
-    @Override
-    public void onRetryClicked() {
-        view.navigateToRetry(uploadIds, roomName, memberCount);
-    }
-
     // "다음"을 누른 시점의 필드 값(수정했든 안 했든)을 /api/itinerary/confirm.php로 보내 서버에
-    // 확정 반영한다. 여행지·기간이 실제로 바뀐 경우 서버가 GPT로 반입규정·추천준비물을 다시
+    // 확정 반영한다. 필드가 하나라도 실제로 바뀐 경우 서버가 GPT로 반입규정·추천준비물을 다시
     // 산출해서 돌려주므로, 그 응답값으로 다음 화면에 넘길 목록을 갱신한다.
     @Override
     public void onNextClicked() {
