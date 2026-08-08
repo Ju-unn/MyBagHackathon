@@ -126,6 +126,8 @@ public class ScheduleReviewActivity extends AppCompatActivity {
                 if (result.isSuccess()) {
                     Intent roomDetailIntent = new Intent(this, RoomDetailActivity.class);
                     roomDetailIntent.putExtra(EXTRA_TRIP_ID, result.getData().getTripId());
+                    roomDetailIntent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, roomName);
+                    roomDetailIntent.putExtra(RoomDetailActivity.EXTRA_INVITE_CODE, result.getData().getInviteCode());
                     startActivity(roomDetailIntent);
                     finish();
                 } else {

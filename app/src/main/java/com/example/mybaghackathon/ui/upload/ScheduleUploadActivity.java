@@ -31,7 +31,10 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -102,16 +105,45 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         startAnalysis.setText(R.string.upload_start_analysis);
         startAnalysis.setOnClickListener(v -> onStartAnalysis(startAnalysis));
 
-        // S06에서 "취소" 눌러서 돌아온 경우, 아까 고르던 사진 목록을 그대로 복원
-        ArrayList<Uri> restoredUris = getIntent().getParcelableArrayListExtra(EXTRA_SELECTED_URIS);
-        if (restoredUris != null) {
+        // S06에서 "취소" 눌러서 돌아온 경우, 아까 고르던 사진 목록을 그대로 복원.
+        // 캐시에 이미 복사해둔 파일 경로라서 그대로 다시 읽을 수 있음
+        ArrayList<String> restoredPaths = getIntent().getStringArrayListExtra(EXTRA_SELECTED_URIS);
+        if (restoredPaths != null) {
+            List<Uri> restoredUris = new ArrayList<>();
+            for (String path : restoredPaths) {
+                restoredUris.add(Uri.fromFile(new File(path)));
+            }
             addPhotos(restoredUris);
         }
     }
 
     private void onPhotosPicked(List<Uri> uris) {
         if (uris.isEmpty()) return;
-        addPhotos(uris);
+        // 포토피커가 주는 주소(content://media/picker/...)는 이 화면 인스턴스가 없어지면
+        // 못 읽게 되는 임시 권한이라, 고르자마자 우리 캐시 폴더로 복사해서 화면이
+        // 다시 생성돼도(취소 왕복 등) 안전하게 다시 읽을 수 있는 주소로 바꿔둠
+        List<Uri> cachedUris = new ArrayList<>();
+        for (Uri uri : uris) {
+            Uri cached = cachePickedPhoto(uri);
+            if (cached != null) cachedUris.add(cached);
+        }
+        addPhotos(cachedUris);
+    }
+
+    private Uri cachePickedPhoto(Uri sourceUri) {
+        File outFile = new File(getCacheDir(), "picked_" + System.nanoTime() + ".jpg");
+        try (InputStream in = getContentResolver().openInputStream(sourceUri);
+             OutputStream out = new FileOutputStream(outFile)) {
+            if (in == null) return null;
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            return Uri.fromFile(outFile);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     private void addPhotos(List<Uri> uris) {
@@ -183,29 +215,45 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         }
     }
 
-    // 어두운 스크림 + 꽉 찬 사진 + 우측 상단 원형 닫기 버튼으로 구성된 전체화면 미리보기
+    // 화면 전체를 덮는 검은 배경 대신, 살짝 어둡게만 처리한 배경 위에
+    // 우리 카드 색(흰색·둥근모서리)의 팝업 카드 안에 사진을 보여줌
     private View buildPhotoPreviewLayout(Dialog dialog, Uri uri) {
         FrameLayout root = new FrameLayout(this);
         root.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        root.setBackgroundColor(0xF2000000);
+        root.setBackgroundColor(0x99000000);
         root.setOnClickListener(v -> dialog.dismiss());
 
-        ImageView fullImage = new ImageView(this);
-        fullImage.setAdjustViewBounds(true);
-        fullImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        fullImage.setImageURI(uri);
-        FrameLayout.LayoutParams imageLp = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        imageLp.setMargins(dp(24), dp(64), dp(24), dp(64));
-        fullImage.setLayoutParams(imageLp);
-        root.addView(fullImage);
+        FrameLayout card = new FrameLayout(this);
+        card.setBackgroundResource(R.drawable.bg_card_photo_preview);
+        card.setClickable(true); // 카드 안쪽을 탭했을 땐 닫히지 않도록 터치를 여기서 소비함
+        int cardPadding = dp(8);
+        card.setPadding(cardPadding, cardPadding, cardPadding, cardPadding);
+        FrameLayout.LayoutParams cardLp = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        cardLp.gravity = Gravity.CENTER;
+        int sideMargin = dp(24);
+        cardLp.setMargins(sideMargin, dp(96), sideMargin, dp(96));
+
+        ShapeableImageView image = new ShapeableImageView(this);
+        image.setAdjustViewBounds(true);
+        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        image.setMaxHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.55f));
+        image.setImageURI(uri);
+        image.setShapeAppearanceModel(image.getShapeAppearanceModel().toBuilder()
+                .setAllCornerSizes(getResources().getDimension(R.dimen.radius_lg))
+                .build());
+        image.setLayoutParams(new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        card.addView(image);
+
+        root.addView(card, cardLp);
 
         ImageView closeButton = new ImageView(this);
         int closeSize = dp(36);
         FrameLayout.LayoutParams closeLp = new FrameLayout.LayoutParams(closeSize, closeSize);
         closeLp.gravity = Gravity.TOP | Gravity.END;
-        closeLp.topMargin = dp(20);
+        closeLp.topMargin = dp(52);
         closeLp.rightMargin = dp(20);
         closeButton.setLayoutParams(closeLp);
         closeButton.setBackgroundResource(R.drawable.bg_photo_preview_close);
@@ -259,7 +307,11 @@ public class ScheduleUploadActivity extends AppCompatActivity {
             }
             Intent intent = new Intent(this, AnalyzingActivity.class);
             intent.putExtra(EXTRA_UPLOAD_IDS, uploadIds);
-            intent.putParcelableArrayListExtra(EXTRA_SELECTED_URIS, new ArrayList<>(selectedUris));
+            ArrayList<String> selectedPaths = new ArrayList<>();
+            for (Uri uri : selectedUris) {
+                selectedPaths.add(uri.getPath());
+            }
+            intent.putStringArrayListExtra(EXTRA_SELECTED_URIS, selectedPaths);
             intent.putExtra(EXTRA_ROOM_NAME, roomName);
             intent.putExtra(EXTRA_MEMBER_COUNT, memberCount);
             startActivity(intent);
