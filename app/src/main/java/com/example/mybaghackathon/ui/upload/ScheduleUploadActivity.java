@@ -1,11 +1,14 @@
 package com.example.mybaghackathon.ui.upload;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,7 +17,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
@@ -65,7 +67,7 @@ public class ScheduleUploadActivity extends AppCompatActivity {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private final ActivityResultLauncher<PickVisualMediaRequest> photoPicker =
-            registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(),
+            registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(MAX_PHOTOS),
                     this::onPhotosPicked);
 
     @Override
@@ -172,17 +174,49 @@ public class ScheduleUploadActivity extends AppCompatActivity {
     }
 
     private void showPhotoPreview(Uri uri) {
+        Dialog dialog = new Dialog(this, R.style.Theme_Bag_FullscreenDialog);
+        dialog.setContentView(buildPhotoPreviewLayout(dialog, uri));
+        dialog.show();
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+    }
+
+    // 어두운 스크림 + 꽉 찬 사진 + 우측 상단 원형 닫기 버튼으로 구성된 전체화면 미리보기
+    private View buildPhotoPreviewLayout(Dialog dialog, Uri uri) {
+        FrameLayout root = new FrameLayout(this);
+        root.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        root.setBackgroundColor(0xF2000000);
+        root.setOnClickListener(v -> dialog.dismiss());
+
         ImageView fullImage = new ImageView(this);
         fullImage.setAdjustViewBounds(true);
         fullImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
         fullImage.setImageURI(uri);
-        int padding = dp(8);
-        fullImage.setPadding(padding, padding, padding, padding);
+        FrameLayout.LayoutParams imageLp = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        imageLp.setMargins(dp(24), dp(64), dp(24), dp(64));
+        fullImage.setLayoutParams(imageLp);
+        root.addView(fullImage);
 
-        new AlertDialog.Builder(this)
-                .setView(fullImage)
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
+        ImageView closeButton = new ImageView(this);
+        int closeSize = dp(36);
+        FrameLayout.LayoutParams closeLp = new FrameLayout.LayoutParams(closeSize, closeSize);
+        closeLp.gravity = Gravity.TOP | Gravity.END;
+        closeLp.topMargin = dp(20);
+        closeLp.rightMargin = dp(20);
+        closeButton.setLayoutParams(closeLp);
+        closeButton.setBackgroundResource(R.drawable.bg_photo_preview_close);
+        closeButton.setImageResource(R.drawable.ic_close_small);
+        closeButton.setColorFilter(getColor(R.color.bag_text_primary));
+        int iconPadding = dp(8);
+        closeButton.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        closeButton.setOnClickListener(v -> dialog.dismiss());
+        root.addView(closeButton);
+
+        return root;
     }
 
     private void onStartAnalysis(MaterialButton button) {

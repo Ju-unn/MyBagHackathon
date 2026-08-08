@@ -8,7 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
@@ -28,6 +27,7 @@ import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.PriorityDotView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
 import com.example.mybaghackathon.ui.atoms.WeatherIconView;
+import com.example.mybaghackathon.ui.overlay.RestrictionInfoSheet;
 import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
 import com.example.mybaghackathon.ui.upload.ScheduleUploadActivity;
 import com.google.android.material.button.MaterialButton;
@@ -178,14 +178,30 @@ public class ScheduleReviewActivity extends AppCompatActivity {
 
         View header = LayoutInflater.from(this).inflate(R.layout.molecule_section_header, sections, false);
         ((PriorityDotView) header.findViewById(R.id.sectionHeaderDot)).setLevel(level);
-        ((TextView) header.findViewById(R.id.sectionHeaderLabel)).setText(label);
+        ((TextView) header.findViewById(R.id.sectionHeaderLabel))
+                .setText(getString(R.string.review_priority_count_format, label, items.size()));
         LinearLayout.LayoutParams headerLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         if (sections.getChildCount() > 0) headerLp.topMargin = dp(16);
         sections.addView(header, headerLp);
 
-        for (PackingItem item : items) {
-            View row = LayoutInflater.from(this).inflate(R.layout.molecule_checklist_item_row, sections, false);
+        // 항목들을 카드 하나로 묶어서 다른 화면의 카드들과 톤을 맞춤 (예전엔 테두리 없이 쭉 나열됨)
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setBackgroundResource(R.drawable.bg_card_lg_border);
+        card.setPadding(dp(12), dp(4), dp(12), dp(4));
+
+        for (int i = 0; i < items.size(); i++) {
+            PackingItem item = items.get(i);
+            if (i > 0) {
+                View divider = new View(this);
+                divider.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, dp(1)));
+                divider.setBackgroundColor(getColor(R.color.bag_border_divider));
+                card.addView(divider);
+            }
+
+            View row = LayoutInflater.from(this).inflate(R.layout.molecule_checklist_item_row, card, false);
             ((TextView) row.findViewById(R.id.checklistItemLabel)).setText(item.getItemName());
 
             RestrictedItem restriction = findRestriction(item.getItemName());
@@ -205,8 +221,10 @@ public class ScheduleReviewActivity extends AppCompatActivity {
                     itemScopeByName.put(item.getItemName(),
                             newState == CheckboxView.CHECKED ? SCOPE_COMMON : SCOPE_PERSONAL));
 
-            sections.addView(row);
+            card.addView(row);
         }
+
+        sections.addView(card);
     }
 
     private RestrictedItem findRestriction(String itemName) {
@@ -306,32 +324,7 @@ public class ScheduleReviewActivity extends AppCompatActivity {
     }
 
     private void showRestrictionDialog() {
-        StringBuilder message = new StringBuilder();
-        for (RestrictedItem item : restrictedItems) {
-            if (message.length() > 0) message.append("\n\n");
-            message.append(item.getItemName()).append(" — ").append(restrictionTypeLabel(item.getRestrictionType()));
-            if (item.getReason() != null && !item.getReason().isEmpty()) {
-                message.append("\n").append(item.getReason());
-            }
-        }
-
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.review_restriction_dialog_title)
-                .setMessage(message.toString())
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
-    }
-
-    private String restrictionTypeLabel(String type) {
-        if (type == null) return "";
-        switch (type) {
-            case "PROHIBITED": return getString(R.string.restriction_prohibited);
-            case "CARRY_ON_ONLY": return getString(R.string.restriction_cabin_only);
-            case "CHECKED_ONLY": return getString(R.string.restriction_checked_only);
-            case "LIMITED": return getString(R.string.restriction_limited);
-            case "CAUTION": return getString(R.string.restriction_caution);
-            default: return type;
-        }
+        RestrictionInfoSheet.newInstance(restrictedItems).show(getSupportFragmentManager(), "restriction_info");
     }
 
     @Override

@@ -35,4 +35,33 @@
     </style>
 
     <style name="Theme.MyBagHackathon" parent="Base.Theme.MyBagHackathon" />
+
+    <!-- 사진 전체화면 미리보기용 — 타이틀바 없이 화면을 꽉 채우는 다이얼로그 -->
+    <style name="Theme.Bag.FullscreenDialog" parent="Theme.Material3.DayNight.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <!-- MaterialDatePicker 기본 라벤더 틴트 대신 우리 브랜드 색으로.
+         선택 원(colorPrimary)만 바꿔서는 안 먹힘 — 배경 패널은 M3의
+         surfaceContainer 계열 토큰을 따로 참조해서, 그것들도 다 흰색으로 눌러줘야 함. -->
+    <style name="ThemeOverlay.Bag.DatePicker" parent="ThemeOverlay.Material3.MaterialCalendar">
+        <item name="colorPrimary">@color/bag_brand_default</item>
+        <item name="colorOnPrimary">@color/bag_text_on_brand</item>
+        <item name="colorPrimaryContainer">@color/bag_bg_brand_subtle</item>
+        <item name="colorOnPrimaryContainer">@color/bag_text_brand</item>
+        <item name="colorSecondary">@color/bag_brand_default</item>
+        <item name="colorOnSecondary">@color/bag_text_on_brand</item>
+        <item name="colorSurface">@color/bag_bg_base</item>
+        <item name="colorOnSurface">@color/bag_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/bag_text_secondary</item>
+        <item name="colorSurfaceVariant">@color/bag_bg_subtle</item>
+        <item name="colorSurfaceContainer">@color/white</item>
+        <item name="colorSurfaceContainerHigh">@color/white</item>
+        <item name="colorSurfaceContainerHighest">@color/white</item>
+        <item name="colorSurfaceContainerLow">@color/white</item>
+        <item name="colorSurfaceContainerLowest">@color/white</item>
+        <item name="colorOutline">@color/bag_border_default</item>
+    </style>
 </resources>
