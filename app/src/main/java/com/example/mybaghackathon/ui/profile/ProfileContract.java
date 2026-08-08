@@ -1,5 +1,6 @@
 package com.example.mybaghackathon.ui.profile;
 
+import com.example.mybaghackathon.model.User;
 import com.example.mybaghackathon.model.UserDefaultItem;
 
 import java.util.List;
@@ -8,12 +9,14 @@ import java.util.List;
 public interface ProfileContract {
 
     interface View {
+        // user는 로컬에 저장된 로그인 사용자 정보가 없으면(비로그인 등) null일 수 있다
+        void showUser(User user);
         void showItemPreview(List<UserDefaultItem> previewItems, int totalCount);
         void showError(String message);
     }
 
     interface Presenter {
-        // 기본 물품 목록을 불러와 앞 4개 미리보기와 전체 개수를 View에 전달한다
+        // 로컬에 저장된 사용자 정보와 기본 물품 목록(앞 4개 미리보기 + 전체 개수)을 View에 전달한다
         void loadItems();
 
         void renameItem(long defaultItemId, String newLabel);

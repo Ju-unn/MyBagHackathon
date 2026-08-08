@@ -13,9 +13,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.app.AppContainer;
 import com.example.mybaghackathon.app.MyBagApplication;
+import com.example.mybaghackathon.data.local.UserStorage;
 import com.example.mybaghackathon.data.repository.DefaultItemRepository;
 import com.example.mybaghackathon.databinding.FragmentProfileBinding;
+import com.example.mybaghackathon.model.User;
 import com.example.mybaghackathon.model.UserDefaultItem;
 import com.example.mybaghackathon.ui.login.LoginActivity;
 import com.example.mybaghackathon.ui.overlay.EditItemSheet;
@@ -44,9 +47,10 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                               @Nullable Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
 
-        DefaultItemRepository defaultItemRepository =
-                ((MyBagApplication) requireActivity().getApplication()).getAppContainer().defaultItemRepository;
-        presenter = new ProfilePresenter(this, defaultItemRepository);
+        AppContainer appContainer = ((MyBagApplication) requireActivity().getApplication()).getAppContainer();
+        DefaultItemRepository defaultItemRepository = appContainer.defaultItemRepository;
+        UserStorage userStorage = appContainer.userStorage;
+        presenter = new ProfilePresenter(this, defaultItemRepository, userStorage);
 
         itemAdapter = new ProfileItemAdapter((position, item) -> {
             EditItemSheet sheet = EditItemSheet.newInstance(item.getItemName());
@@ -95,6 +99,20 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     }
 
     // ===== ProfileContract.View =====
+
+    @Override
+    public void showUser(User user) {
+        if (binding == null) return;
+        if (user == null || user.getNickname() == null || user.getNickname().isEmpty()) {
+            binding.profileName.setText(null);
+            binding.profileAvatar.setInitial(null);
+            binding.profileAvatar.setImageUrl(null);
+            return;
+        }
+        binding.profileName.setText(user.getNickname());
+        binding.profileAvatar.setInitial(user.getNickname().substring(0, 1));
+        binding.profileAvatar.setImageUrl(user.getProfileImageUrl());
+    }
 
     @Override
     public void showItemPreview(List<UserDefaultItem> previewItems, int totalCount) {
