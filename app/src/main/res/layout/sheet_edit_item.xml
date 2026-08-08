@@ -33,6 +33,44 @@
             android:textAppearance="@style/TextAppearance.Bag.BodyL" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:textStyle="bold"
+        android:text="@string/bs_add_item_priority_label"
+        android:textAppearance="@style/TextAppearance.Bag.LabelL" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:orientation="horizontal">
+
+        <com.example.mybaghackathon.ui.atoms.ChipView
+            android:id="@+id/editItemPriorityHigh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space_sm"
+            app:chipActive="true"
+            app:chipLabel="@string/review_priority_high" />
+
+        <com.example.mybaghackathon.ui.atoms.ChipView
+            android:id="@+id/editItemPriorityMid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space_sm"
+            app:chipActive="false"
+            app:chipLabel="@string/review_priority_mid" />
+
+        <com.example.mybaghackathon.ui.atoms.ChipView
+            android:id="@+id/editItemPriorityLow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipActive="false"
+            app:chipLabel="@string/review_priority_low" />
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

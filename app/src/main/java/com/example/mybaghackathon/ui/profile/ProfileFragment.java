@@ -55,11 +55,12 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         presenter = new ProfilePresenter(this, defaultItemRepository, authRepository, userStorage);
 
         itemAdapter = new ProfileItemAdapter((position, item) -> {
-            EditItemSheet sheet = EditItemSheet.newInstance(item.getItemName());
+            EditItemSheet sheet = EditItemSheet.newInstance(
+                    item.getItemName(), PriorityLevels.fromApiValue(item.getPriority()));
             sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
                 @Override
-                public void onItemRenamed(String newLabel) {
-                    presenter.renameItem(item.getDefaultItemId(), newLabel);
+                public void onItemRenamed(String newLabel, int priorityLevel) {
+                    presenter.renameItem(item.getDefaultItemId(), newLabel, priorityLevel);
                 }
 
                 @Override

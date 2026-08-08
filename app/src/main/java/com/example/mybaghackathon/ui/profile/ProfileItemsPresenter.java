@@ -44,7 +44,8 @@ public class ProfileItemsPresenter implements ProfileItemsContract.Presenter {
     @Override
     public void addItem(String itemName, int priorityLevel) {
         executor.execute(() -> {
-            AppResult<Long> result = defaultItemRepository.addItem(itemName, null, toPriority(priorityLevel));
+            AppResult<Long> result =
+                    defaultItemRepository.addItem(itemName, null, PriorityLevels.toApiValue(priorityLevel));
             postToView(() -> {
                 if (result.isSuccess()) {
                     loadItems();
@@ -56,9 +57,10 @@ public class ProfileItemsPresenter implements ProfileItemsContract.Presenter {
     }
 
     @Override
-    public void renameItem(long defaultItemId, String newLabel) {
+    public void renameItem(long defaultItemId, String newLabel, int priorityLevel) {
         executor.execute(() -> {
-            AppResult<Void> result = defaultItemRepository.updateItem(defaultItemId, newLabel, null, null);
+            AppResult<Void> result = defaultItemRepository.updateItem(
+                    defaultItemId, newLabel, null, PriorityLevels.toApiValue(priorityLevel));
             postToView(() -> {
                 if (result.isSuccess()) {
                     loadItems();
@@ -94,16 +96,5 @@ public class ProfileItemsPresenter implements ProfileItemsContract.Presenter {
             if (destroyed) return;
             action.run();
         });
-    }
-
-    private String toPriority(int priorityLevel) {
-        switch (priorityLevel) {
-            case 0:
-                return "REQUIRED";
-            case 1:
-                return "RECOMMENDED";
-            default:
-                return "OPTIONAL";
-        }
     }
 }

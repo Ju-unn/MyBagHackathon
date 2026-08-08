@@ -18,7 +18,7 @@ public interface ProfileItemsContract {
         // priorityLevel: 0=필수, 1=중간, 2=선택 (AddItemSheet 기준)
         void addItem(String itemName, int priorityLevel);
 
-        void renameItem(long defaultItemId, String newLabel);
+        void renameItem(long defaultItemId, String newLabel, int priorityLevel);
 
         void deleteItem(long defaultItemId);
 

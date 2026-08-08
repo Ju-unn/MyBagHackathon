@@ -58,9 +58,10 @@ public class ProfilePresenter implements ProfileContract.Presenter {
     }
 
     @Override
-    public void renameItem(long defaultItemId, String newLabel) {
+    public void renameItem(long defaultItemId, String newLabel, int priorityLevel) {
         executor.execute(() -> {
-            AppResult<Void> result = defaultItemRepository.updateItem(defaultItemId, newLabel, null, null);
+            AppResult<Void> result = defaultItemRepository.updateItem(
+                    defaultItemId, newLabel, null, PriorityLevels.toApiValue(priorityLevel));
             postToView(() -> {
                 if (result.isSuccess()) {
                     loadItems();

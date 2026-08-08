@@ -20,7 +20,7 @@ public interface ProfileContract {
         // 로컬에 저장된 사용자 정보와 기본 물품 목록(앞 4개 미리보기 + 전체 개수)을 View에 전달한다
         void loadItems();
 
-        void renameItem(long defaultItemId, String newLabel);
+        void renameItem(long defaultItemId, String newLabel, int priorityLevel);
 
         void deleteItem(long defaultItemId);
 

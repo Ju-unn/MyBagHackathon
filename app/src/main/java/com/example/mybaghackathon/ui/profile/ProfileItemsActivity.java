@@ -47,11 +47,12 @@ public class ProfileItemsActivity extends AppCompatActivity implements ProfileIt
         presenter = new ProfileItemsPresenter(this, defaultItemRepository);
 
         itemAdapter = new ProfileItemAdapter((position, item) -> {
-            EditItemSheet sheet = EditItemSheet.newInstance(item.getItemName());
+            EditItemSheet sheet = EditItemSheet.newInstance(
+                    item.getItemName(), PriorityLevels.fromApiValue(item.getPriority()));
             sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
                 @Override
-                public void onItemRenamed(String newLabel) {
-                    presenter.renameItem(item.getDefaultItemId(), newLabel);
+                public void onItemRenamed(String newLabel, int priorityLevel) {
+                    presenter.renameItem(item.getDefaultItemId(), newLabel, priorityLevel);
                 }
 
                 @Override
