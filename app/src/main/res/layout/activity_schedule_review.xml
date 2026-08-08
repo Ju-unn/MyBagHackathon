@@ -92,6 +92,25 @@
                     android:layout_marginTop="@dimen/space_md"
                     android:orientation="vertical" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="@string/review_weather_disclaimer"
+                    android:textAppearance="@style/TextAppearance.Bag.Caption"
+                    android:textColor="@color/bag_text_tertiary_safe" />
+
+                <!-- 여행 기간이 날씨 제공 기간(10일)보다 길 때만 노출 -->
+                <TextView
+                    android:id="@+id/reviewWeatherLimitNotice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_2xs"
+                    android:text="@string/review_weather_limit_notice"
+                    android:textAppearance="@style/TextAppearance.Bag.Caption"
+                    android:textColor="@color/bag_text_tertiary_safe"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
             <!-- Step2Badge -->
@@ -119,6 +138,14 @@
 
                 <include layout="@layout/molecule_warning_banner" />
             </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="@string/review_restriction_disclaimer"
+                android:textAppearance="@style/TextAppearance.Bag.Caption"
+                android:textColor="@color/bag_text_tertiary_safe" />
 
             <TextView
                 android:layout_width="wrap_content"

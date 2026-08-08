@@ -1,10 +1,12 @@
 package com.example.mybaghackathon.model;
 
+import java.io.Serializable;
+
 /**
  * 목적지 반입 규정에 걸리는 품목 한 건을 나타내는 모델입니다. (analyze.php/confirm.php 응답의
  * restricted_items 대응)
  */
-public class RestrictedItem {
+public class RestrictedItem implements Serializable {
 
     private String itemName;
     private String restrictionType;

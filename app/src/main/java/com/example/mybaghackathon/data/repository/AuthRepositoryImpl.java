@@ -3,6 +3,7 @@ package com.example.mybaghackathon.data.repository;
 import com.example.mybaghackathon.common.AppError;
 import com.example.mybaghackathon.common.AppResult;
 import com.example.mybaghackathon.data.local.TokenStorage;
+import com.example.mybaghackathon.data.local.UserStorage;
 import com.example.mybaghackathon.data.mapper.UserMapper;
 import com.example.mybaghackathon.data.remote.api.AuthApi;
 import com.example.mybaghackathon.data.remote.dto.auth.AuthTokenDto;
@@ -20,10 +21,12 @@ public class AuthRepositoryImpl implements AuthRepository {
 
     private final AuthApi authApi;
     private final TokenStorage tokenStorage;
+    private final UserStorage userStorage;
 
-    public AuthRepositoryImpl(AuthApi authApi, TokenStorage tokenStorage) {
+    public AuthRepositoryImpl(AuthApi authApi, TokenStorage tokenStorage, UserStorage userStorage) {
         this.authApi = authApi;
         this.tokenStorage = tokenStorage;
+        this.userStorage = userStorage;
     }
 
     // 카카오 로그인 API 호출 → 성공 시 JWT 저장 후 User 반환, 실패 시 에러 반환
@@ -40,7 +43,9 @@ public class AuthRepositoryImpl implements AuthRepository {
 
             AuthTokenDto data = body.getData();
             tokenStorage.saveToken(data.getToken());
-            return AppResult.success(UserMapper.from(data.getUser()));
+            User user = UserMapper.from(data.getUser());
+            userStorage.saveUser(user);
+            return AppResult.success(user);
         } catch (IOException e) {
             return AppResult.failure(networkError());
         }
@@ -57,6 +62,7 @@ public class AuthRepositoryImpl implements AuthRepository {
             }
 
             tokenStorage.clearToken();
+            userStorage.clearUser();
             return AppResult.success(null);
         } catch (IOException e) {
             return AppResult.failure(networkError());

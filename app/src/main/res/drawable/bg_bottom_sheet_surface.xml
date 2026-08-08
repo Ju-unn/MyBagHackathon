@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 바텀시트 콘텐츠 배경 — Material3 기본 테마의 틴트된 surface 색 대신
+     우리 앱의 실제 배경색(흰색)을 직접 덮어씌우기 위한 용도 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/bag_bg_surface" />
+    <corners
+        android:topLeftRadius="@dimen/radius_xl"
+        android:topRightRadius="@dimen/radius_xl" />
+</shape>

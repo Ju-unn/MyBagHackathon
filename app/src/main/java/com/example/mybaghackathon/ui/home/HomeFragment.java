@@ -16,7 +16,6 @@ import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.FragmentHomeBinding;
 import com.example.mybaghackathon.model.Trip;
 import com.example.mybaghackathon.model.TripMember;
-import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.example.mybaghackathon.ui.createroom.CreateRoomActivity;
 import com.example.mybaghackathon.ui.home.adapter.TripRoomAdapter;
 import com.example.mybaghackathon.ui.molecules.AvatarStackHelper;
@@ -61,9 +60,9 @@ public class HomeFragment extends Fragment {
         binding.homeTopAppBar.topAppBarAction.setVisibility(View.GONE);
 
         adapter = new TripRoomAdapter(trip -> {
-            Intent intent = trip.state == TripRoomUiModel.State.ACTIVE
-                    ? new Intent(getContext(), ChecklistActivity.class)
-                    : new Intent(getContext(), RoomDetailActivity.class);
+            Intent intent = new Intent(getContext(), RoomDetailActivity.class);
+            intent.putExtra(RoomDetailActivity.EXTRA_TRIP_ID, trip.tripId);
+            intent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, trip.title);
             startActivity(intent);
         });
         binding.homeTripRecycler.setLayoutManager(new LinearLayoutManager(getContext()));

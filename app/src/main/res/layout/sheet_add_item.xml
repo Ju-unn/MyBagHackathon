@@ -11,6 +11,7 @@
     android:paddingBottom="@dimen/space_2xl">
 
     <TextView
+        android:id="@+id/addItemTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"

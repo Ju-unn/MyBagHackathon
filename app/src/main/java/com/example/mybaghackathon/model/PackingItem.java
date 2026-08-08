@@ -1,9 +1,11 @@
 package com.example.mybaghackathon.model;
 
+import java.io.Serializable;
+
 /**
  * 여행 체크리스트의 준비물 한 건을 나타내는 앱 내부 모델입니다.
  */
-public class PackingItem {
+public class PackingItem implements Serializable {
 
     private long packingItemId;
     private long tripId;

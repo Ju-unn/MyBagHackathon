@@ -1,5 +1,7 @@
 package com.example.mybaghackathon.data.remote.dto.packing;
 
+import com.example.mybaghackathon.data.remote.adapter.FlexibleBooleanAdapter;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -40,6 +42,7 @@ public class ChecklistItemDto {
     private Long assigneeUserId;
 
     @SerializedName("is_completed")
+    @JsonAdapter(FlexibleBooleanAdapter.class)
     private boolean completed;
 
     @SerializedName("completed_at")
