@@ -36,11 +36,15 @@
 
     <style name="Theme.MyBagHackathon" parent="Base.Theme.MyBagHackathon" />
 
-    <!-- 사진 전체화면 미리보기용 — 타이틀바 없이 화면을 꽉 채우는 다이얼로그 -->
+    <!-- 사진 전체화면 미리보기용 — 타이틀바 없이 화면을 꽉 채우는 다이얼로그.
+         statusBarColor를 명시 안 하면 M3 기본 보라색 상태바가 뜨므로,
+         팝업 배경 스크림과 같은 톤으로 맞춰줌. -->
     <style name="Theme.Bag.FullscreenDialog" parent="Theme.Material3.DayNight.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">#99000000</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <!-- MaterialDatePicker 기본 라벤더 틴트 대신 우리 브랜드 색으로.

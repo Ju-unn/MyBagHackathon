@@ -1,7 +1,6 @@
 package com.example.mybaghackathon.ui.analyzing;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -56,7 +55,7 @@ public class AnalyzingActivity extends AppCompatActivity {
     private AnalysisRepository analysisRepository;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private long[] uploadIdsArray; // 성공 시 S07로 다시 넘겨줘서, "다시 분석하기" 때 재사용할 수 있게 보관
-    private ArrayList<Uri> selectedUris; // 취소 시 S05로 되돌려줄 사진 목록
+    private ArrayList<String> selectedPhotoPaths; // 취소 시 S05로 되돌려줄 사진 캐시 파일 경로 목록
     private String roomName;
     private int memberCount;
 
@@ -75,7 +74,7 @@ public class AnalyzingActivity extends AppCompatActivity {
 
         binding.analyzingCancel.setOnClickListener(v -> {
             Intent intent = new Intent(this, ScheduleUploadActivity.class);
-            intent.putParcelableArrayListExtra(ScheduleUploadActivity.EXTRA_SELECTED_URIS, selectedUris);
+            intent.putStringArrayListExtra(ScheduleUploadActivity.EXTRA_SELECTED_URIS, selectedPhotoPaths);
             intent.putExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME, roomName);
             intent.putExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, memberCount);
             startActivity(intent);
@@ -87,7 +86,7 @@ public class AnalyzingActivity extends AppCompatActivity {
 
     private void startAnalysis() {
         uploadIdsArray = getIntent().getLongArrayExtra(ScheduleUploadActivity.EXTRA_UPLOAD_IDS);
-        selectedUris = getIntent().getParcelableArrayListExtra(ScheduleUploadActivity.EXTRA_SELECTED_URIS);
+        selectedPhotoPaths = getIntent().getStringArrayListExtra(ScheduleUploadActivity.EXTRA_SELECTED_URIS);
         roomName = getIntent().getStringExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME);
         memberCount = getIntent().getIntExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, 0);
         List<Long> uploadIds = new ArrayList<>();
