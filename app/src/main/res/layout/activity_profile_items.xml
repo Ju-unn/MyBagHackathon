@@ -2,6 +2,7 @@
 <!-- S15 내 기본 물품 전체보기 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
@@ -37,12 +38,14 @@
                 android:textAppearance="@style/TextAppearance.Bag.LabelM"
                 android:textColor="@color/bag_text_secondary" />
 
-            <LinearLayout
-                android:id="@+id/profileItemsList"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/profileItemsRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_lg"
-                android:orientation="vertical" />
+                android:nestedScrollingEnabled="false"
+                tools:itemCount="12"
+                tools:listitem="@layout/molecule_default_item_row" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
