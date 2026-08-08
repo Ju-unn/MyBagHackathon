@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.model.UserDefaultItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,17 +19,17 @@ import java.util.List;
 final class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.ViewHolder> {
 
     interface OnItemClickListener {
-        void onItemClick(int position, String label);
+        void onItemClick(int position, UserDefaultItem item);
     }
 
-    private List<String> items = Collections.emptyList();
+    private List<UserDefaultItem> items = Collections.emptyList();
     private final OnItemClickListener listener;
 
     ProfileItemAdapter(OnItemClickListener listener) {
         this.listener = listener;
     }
 
-    void submitList(List<String> newItems) {
+    void submitList(List<UserDefaultItem> newItems) {
         items = new ArrayList<>(newItems);
         notifyDataSetChanged();
     }
@@ -43,9 +44,9 @@ final class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.V
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String label = items.get(position);
-        holder.label.setText(label);
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(position, label));
+        UserDefaultItem item = items.get(position);
+        holder.label.setText(item.getItemName());
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(position, item));
     }
 
     @Override
