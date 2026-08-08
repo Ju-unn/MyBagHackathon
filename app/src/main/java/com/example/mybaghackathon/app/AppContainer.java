@@ -3,6 +3,7 @@ package com.example.mybaghackathon.app;
 import android.content.Context;
 
 import com.example.mybaghackathon.data.local.TokenStorage;
+import com.example.mybaghackathon.data.local.UserStorage;
 import com.example.mybaghackathon.data.remote.api.AnalysisApi;
 import com.example.mybaghackathon.data.remote.api.ApiClient;
 import com.example.mybaghackathon.data.remote.api.AuthApi;
@@ -33,6 +34,7 @@ import com.example.mybaghackathon.data.repository.WeatherRepositoryImpl;
 public class AppContainer {
 
     public final TokenStorage tokenStorage;
+    public final UserStorage userStorage;
     public final AuthRepository authRepository;
     public final WeatherRepository weatherRepository;
     public final UploadRepository uploadRepository;
@@ -45,6 +47,7 @@ public class AppContainer {
     // TokenStorage → ApiClient → 각 Api → Repository 순으로 엮어서 보관한다
     public AppContainer(Context context) {
         tokenStorage = new TokenStorage(context.getApplicationContext());
+        userStorage = new UserStorage(context.getApplicationContext());
 
         ApiClient apiClient = new ApiClient(tokenStorage);
         AuthApi authApi = apiClient.create(AuthApi.class);
@@ -56,7 +59,7 @@ public class AppContainer {
         TripApi tripApi = apiClient.create(TripApi.class);
         NotificationSettingsApi notificationSettingsApi = apiClient.create(NotificationSettingsApi.class);
 
-        authRepository = new AuthRepositoryImpl(authApi, tokenStorage);
+        authRepository = new AuthRepositoryImpl(authApi, tokenStorage, userStorage);
         weatherRepository = new WeatherRepositoryImpl(weatherApi);
         uploadRepository = new UploadRepositoryImpl(uploadApi);
         analysisRepository = new AnalysisRepositoryImpl(analysisApi);

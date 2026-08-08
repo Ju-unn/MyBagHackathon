@@ -36,6 +36,12 @@
 
     <style name="Theme.MyBagHackathon" parent="Base.Theme.MyBagHackathon" />
 
+    <!-- Android 12+ 시스템 스플래시(런처 아이콘 확대 애니메이션)를 windowIsTranslucent로 우회.
+         (참고: https://woojun.app/posts/안드로이드-Splash-screen-제거/) -->
+    <style name="Theme.MyBagHackathon.Splash" parent="Theme.MyBagHackathon">
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
     <!-- 사진 전체화면 미리보기용 — 타이틀바 없이 화면을 꽉 채우는 다이얼로그.
          statusBarColor를 명시 안 하면 M3 기본 보라색 상태바가 뜨므로,
          팝업 배경 스크림과 같은 톤으로 맞춰줌. -->
