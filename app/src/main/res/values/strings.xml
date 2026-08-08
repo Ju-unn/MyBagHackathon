@@ -181,17 +181,21 @@
     <string name="archive_empty_title">아직 함께한 여행이 없어요</string>
     <string name="archive_empty_desc">방을 만들면 이곳에 모여요</string>
 
-    <!-- S14 프로필 -->
-    <string name="profile_name">김민지</string>
-    <string name="profile_email">minji@example.com</string>
+    <!-- S15 프로필 -->
     <string name="profile_version_value">v1.0.0</string>
     <string name="profile_my_items">내 기본 물품</string>
+    <string name="profile_item_count_format">%1$d개</string>
     <string name="profile_add_item">+ 물품 추가</string>
     <string name="profile_item_hint">새 여행방을 만들 때 체크리스트 초기값으로 제안돼요</string>
+    <string name="profile_view_all">전체보기</string>
     <string name="profile_settings">설정</string>
     <string name="profile_notification_settings">알림 설정</string>
     <string name="profile_logout">로그아웃</string>
     <string name="profile_version">버전</string>
+
+    <!-- S15 내 기본 물품 전체보기 -->
+    <string name="profile_items_title">내 기본 물품</string>
+    <string name="profile_items_swipe_hint">스와이프하면 수정하거나 삭제할 수 있어요</string>
 
     <!-- S15 알림 설정 -->
     <string name="notif_title">알림 설정</string>

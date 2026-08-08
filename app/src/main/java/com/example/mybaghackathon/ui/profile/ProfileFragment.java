@@ -5,94 +5,131 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.app.AppContainer;
+import com.example.mybaghackathon.app.MyBagApplication;
+import com.example.mybaghackathon.data.local.UserStorage;
+import com.example.mybaghackathon.data.repository.AuthRepository;
+import com.example.mybaghackathon.data.repository.DefaultItemRepository;
 import com.example.mybaghackathon.databinding.FragmentProfileBinding;
+import com.example.mybaghackathon.model.User;
+import com.example.mybaghackathon.model.UserDefaultItem;
+import com.example.mybaghackathon.ui.login.LoginActivity;
 import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 import com.example.mybaghackathon.ui.settings.NotificationSettingsActivity;
 
-/**
- * S14 · 프로필 — 사용자의 기본 짐 항목 목록 + 앱 설정.
- *
- * 기능: 기본 항목들을 목록으로 보여주고 각 행을 누르면 EditItemSheet로
- * 수정/삭제하게 하며, 추가 버튼으로 AddItemSheet를 띄우고, 알림 설정 행
- * 클릭 시 NotificationSettingsActivity로 이동하는 화면.
- */
-public class ProfileFragment extends Fragment {
+import java.util.List;
 
-    private static final String[] DEFAULT_ITEMS = {"여권", "충전기", "보조배터리", "우산"};
+/**
+ * S15 · 프로필 — 아바타/이름 카드 + 내 기본 물품 미리보기(최대 4개) + 설정 목록.
+ *
+ * 기능: ProfilePresenter가 불러온 기본 물품 앞 4개를 RecyclerView로 보여주고
+ * 행을 누르면 EditItemSheet로 수정/삭제하게 하며, "전체보기"로
+ * ProfileItemsActivity 전체 목록으로, 알림 설정 행으로
+ * NotificationSettingsActivity로 이동하고, 로그아웃 행을 누르면 로그인
+ * 화면으로 돌아가는 화면.
+ */
+public class ProfileFragment extends Fragment implements ProfileContract.View {
 
     private FragmentProfileBinding binding;
+    private ProfileContract.Presenter presenter;
+    private ProfileItemAdapter itemAdapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
 
-        LinearLayout itemList = binding.profileItemList;
-        for (String item : DEFAULT_ITEMS) {
-            TextView row = new TextView(requireContext());
-            row.setText(item);
-            row.setTextAppearance(R.style.TextAppearance_Bag_BodyL);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, dp(40));
-            row.setLayoutParams(lp);
-            row.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            row.setOnClickListener(v -> {
-                EditItemSheet sheet = EditItemSheet.newInstance(item);
-                sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
-                    @Override
-                    public void onItemRenamed(String newLabel) {
-                        row.setText(newLabel);
-                    }
+        AppContainer appContainer = ((MyBagApplication) requireActivity().getApplication()).getAppContainer();
+        DefaultItemRepository defaultItemRepository = appContainer.defaultItemRepository;
+        AuthRepository authRepository = appContainer.authRepository;
+        UserStorage userStorage = appContainer.userStorage;
+        presenter = new ProfilePresenter(this, defaultItemRepository, authRepository, userStorage);
 
-                    @Override
-                    public void onItemDeleted() {
-                        itemList.removeView(row);
-                    }
-                });
-                sheet.show(getParentFragmentManager(), "edit_item");
+        itemAdapter = new ProfileItemAdapter((position, item) -> {
+            EditItemSheet sheet = EditItemSheet.newInstance(
+                    item.getItemName(), PriorityLevels.fromApiValue(item.getPriority()));
+            sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
+                @Override
+                public void onItemRenamed(String newLabel, int priorityLevel) {
+                    presenter.renameItem(item.getDefaultItemId(), newLabel, priorityLevel);
+                }
+
+                @Override
+                public void onItemDeleted() {
+                    presenter.deleteItem(item.getDefaultItemId());
+                }
             });
-            itemList.addView(row);
-        }
-
-        binding.profileAddItemWrapper.setOnClickListener(v -> {
-            com.example.mybaghackathon.ui.overlay.AddItemSheet sheet =
-                    new com.example.mybaghackathon.ui.overlay.AddItemSheet();
-            sheet.setOnItemAddedListener((label, priority) -> {
-                TextView row = new TextView(requireContext());
-                row.setText(label);
-                row.setTextAppearance(R.style.TextAppearance_Bag_BodyL);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, dp(40));
-                row.setLayoutParams(lp);
-                row.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                itemList.addView(row);
-            });
-            sheet.show(getParentFragmentManager(), "add_item");
+            sheet.show(getParentFragmentManager(), "edit_item");
         });
+        binding.profileItemRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.profileItemRecycler.setAdapter(itemAdapter);
+
+        binding.profileViewAllRow.setOnClickListener(v ->
+                startActivity(new Intent(getContext(), ProfileItemsActivity.class)));
 
         binding.profileNotifRow.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), NotificationSettingsActivity.class)));
 
-        return root;
+        binding.profileLogoutRow.setOnClickListener(v -> presenter.logout());
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.loadItems();
     }
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        presenter.onDestroy();
         binding = null;
+        super.onDestroyView();
     }
 
-    private int dp(int value) {
-        return Math.round(value * getResources().getDisplayMetrics().density);
+    // ===== ProfileContract.View =====
+
+    @Override
+    public void showUser(User user) {
+        if (binding == null) return;
+        if (user == null || user.getNickname() == null || user.getNickname().isEmpty()) {
+            binding.profileName.setText(null);
+            binding.profileAvatar.setInitial(null);
+            binding.profileAvatar.setImageUrl(null);
+            return;
+        }
+        binding.profileName.setText(user.getNickname());
+        binding.profileAvatar.setInitial(user.getNickname().substring(0, 1));
+        binding.profileAvatar.setImageUrl(user.getProfileImageUrl());
+    }
+
+    @Override
+    public void showItemPreview(List<UserDefaultItem> previewItems, int totalCount) {
+        if (binding == null) return;
+        binding.profileItemCount.setText(getString(R.string.profile_item_count_format, totalCount));
+        itemAdapter.submitList(previewItems);
+    }
+
+    @Override
+    public void showError(String message) {
+        if (getContext() == null) return;
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void navigateToLogin() {
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

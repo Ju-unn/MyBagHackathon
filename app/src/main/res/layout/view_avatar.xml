@@ -11,4 +11,12 @@
         android:textColor="@color/bag_text_on_brand"
         android:textStyle="bold"
         tools:text="민" />
+
+    <ImageView
+        android:id="@+id/avatarImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
 </merge>
