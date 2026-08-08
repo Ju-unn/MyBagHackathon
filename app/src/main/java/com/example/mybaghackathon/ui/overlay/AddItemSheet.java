@@ -23,6 +23,10 @@ import com.google.android.material.textfield.TextInputEditText;
  */
 public class AddItemSheet extends BottomSheetDialogFragment {
 
+    private static final String ARG_ITEM_NAME = "item_name";
+    private static final String ARG_PRIORITY = "priority";
+    private static final String ARG_EDIT_MODE = "edit_mode";
+
     /** Implemented by the host screen to receive the new item. */
     public interface OnItemAddedListener {
         void onItemAdded(String label, int priorityLevel);
@@ -37,6 +41,16 @@ public class AddItemSheet extends BottomSheetDialogFragment {
         this.listener = listener;
     }
 
+    public static AddItemSheet newEditInstance(String itemName, int priorityLevel) {
+        AddItemSheet sheet = new AddItemSheet();
+        Bundle arguments = new Bundle();
+        arguments.putString(ARG_ITEM_NAME, itemName);
+        arguments.putInt(ARG_PRIORITY, priorityLevel);
+        arguments.putBoolean(ARG_EDIT_MODE, true);
+        sheet.setArguments(arguments);
+        return sheet;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -48,6 +62,15 @@ public class AddItemSheet extends BottomSheetDialogFragment {
         ChipView high = binding.addItemPriorityHigh;
         ChipView mid = binding.addItemPriorityMid;
         ChipView low = binding.addItemPriorityLow;
+
+        Bundle arguments = getArguments();
+        if (arguments != null && arguments.getBoolean(ARG_EDIT_MODE, false)) {
+            binding.addItemTitle.setText(R.string.bs_edit_item_title);
+            binding.addItemSaveButton.setText(R.string.action_save);
+            nameInput.setText(arguments.getString(ARG_ITEM_NAME, ""));
+            int priority = arguments.getInt(ARG_PRIORITY, 0);
+            selectPriority(high, mid, low, priority == 1 ? mid : (priority == 2 ? low : high));
+        }
 
         high.setOnClickListener(v -> selectPriority(high, mid, low, high));
         mid.setOnClickListener(v -> selectPriority(high, mid, low, mid));
