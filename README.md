@@ -428,8 +428,11 @@ com.example.mybaghackathon
 │       └── TokenStorage.java
 ├── ui
 │   ├── EdgeToEdgeUtil.java
-│   ├── splash/SplashActivity.java
-│   ├── login/LoginActivity.java            # 카카오 SDK 실제 연동 전, 임시로 바로 MainActivity 이동
+│   ├── splash/SplashActivity.java          # 로그인 상태 확인 후 LoginActivity/MainActivity로 분기 + 알림 권한 요청
+│   ├── login/
+│   │   ├── LoginActivity.java              # 카카오 SDK 로그인(카카오톡 앱 우선, 실패 시 계정 웹 로그인 폴백) 연동 완료
+│   │   ├── LoginPresenter.java
+│   │   └── LoginContract.java
 │   ├── home/
 │   │   ├── HomeFragment.java               # S03, 더미 데이터
 │   │   ├── TripRoomUiModel.java
