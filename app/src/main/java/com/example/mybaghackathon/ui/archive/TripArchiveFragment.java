@@ -52,8 +52,12 @@ public class TripArchiveFragment extends Fragment {
         activeChip = binding.archiveSegmentActive;
         pastChip = binding.archiveSegmentPast;
 
-        adapter = new ArchiveTripAdapter(trip ->
-                startActivity(new Intent(getContext(), RoomDetailActivity.class)));
+        adapter = new ArchiveTripAdapter(trip -> {
+            Intent intent = new Intent(getContext(), RoomDetailActivity.class);
+            intent.putExtra(RoomDetailActivity.EXTRA_TRIP_ID, trip.tripId);
+            intent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, trip.title);
+            startActivity(intent);
+        });
         binding.archiveTripRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.archiveTripRecycler.setAdapter(adapter);
 
