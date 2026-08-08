@@ -135,6 +135,11 @@ public class ScheduleReviewActivity extends AppCompatActivity implements ReviewC
     }
 
     @Override
+    public void showWeatherLimitNotice() {
+        binding.reviewWeatherLimitNotice.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void showRequiredItems(List<ReviewContract.ItemView> items) {
         addPrioritySection(0, getString(R.string.review_priority_high), items);
     }

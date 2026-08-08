@@ -1,24 +1,37 @@
 package com.example.mybaghackathon.ui.analysisresult;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.common.AppResult;
+import com.example.mybaghackathon.data.repository.AnalysisRepository;
+import com.example.mybaghackathon.model.AnalysisResult;
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.model.RestrictedItem;
+import com.example.mybaghackathon.model.TripSchedule;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-// AnalysisResultContract.Presenter 구현체 — 필드 포맷팅, 수정 처리, 다음 화면으로
-// 넘길 데이터 구성을 담당 (이 화면은 API 호출이 없어서 스레딩 불필요)
+// AnalysisResultContract.Presenter 구현체 — 필드 포맷팅, 수정 처리, 그리고 "다음" 클릭 시
+// /api/itinerary/confirm.php로 수정된 필드를 서버에 확정 반영한 뒤 다음 화면으로 넘김
 public class AnalysisResultPresenter implements AnalysisResultContract.Presenter {
 
     private final AnalysisResultContract.View view;
     private final Context appContext;
+    private final AnalysisRepository analysisRepository;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private volatile boolean destroyed = false;
 
     private long analysisId;
     private long[] uploadIds;
@@ -33,9 +46,11 @@ public class AnalysisResultPresenter implements AnalysisResultContract.Presenter
     private String accommodationName;
     private String transportMode;
 
-    public AnalysisResultPresenter(AnalysisResultContract.View view, Context appContext) {
+    public AnalysisResultPresenter(AnalysisResultContract.View view, Context appContext,
+                                    AnalysisRepository analysisRepository) {
         this.view = view;
         this.appContext = appContext;
+        this.analysisRepository = analysisRepository;
     }
 
     @Override
@@ -127,10 +142,39 @@ public class AnalysisResultPresenter implements AnalysisResultContract.Presenter
         view.navigateToRetry(uploadIds, roomName, memberCount);
     }
 
+    // "다음"을 누른 시점의 필드 값(수정했든 안 했든)을 /api/itinerary/confirm.php로 보내 서버에
+    // 확정 반영한다. 여행지·기간이 실제로 바뀐 경우 서버가 GPT로 반입규정·추천준비물을 다시
+    // 산출해서 돌려주므로, 그 응답값으로 다음 화면에 넘길 목록을 갱신한다.
     @Override
     public void onNextClicked() {
-        view.navigateToReview(analysisId, roomName, memberCount, restrictedItems, recommendedItems,
-                destinationCountry, destinationCity, startDate, endDate);
+        view.setConfirming(true);
+        executor.execute(() -> {
+            AppResult<AnalysisResult> result = analysisRepository.confirm(
+                    analysisId, destinationCountry, destinationCity, startDate, endDate,
+                    transportMode, accommodationName);
+            mainHandler.post(() -> handleConfirmResult(result));
+        });
+    }
+
+    private void handleConfirmResult(AppResult<AnalysisResult> result) {
+        if (destroyed) return;
+        if (result.isSuccess()) {
+            AnalysisResult data = result.getData();
+            TripSchedule schedule = data.getSchedule();
+            view.navigateToReview(analysisId, roomName, memberCount,
+                    new ArrayList<>(data.getRestrictedItems()), new ArrayList<>(data.getRecommendedItems()),
+                    schedule.getDestinationCountry(), schedule.getDestinationCity(),
+                    schedule.getStartDate(), schedule.getEndDate());
+        } else {
+            view.setConfirming(false);
+            view.showConfirmError(result.getError().getMessage());
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        destroyed = true;
+        executor.shutdown();
     }
 
     private String formatDestination(String city, String country) {
