@@ -76,10 +76,10 @@
             android:name=".ui.checklist.ChecklistActivity"
             android:exported="false" />
 
-<!--        &lt;!&ndash; S15 프로필 &ndash;&gt;-->
-<!--        <activity-->
-<!--            android:name=".ui.profile.ProfileItemsActivity"-->
-<!--            android:exported="false" />-->
+        <!-- S15 프로필 -->
+        <activity
+            android:name=".ui.profile.ProfileItemsActivity"
+            android:exported="false" />
 
         <!-- S16 알림 설정 -->
         <activity
