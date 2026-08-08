@@ -37,6 +37,16 @@ public interface WeatherApi {
     );
 
     /**
+     * 여행방 trip_id로 저장된 예보 조회 (라이브 호출 없이 방 생성/D-7/D-3/D-1 체크포인트에 갱신된 값만 반환)
+     *
+     * 요청: GET /api/weather/forecast.php?trip_id=2
+     *
+     * 아직 체크포인트 갱신 전이면 data.ready=false, data.next_refresh_at에 다음 갱신 예정일이 옴
+     */
+    @GET("api/weather/forecast.php")
+    Call<ApiResponseDto<WeatherForecastDto>> getForecastByTrip(@Query("trip_id") long tripId);
+
+    /**
      * 여행방 목적지·기간·날씨 기반 옷차림/음식/숙소 GPT 조언 조회 (S10 WeatherFeedbackActivity)
      *
      * 요청: GET /api/weather/feedback.php?trip_id=2
