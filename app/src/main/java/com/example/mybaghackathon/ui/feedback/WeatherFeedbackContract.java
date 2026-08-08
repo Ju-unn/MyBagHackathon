@@ -16,6 +16,9 @@ public interface WeatherFeedbackContract {
 
         void showFeedback(WeatherFeedback feedback);
 
+        // 예보/팁이 아직 체크포인트 갱신 전(ready=false)일 때 안내 문구를 보여준다. 에러 아님(showError와 구분)
+        void showPending(String message);
+
         void showError(String message);
     }
 
