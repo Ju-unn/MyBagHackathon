@@ -83,7 +83,7 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
 
         binding.archiveEmptyState.emptyStateTitle.setText(R.string.archive_empty_title);
         binding.archiveEmptyState.emptyStateDesc.setText(R.string.archive_empty_desc);
-        binding.archiveEmptyState.emptyStateAction.setText(R.string.create_room_submit);
+        binding.archiveEmptyState.emptyStateAction.setText(R.string.empty_state_create_room);
         binding.archiveEmptyState.emptyStateAction.setOnClickListener(
                 v -> startActivity(new Intent(getContext(), CreateRoomActivity.class)));
 

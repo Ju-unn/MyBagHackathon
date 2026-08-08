@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
         binding.homeEmptyState.emptyStateTitle.setText(R.string.home_empty_title);
         binding.homeEmptyState.emptyStateDesc.setText(R.string.home_empty_desc);
-        binding.homeEmptyState.emptyStateAction.setText(R.string.create_room_submit);
+        binding.homeEmptyState.emptyStateAction.setText(R.string.empty_state_create_room);
         binding.homeEmptyState.emptyStateAction.setOnClickListener(v -> openCreateRoom());
         binding.homeAddRoomWrapper.setOnClickListener(v -> openCreateRoom());
 
