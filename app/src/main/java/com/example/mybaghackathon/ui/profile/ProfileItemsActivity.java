@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mybaghackathon.R;
-import com.example.mybaghackathon.databinding.MoleculeProfileMyBasicsItemsBinding;
+import com.example.mybaghackathon.databinding.ActivityProfileItemsBinding;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
 import com.example.mybaghackathon.ui.overlay.EditItemSheet;
@@ -20,13 +20,13 @@ import com.example.mybaghackathon.ui.overlay.EditItemSheet;
  */
 public class ProfileItemsActivity extends AppCompatActivity {
 
-    private MoleculeProfileMyBasicsItemsBinding binding;
+    private ActivityProfileItemsBinding binding;
     private ProfileItemAdapter itemAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = MoleculeProfileMyBasicsItemsBinding.inflate(getLayoutInflater());
+        binding = ActivityProfileItemsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
