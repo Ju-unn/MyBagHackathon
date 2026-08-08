@@ -16,6 +16,7 @@ import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.app.AppContainer;
 import com.example.mybaghackathon.app.MyBagApplication;
 import com.example.mybaghackathon.data.local.UserStorage;
+import com.example.mybaghackathon.data.repository.AuthRepository;
 import com.example.mybaghackathon.data.repository.DefaultItemRepository;
 import com.example.mybaghackathon.databinding.FragmentProfileBinding;
 import com.example.mybaghackathon.model.User;
@@ -49,8 +50,9 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
 
         AppContainer appContainer = ((MyBagApplication) requireActivity().getApplication()).getAppContainer();
         DefaultItemRepository defaultItemRepository = appContainer.defaultItemRepository;
+        AuthRepository authRepository = appContainer.authRepository;
         UserStorage userStorage = appContainer.userStorage;
-        presenter = new ProfilePresenter(this, defaultItemRepository, userStorage);
+        presenter = new ProfilePresenter(this, defaultItemRepository, authRepository, userStorage);
 
         itemAdapter = new ProfileItemAdapter((position, item) -> {
             EditItemSheet sheet = EditItemSheet.newInstance(item.getItemName());
@@ -76,11 +78,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         binding.profileNotifRow.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), NotificationSettingsActivity.class)));
 
-        binding.profileLogoutRow.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
+        binding.profileLogoutRow.setOnClickListener(v -> presenter.logout());
 
         return binding.getRoot();
     }
@@ -125,5 +123,12 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     public void showError(String message) {
         if (getContext() == null) return;
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void navigateToLogin() {
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

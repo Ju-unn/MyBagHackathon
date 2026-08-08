@@ -13,6 +13,7 @@ public interface ProfileContract {
         void showUser(User user);
         void showItemPreview(List<UserDefaultItem> previewItems, int totalCount);
         void showError(String message);
+        void navigateToLogin();
     }
 
     interface Presenter {
@@ -22,6 +23,9 @@ public interface ProfileContract {
         void renameItem(long defaultItemId, String newLabel);
 
         void deleteItem(long defaultItemId);
+
+        // 서버 로그아웃 API 호출 후 성공하면 로컬 토큰/유저 정보를 지우고 로그인 화면으로 보낸다
+        void logout();
 
         // Fragment의 뷰가 파괴될 때 호출 — 이후 View 콜백을 막는다
         void onDestroy();
