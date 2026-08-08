@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- M · 기본 물품 행 — 라벨 하나로 이루어진 목록 행. 프로필 미리보기와 전체보기가 함께 쓴다. -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/defaultItemRowLabel"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:textAppearance="@style/TextAppearance.Bag.BodyL"
+    tools:text="선크림" />

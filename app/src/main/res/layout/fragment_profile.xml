@@ -28,8 +28,7 @@
             <com.example.mybaghackathon.ui.atoms.AvatarView
                 android:id="@+id/profileAvatar"
                 android:layout_width="44dp"
-                android:layout_height="44dp"
-                app:avatarInitial="김" />
+                android:layout_height="44dp" />
 
             <TextView
                 android:id="@+id/profileName"
@@ -37,8 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/space_md"
                 android:layout_weight="1"
-                android:text="@string/profile_name"
-                android:textAppearance="@style/TextAppearance.Bag.TitleL" />
+                android:textAppearance="@style/TextAppearance.Bag.TitleL"
+                tools:text="김민지" />
 
         </LinearLayout>
 
@@ -66,12 +65,14 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/profileItemList"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/profileItemRecycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
-            android:orientation="vertical" />
+            android:nestedScrollingEnabled="false"
+            tools:itemCount="4"
+            tools:listitem="@layout/molecule_default_item_row" />
 
         <LinearLayout
             android:id="@+id/profileViewAllRow"
