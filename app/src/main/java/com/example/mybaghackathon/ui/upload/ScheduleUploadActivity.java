@@ -21,57 +21,42 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.app.MyBagApplication;
-import com.example.mybaghackathon.common.AppResult;
-import com.example.mybaghackathon.data.repository.UploadRepository;
 import com.example.mybaghackathon.databinding.ActivityScheduleUploadBinding;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.analyzing.AnalyzingActivity;
-import com.example.mybaghackathon.util.ImageCompressor;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * S05 · 일정 사진 업로드 — 드롭존을 탭해 일정표·예약 확인 사진을 한 번에
- * 여러 장 선택하고, 선택된 사진은 하단 미리보기 줄에 썸네일로 쌓인다.
- *
- * 기능: 시스템 포토 피커로 다중 이미지를 선택해 미리보기 줄에 채우고,
- * "AI 분석 시작하기" 버튼을 누르면 선택된 사진을 압축해 업로드한 뒤
- * 받은 uploadIds를 들고 AnalyzingActivity로 이동하는 화면.
+ * S05 · 일정 사진 업로드 — 화면 표시(View)만 담당. 사진 캐시 복사, 개수 제한,
+ * 압축·업로드 흐름 같은 실제 로직은 UploadPresenter가 처리함(MVP).
  */
-public class ScheduleUploadActivity extends AppCompatActivity {
+public class ScheduleUploadActivity extends AppCompatActivity implements UploadContract.View {
 
     public static final String EXTRA_UPLOAD_IDS = "upload_ids";
     public static final String EXTRA_SELECTED_URIS = "selected_uris";
     public static final String EXTRA_ROOM_NAME = "room_name";
     public static final String EXTRA_MEMBER_COUNT = "member_count";
 
+    // registerForActivityResult는 onCreate/Presenter 생성보다 먼저 필드로 등록해야 해서
+    // Presenter의 MAX_PHOTOS와 별개로 여기서도 필요함 (같은 값 5로 맞춰둠)
     private static final int MAX_PHOTOS = 5;
 
-    // 사진 종류는 사용자가 직접 고르지 않는다 — 일정표·숙소예약·항공권 등 섞인 사진을
-    // 그대로 올리면 AI가 분석해서 구분한다(S07/S08 결과 화면 참고). 그래서 업로드
-    // 시점엔 전부 ITINERARY로 보내는 게 의도된 동작.
-    private static final String UPLOAD_TYPE_ITINERARY = "ITINERARY";
-
     private ActivityScheduleUploadBinding binding;
-    private UploadRepository uploadRepository;
+    private UploadContract.Presenter presenter;
     private String roomName;
     private int memberCount;
-    private final List<Uri> selectedUris = new ArrayList<>();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Map<Uri, View> thumbnailViews = new HashMap<>();
 
     private final ActivityResultLauncher<PickVisualMediaRequest> photoPicker =
             registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(MAX_PHOTOS),
-                    this::onPhotosPicked);
+                    uris -> {
+                        if (!uris.isEmpty()) presenter.onPhotosPicked(uris);
+                    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +65,8 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
-        uploadRepository = ((MyBagApplication) getApplication()).getAppContainer().uploadRepository;
+        presenter = new UploadPresenter(this, getApplicationContext(),
+                ((MyBagApplication) getApplication()).getAppContainer().uploadRepository);
 
         roomName = getIntent().getStringExtra(EXTRA_ROOM_NAME);
         memberCount = getIntent().getIntExtra(EXTRA_MEMBER_COUNT, 0);
@@ -90,8 +76,8 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         binding.uploadTopAppBar.topAppBarDesc.setVisibility(View.VISIBLE);
 
         binding.uploadDropzone.setOnClickListener(v -> {
-            if (selectedUris.size() >= MAX_PHOTOS) {
-                Toast.makeText(this, R.string.upload_error_max_photos, Toast.LENGTH_SHORT).show();
+            if (!presenter.canPickMorePhotos()) {
+                showMaxPhotosReached();
                 return;
             }
             photoPicker.launch(new PickVisualMediaRequest.Builder()
@@ -103,68 +89,20 @@ public class ScheduleUploadActivity extends AppCompatActivity {
 
         MaterialButton startAnalysis = binding.uploadBottomCta.bottomCtaPrimary;
         startAnalysis.setText(R.string.upload_start_analysis);
-        startAnalysis.setOnClickListener(v -> onStartAnalysis(startAnalysis));
+        startAnalysis.setOnClickListener(v -> presenter.onStartAnalysisClicked());
 
-        // S06에서 "취소" 눌러서 돌아온 경우, 아까 고르던 사진 목록을 그대로 복원.
-        // 캐시에 이미 복사해둔 파일 경로라서 그대로 다시 읽을 수 있음
+        // S06에서 "취소" 눌러서 돌아온 경우, 아까 고르던 사진 목록을 그대로 복원
         ArrayList<String> restoredPaths = getIntent().getStringArrayListExtra(EXTRA_SELECTED_URIS);
         if (restoredPaths != null) {
-            List<Uri> restoredUris = new ArrayList<>();
-            for (String path : restoredPaths) {
-                restoredUris.add(Uri.fromFile(new File(path)));
-            }
-            addPhotos(restoredUris);
+            presenter.onPhotosRestored(restoredPaths);
         }
     }
 
-    private void onPhotosPicked(List<Uri> uris) {
-        if (uris.isEmpty()) return;
-        // 포토피커가 주는 주소(content://media/picker/...)는 이 화면 인스턴스가 없어지면
-        // 못 읽게 되는 임시 권한이라, 고르자마자 우리 캐시 폴더로 복사해서 화면이
-        // 다시 생성돼도(취소 왕복 등) 안전하게 다시 읽을 수 있는 주소로 바꿔둠
-        List<Uri> cachedUris = new ArrayList<>();
-        for (Uri uri : uris) {
-            Uri cached = cachePickedPhoto(uri);
-            if (cached != null) cachedUris.add(cached);
-        }
-        addPhotos(cachedUris);
-    }
+    // ===== UploadContract.View =====
 
-    private Uri cachePickedPhoto(Uri sourceUri) {
-        File outFile = new File(getCacheDir(), "picked_" + System.nanoTime() + ".jpg");
-        try (InputStream in = getContentResolver().openInputStream(sourceUri);
-             OutputStream out = new FileOutputStream(outFile)) {
-            if (in == null) return null;
-            byte[] buffer = new byte[8192];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
-            }
-            return Uri.fromFile(outFile);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    private void addPhotos(List<Uri> uris) {
+    @Override
+    public void showThumbnail(Uri uri) {
         LinearLayout previewRow = binding.uploadPreviewRow;
-        boolean skippedSome = false;
-        for (Uri uri : uris) {
-            if (selectedUris.contains(uri)) continue; // 이미 고른 사진은 중복 추가하지 않음
-            if (selectedUris.size() >= MAX_PHOTOS) {
-                skippedSome = true;
-                continue;
-            }
-            selectedUris.add(uri);
-            addThumbnail(previewRow, uri);
-        }
-        if (skippedSome) {
-            Toast.makeText(this, R.string.upload_error_max_photos, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    // 썸네일(탭하면 확대) + 우측 상단 삭제 배지가 있는 미리보기 타일 하나를 추가한다
-    private void addThumbnail(LinearLayout previewRow, Uri uri) {
         int size = dp(64);
         int gap = dp(10);
 
@@ -194,16 +132,58 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         deleteBadge.setColorFilter(Color.WHITE);
         int iconPadding = dp(4);
         deleteBadge.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
-        deleteBadge.setOnClickListener(v -> removePhoto(uri, wrapper, previewRow));
+        deleteBadge.setOnClickListener(v -> presenter.onPhotoRemoved(uri));
         wrapper.addView(deleteBadge);
 
         previewRow.addView(wrapper, wrapperLp);
+        thumbnailViews.put(uri, wrapper);
     }
 
-    private void removePhoto(Uri uri, View wrapper, LinearLayout previewRow) {
-        selectedUris.remove(uri);
-        previewRow.removeView(wrapper);
+    @Override
+    public void removeThumbnail(Uri uri) {
+        View wrapper = thumbnailViews.remove(uri);
+        if (wrapper != null) {
+            binding.uploadPreviewRow.removeView(wrapper);
+        }
     }
+
+    @Override
+    public void showMaxPhotosReached() {
+        Toast.makeText(this, R.string.upload_error_max_photos, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showNoPhotosError() {
+        Toast.makeText(this, R.string.upload_error_no_photos, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showCompressError() {
+        Toast.makeText(this, R.string.upload_error_compress_failed, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showUploadError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setUploading(boolean uploading) {
+        binding.uploadBottomCta.bottomCtaPrimary.setEnabled(!uploading);
+    }
+
+    @Override
+    public void navigateToAnalyzing(long[] uploadIds, ArrayList<String> selectedPaths) {
+        Intent intent = new Intent(this, AnalyzingActivity.class);
+        intent.putExtra(EXTRA_UPLOAD_IDS, uploadIds);
+        intent.putStringArrayListExtra(EXTRA_SELECTED_URIS, selectedPaths);
+        intent.putExtra(EXTRA_ROOM_NAME, roomName);
+        intent.putExtra(EXTRA_MEMBER_COUNT, memberCount);
+        startActivity(intent);
+        finish();
+    }
+
+    // ===== 사진 전체화면 미리보기 (순수 화면 로직이라 그대로 유지) =====
 
     private void showPhotoPreview(Uri uri) {
         Dialog dialog = new Dialog(this, R.style.Theme_Bag_FullscreenDialog);
@@ -267,61 +247,6 @@ public class ScheduleUploadActivity extends AppCompatActivity {
         return root;
     }
 
-    private void onStartAnalysis(MaterialButton button) {
-        if (selectedUris.isEmpty()) {
-            Toast.makeText(this, R.string.upload_error_no_photos, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        button.setEnabled(false);
-        List<Uri> uris = new ArrayList<>(selectedUris);
-        executor.execute(() -> {
-            List<File> compressed = new ArrayList<>();
-            try {
-                for (Uri uri : uris) {
-                    compressed.add(ImageCompressor.compress(this, uri));
-                }
-
-                AppResult<List<Long>> result = uploadRepository.upload(compressed, UPLOAD_TYPE_ITINERARY);
-                runOnUiThread(() -> handleUploadResult(button, result));
-            } catch (IOException e) {
-                runOnUiThread(() -> {
-                    button.setEnabled(true);
-                    Toast.makeText(this, R.string.upload_error_compress_failed, Toast.LENGTH_SHORT).show();
-                });
-            } finally {
-                // 업로드 성공/실패와 무관하게 압축된 임시 파일은 더 이상 필요 없으므로 캐시 폴더에서 정리
-                for (File file : compressed) {
-                    file.delete();
-                }
-            }
-        });
-    }
-
-    private void handleUploadResult(MaterialButton button, AppResult<List<Long>> result) {
-        if (isFinishing()) return;
-        if (result.isSuccess()) {
-            long[] uploadIds = new long[result.getData().size()];
-            for (int i = 0; i < uploadIds.length; i++) {
-                uploadIds[i] = result.getData().get(i);
-            }
-            Intent intent = new Intent(this, AnalyzingActivity.class);
-            intent.putExtra(EXTRA_UPLOAD_IDS, uploadIds);
-            ArrayList<String> selectedPaths = new ArrayList<>();
-            for (Uri uri : selectedUris) {
-                selectedPaths.add(uri.getPath());
-            }
-            intent.putStringArrayListExtra(EXTRA_SELECTED_URIS, selectedPaths);
-            intent.putExtra(EXTRA_ROOM_NAME, roomName);
-            intent.putExtra(EXTRA_MEMBER_COUNT, memberCount);
-            startActivity(intent);
-            finish();
-        } else {
-            button.setEnabled(true);
-            Toast.makeText(this, result.getError().getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private int dp(int value) {
         return Math.round(value * getResources().getDisplayMetrics().density);
     }
@@ -329,6 +254,6 @@ public class ScheduleUploadActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        executor.shutdown();
+        presenter.onDestroy();
     }
 }
