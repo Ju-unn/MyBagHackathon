@@ -34,7 +34,7 @@ public class SplashActivity extends AppCompatActivity {
     private ActivitySplashBinding binding;
 
     private final ActivityResultLauncher<String> notificationPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> { });
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> navigateNext());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,26 +44,29 @@ public class SplashActivity extends AppCompatActivity {
         EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
         requestNotificationPermission();
-
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (isFinishing()) return;
-
-            boolean isLoggedIn = ((MyBagApplication) getApplication())
-                    .getAppContainer().tokenStorage.isLoggedIn();
-            Intent next = new Intent(this, isLoggedIn ? MainActivity.class : LoginActivity.class);
-            startActivity(next);
-            finish();
-        }, SPLASH_DELAY_MS);
     }
 
-    // Android 13(API 33)+ 에서는 POST_NOTIFICATIONS를 런타임에 승인받아야 FCM 알림이 표시됨
+    // Android 13(API 33)+ 에서는 POST_NOTIFICATIONS를 런타임에 승인받아야 FCM 알림이 표시됨.
+    // 권한을 물어봐야 하는 경우엔 사용자가 허용/거부를 선택한 뒤에 다음 화면으로 이동한다.
     private void requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            return;
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) {
+        boolean needsRequest = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED;
+
+        if (needsRequest) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        } else {
+            new Handler(Looper.getMainLooper()).postDelayed(this::navigateNext, SPLASH_DELAY_MS);
         }
+    }
+
+    private void navigateNext() {
+        if (isFinishing()) return;
+
+        boolean isLoggedIn = ((MyBagApplication) getApplication())
+                .getAppContainer().tokenStorage.isLoggedIn();
+        Intent next = new Intent(this, isLoggedIn ? MainActivity.class : LoginActivity.class);
+        startActivity(next);
+        finish();
     }
 }
