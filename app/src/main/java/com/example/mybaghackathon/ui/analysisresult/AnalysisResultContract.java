@@ -14,6 +14,8 @@ public interface AnalysisResultContract {
         void showLodging(String value);
         void showTransport(String value);
         void showInvalidDateError();
+        void setConfirming(boolean confirming);
+        void showConfirmError(String message);
         void navigateToRetry(long[] uploadIds, String roomName, int memberCount);
         void navigateToReview(long analysisId, String roomName, int memberCount,
                                ArrayList<RestrictedItem> restrictedItems, ArrayList<PackingItem> recommendedItems,
@@ -38,5 +40,6 @@ public interface AnalysisResultContract {
         void onTransportEdited(String value);
         void onRetryClicked();
         void onNextClicked();
+        void onDestroy();
     }
 }

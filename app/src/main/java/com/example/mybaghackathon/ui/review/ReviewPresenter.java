@@ -186,13 +186,32 @@ public class ReviewPresenter implements ReviewContract.Presenter {
             AppResult<List<Weather>> result = weatherRepository.getForecast(city, startDate, endDate);
             mainHandler.post(() -> {
                 if (destroyed || !result.isSuccess()) return; // 실패해도 날씨 섹션만 비워둠, 나머지 화면은 그대로
-                for (Weather day : result.getData()) {
+                List<Weather> days = result.getData();
+                for (Weather day : days) {
                     view.addWeatherRow(formatWeatherDate(day.getDate()),
                             WeatherMapper.toIconType(day.getCondition()),
                             formatWeatherStatus(day.getCondition(), day.getTempMax()));
                 }
+                // 날씨 API가 한 번에 최대 10일치만 주기 때문에, 여행 기간이 그보다 길면
+                // 뒤쪽 날짜는 안내 없이 그냥 안 뜨는 것처럼 보일 수 있어 문구로 알려줌
+                if (days.size() < tripDurationDays(startDate, endDate)) {
+                    view.showWeatherLimitNotice();
+                }
             });
         });
+    }
+
+    private int tripDurationDays(String startDate, String endDate) {
+        try {
+            SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+            iso.setLenient(false);
+            Date start = iso.parse(startDate);
+            Date end = iso.parse(endDate);
+            long nights = TimeUnit.MILLISECONDS.toDays(end.getTime() - start.getTime());
+            return (int) nights + 1;
+        } catch (ParseException e) {
+            return 0;
+        }
     }
 
     private String formatWeatherDate(String isoDate) {

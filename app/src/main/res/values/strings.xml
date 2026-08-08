@@ -114,6 +114,7 @@
     <string name="review_dates_label">숙소 일정</string>
     <string name="review_weather_heading">일정별 날씨</string>
     <string name="review_weather_disclaimer">AI 데이터의 기반으로 정리한 날씨 정보라 실제와 다를 수 있어요.\n출발 전 최신 기상 예보를 다시 확인해주세요.</string>
+    <string name="review_weather_limit_notice">최대 10일치 날씨만 제공돼요. 이후 일정 날씨는 출발이 가까워지면 기상청 등 최신 예보로 확인해주세요.</string>
     <string name="review_restriction_disclaimer">AI 데이터의 기반으로 정리한 반입 규정이라 실제와 다를 수 있어요.\n출발 전 항공사 반입 규정을 다시 확인해주세요.</string>
     <string name="weather_condition_sun">맑음</string>
     <string name="weather_condition_rain">비</string>

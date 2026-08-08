@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.R;
+import com.example.mybaghackathon.app.MyBagApplication;
 import com.example.mybaghackathon.databinding.ActivityAnalysisResultBinding;
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.model.RestrictedItem;
@@ -36,7 +37,8 @@ public class AnalysisResultActivity extends AppCompatActivity implements Analysi
         setContentView(binding.getRoot());
         EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
-        presenter = new AnalysisResultPresenter(this, getApplicationContext());
+        presenter = new AnalysisResultPresenter(this, getApplicationContext(),
+                ((MyBagApplication) getApplication()).getAppContainer().analysisRepository);
 
         binding.confirmTopAppBar.topAppBarCompactTitle.setText(R.string.schedule_confirm_title);
         binding.confirmTopAppBar.topAppBarBack.setOnClickListener(v -> finish());
@@ -113,6 +115,17 @@ public class AnalysisResultActivity extends AppCompatActivity implements Analysi
     @Override
     public void showInvalidDateError() {
         Toast.makeText(this, R.string.schedule_confirm_invalid_date, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setConfirming(boolean confirming) {
+        binding.confirmNextButton.setEnabled(!confirming);
+        binding.confirmRetryButton.setEnabled(!confirming);
+    }
+
+    @Override
+    public void showConfirmError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -203,5 +216,11 @@ public class AnalysisResultActivity extends AppCompatActivity implements Analysi
             return true;
         });
         sheet.show(getSupportFragmentManager(), "edit_transport");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
     }
 }

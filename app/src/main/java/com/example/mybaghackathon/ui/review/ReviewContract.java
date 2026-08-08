@@ -26,6 +26,7 @@ public interface ReviewContract {
         void showRestrictionWarning(String text);
         void hideRestrictionWarning();
         void addWeatherRow(String date, int weatherType, String status);
+        void showWeatherLimitNotice();
         void showRequiredItems(List<ItemView> items);
         void showRecommendedItems(List<ItemView> items);
         void showOptionalItems(List<ItemView> items);
