@@ -34,7 +34,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/profile_items_swipe_hint"
+                android:text="@string/profile_items_click_hint"
                 android:textAppearance="@style/TextAppearance.Bag.LabelM"
                 android:textColor="@color/bag_text_secondary" />
 

@@ -5,10 +5,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.SheetEditItemBinding;
 import com.example.mybaghackathon.ui.atoms.ChipView;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -21,6 +23,8 @@ import com.google.android.material.textfield.TextInputEditText;
  * 따라 리스너(OnItemEditedListener)로 결과를 알려주는 바텀시트.
  */
 public class EditItemSheet extends BottomSheetDialogFragment {
+
+    private static final int MAX_ITEM_NAME_LENGTH = 20;
 
     private static final String ARG_LABEL = "label";
     private static final String ARG_PRIORITY = "priority";
@@ -77,7 +81,15 @@ public class EditItemSheet extends BottomSheetDialogFragment {
 
         binding.editItemSaveButton.setOnClickListener(v -> {
             String label = nameInput.getText() != null ? nameInput.getText().toString().trim() : "";
-            if (TextUtils.isEmpty(label)) return;
+            if (TextUtils.isEmpty(label)) {
+                Toast.makeText(getContext(), R.string.item_name_required, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (label.length() > MAX_ITEM_NAME_LENGTH) {
+                Toast.makeText(getContext(),
+                        getString(R.string.item_name_too_long, MAX_ITEM_NAME_LENGTH), Toast.LENGTH_SHORT).show();
+                return;
+            }
             int priority = high.isActive() ? 0 : (mid.isActive() ? 1 : 2);
             if (listener != null) listener.onItemRenamed(label, priority);
             dismiss();

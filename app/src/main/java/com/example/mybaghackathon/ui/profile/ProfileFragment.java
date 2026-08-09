@@ -22,7 +22,6 @@ import com.example.mybaghackathon.databinding.FragmentProfileBinding;
 import com.example.mybaghackathon.model.User;
 import com.example.mybaghackathon.model.UserDefaultItem;
 import com.example.mybaghackathon.ui.login.LoginActivity;
-import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 import com.example.mybaghackathon.ui.settings.NotificationSettingsActivity;
 
 import java.util.List;
@@ -54,22 +53,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         UserStorage userStorage = appContainer.userStorage;
         presenter = new ProfilePresenter(this, defaultItemRepository, authRepository, userStorage);
 
-        itemAdapter = new ProfileItemAdapter((position, item) -> {
-            EditItemSheet sheet = EditItemSheet.newInstance(
-                    item.getItemName(), PriorityLevels.fromApiValue(item.getPriority()));
-            sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
-                @Override
-                public void onItemRenamed(String newLabel, int priorityLevel) {
-                    presenter.renameItem(item.getDefaultItemId(), newLabel, priorityLevel);
-                }
-
-                @Override
-                public void onItemDeleted() {
-                    presenter.deleteItem(item.getDefaultItemId());
-                }
-            });
-            sheet.show(getParentFragmentManager(), "edit_item");
-        });
+        itemAdapter = new ProfileItemAdapter(null);
         binding.profileItemRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.profileItemRecycler.setAdapter(itemAdapter);
 

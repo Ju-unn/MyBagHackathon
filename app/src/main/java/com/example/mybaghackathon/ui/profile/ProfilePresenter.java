@@ -58,35 +58,6 @@ public class ProfilePresenter implements ProfileContract.Presenter {
     }
 
     @Override
-    public void renameItem(long defaultItemId, String newLabel, int priorityLevel) {
-        executor.execute(() -> {
-            AppResult<Void> result = defaultItemRepository.updateItem(
-                    defaultItemId, newLabel, null, PriorityLevels.toApiValue(priorityLevel));
-            postToView(() -> {
-                if (result.isSuccess()) {
-                    loadItems();
-                } else {
-                    view.showError(result.getError().getMessage());
-                }
-            });
-        });
-    }
-
-    @Override
-    public void deleteItem(long defaultItemId) {
-        executor.execute(() -> {
-            AppResult<Void> result = defaultItemRepository.deleteItem(defaultItemId);
-            postToView(() -> {
-                if (result.isSuccess()) {
-                    loadItems();
-                } else {
-                    view.showError(result.getError().getMessage());
-                }
-            });
-        });
-    }
-
-    @Override
     public void logout() {
         executor.execute(() -> {
             AppResult<Void> result = authRepository.logout();

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mybaghackathon.R;
@@ -15,7 +16,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** S15 프로필의 기본 물품 목록 어댑터. 미리보기(ProfileFragment)와 전체보기(ProfileItemsActivity)가 함께 쓴다. */
+/**
+ * S15 프로필의 기본 물품 목록 어댑터. 미리보기(ProfileFragment)와 전체보기(ProfileItemsActivity)가 함께 쓴다.
+ * listener가 null이면 행을 클릭할 수 없다 — 미리보기는 조회 전용, 전체보기만 수정/삭제 진입점을 연다.
+ */
 final class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.ViewHolder> {
 
     interface OnItemClickListener {
@@ -23,9 +27,10 @@ final class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.V
     }
 
     private List<UserDefaultItem> items = Collections.emptyList();
+    @Nullable
     private final OnItemClickListener listener;
 
-    ProfileItemAdapter(OnItemClickListener listener) {
+    ProfileItemAdapter(@Nullable OnItemClickListener listener) {
         this.listener = listener;
     }
 
@@ -46,7 +51,12 @@ final class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.V
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         UserDefaultItem item = items.get(position);
         holder.label.setText(item.getItemName());
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(position, item));
+        if (listener != null) {
+            holder.itemView.setOnClickListener(v -> listener.onItemClick(position, item));
+        } else {
+            holder.itemView.setOnClickListener(null);
+            holder.itemView.setClickable(false);
+        }
     }
 
     @Override
