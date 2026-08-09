@@ -35,7 +35,6 @@
     <string name="home_status_active">진행중</string>
     <string name="home_status_upcoming">준비 전</string>
     <string name="home_status_past">완료</string>
-    <string name="home_upload_needed">일정 사진 업로드 필요</string>
     <string name="home_empty_title">함께할 여행방이 없어요</string>
     <string name="home_empty_desc">방을 만들고 여행을 준비해보아요</string>
     <string name="empty_state_create_room">방 만들기</string>
@@ -185,6 +184,7 @@
     <string name="archive_empty_desc">방을 만들면 이곳에 모여요</string>
 
     <!-- S15 프로필 -->
+    <string name="profile_title">프로필</string>
     <string name="profile_version_value">v1.0.0</string>
     <string name="profile_my_items">내 기본 물품</string>
     <string name="profile_item_count_format">%1$d개</string>

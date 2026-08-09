@@ -32,7 +32,8 @@ public class TripRoomCardBinder {
         Context ctx = root.getContext();
         MaterialCardView card = (MaterialCardView) root;
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_inverse));
-        card.setStrokeWidth(0);
+        card.setStrokeColor(ContextCompat.getColor(ctx, R.color.bag_border_brand_on_inverse));
+        card.setStrokeWidth(dp(ctx, 1));
         card.setAlpha(1f);
 
         root.findViewById(R.id.tripCardDecoration).setVisibility(View.VISIBLE);
@@ -41,6 +42,7 @@ public class TripRoomCardBinder {
 
         TextView status = root.findViewById(R.id.tripCardStatus);
         status.setText(R.string.home_status_active);
+        status.setBackgroundResource(R.drawable.bg_pill_brand_subtle);
         status.setTextColor(ContextCompat.getColor(ctx, R.color.bag_brand_default));
 
         TextView titleView = root.findViewById(R.id.tripCardTitle);
@@ -54,7 +56,7 @@ public class TripRoomCardBinder {
 
         root.findViewById(R.id.tripCardBottomRow).setVisibility(View.VISIBLE);
         LinearLayout stack = root.findViewById(R.id.tripCardAvatarStack);
-        AvatarStackHelper.populate(ctx, stack, avatars, true, 28);
+        AvatarStackHelper.populate(ctx, stack, avatars, 28);
 
         TextView progressLabel = root.findViewById(R.id.tripCardProgressLabel);
         progressLabel.setText(ctx.getString(R.string.checklist_progress_format, percent));
@@ -67,11 +69,11 @@ public class TripRoomCardBinder {
         root.findViewById(R.id.tripCardHint).setVisibility(View.GONE);
     }
 
-    public static void bindUpcoming(View root, String title, String ddayText, String hint) {
+    public static void bindUpcoming(View root, String title, String ddayText) {
         Context ctx = root.getContext();
         MaterialCardView card = (MaterialCardView) root;
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_surface));
-        card.setStrokeColor(ContextCompat.getColor(ctx, R.color.bag_border_default));
+        card.setStrokeColor(ContextCompat.getColor(ctx, R.color.bag_text_primary));
         card.setStrokeWidth(dp(ctx, 1));
         card.setAlpha(1f);
 
@@ -79,42 +81,7 @@ public class TripRoomCardBinder {
 
         TextView status = root.findViewById(R.id.tripCardStatus);
         status.setText(R.string.home_status_upcoming);
-        status.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_secondary));
-
-        TextView titleView = root.findViewById(R.id.tripCardTitle);
-        titleView.setText(title);
-        titleView.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_primary));
-
-        DDayBadgeView dday = root.findViewById(R.id.tripCardDDay);
-        dday.setVisibility(View.VISIBLE);
-        dday.setText(ddayText);
-        dday.setBrand(false);
-
-        root.findViewById(R.id.tripCardBottomRow).setVisibility(View.GONE);
-        root.findViewById(R.id.tripCardProgressBar).setVisibility(View.GONE);
-
-        TextView hintView = root.findViewById(R.id.tripCardHint);
-        hintView.setVisibility(View.VISIBLE);
-        hintView.setText(hint);
-    }
-
-    /**
-     * 아카이브 "진행 중" 탭에서 체크리스트 진행률 데이터가 아직 없는 여행방
-     * 카드용 — Upcoming과 같은 밝은 카드 스타일이지만 "일정 업로드 필요" 힌트
-     * 없이 상태 라벨만 "진행중"으로 보여줌.
-     */
-    public static void bindPlanned(View root, String title, String ddayText) {
-        Context ctx = root.getContext();
-        MaterialCardView card = (MaterialCardView) root;
-        card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_surface));
-        card.setStrokeColor(ContextCompat.getColor(ctx, R.color.bag_border_default));
-        card.setStrokeWidth(dp(ctx, 1));
-        card.setAlpha(1f);
-
-        root.findViewById(R.id.tripCardDecoration).setVisibility(View.GONE);
-
-        TextView status = root.findViewById(R.id.tripCardStatus);
-        status.setText(R.string.home_status_active);
+        status.setBackgroundResource(R.drawable.bg_pill_neutral);
         status.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_secondary));
 
         TextView titleView = root.findViewById(R.id.tripCardTitle);
@@ -135,13 +102,15 @@ public class TripRoomCardBinder {
         Context ctx = root.getContext();
         MaterialCardView card = (MaterialCardView) root;
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_subtle));
-        card.setStrokeWidth(0);
+        card.setStrokeColor(ContextCompat.getColor(ctx, R.color.bag_text_primary));
+        card.setStrokeWidth(dp(ctx, 1));
         card.setAlpha(0.7f);
 
         root.findViewById(R.id.tripCardDecoration).setVisibility(View.GONE);
 
         TextView status = root.findViewById(R.id.tripCardStatus);
         status.setText(R.string.home_status_past);
+        status.setBackgroundResource(R.drawable.bg_pill_neutral);
         status.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_secondary));
 
         TextView titleView = root.findViewById(R.id.tripCardTitle);

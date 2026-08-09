@@ -87,6 +87,9 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         binding.archiveEmptyState.emptyStateAction.setOnClickListener(
                 v -> startActivity(new Intent(getContext(), CreateRoomActivity.class)));
 
+        binding.archiveAddRoomFab.setOnClickListener(
+                v -> startActivity(new Intent(getContext(), CreateRoomActivity.class)));
+
         selectSegment(true);
         return root;
     }
@@ -161,6 +164,7 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         boolean empty = trips.isEmpty();
         binding.archiveTripRecycler.setVisibility(empty ? View.GONE : View.VISIBLE);
         binding.archiveEmptyState.getRoot().setVisibility(empty ? View.VISIBLE : View.GONE);
+        binding.archiveAddRoomFab.setVisibility(empty ? View.GONE : View.VISIBLE);
         adapter.submitList(trips);
     }
 

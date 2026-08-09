@@ -2,7 +2,13 @@
 <!-- O4 · TripRoomCard — 상태 = 진행중/준비전/완료.
      이 레이아웃은 기본적으로 진행중 상태 기준으로 만들어짐 (bg/inverse +
      장식 원 + 아바타 스택 + 프로그레스 바). TripRoomCardBinder.bindUpcoming()/
-     bindPast()가 같은 뷰들을 재구성해서 나머지 두 상태를 표현함. -->
+     bindPast()가 같은 뷰들을 재구성해서 나머지 두 상태를 표현함.
+
+     ConstraintLayout을 씀: 상태/D-day는 상단 고정, 아바타/진행률은 하단
+     고정, 제목은 그 둘 사이 남는 공간의 세로 가운데(bias 0.5)에 오게 함.
+     콘텐츠가 trip_card_min_height보다 많이 필요하면(진행중 카드) wrap_content로
+     자연스럽게 더 커지고, 적게 필요하면(준비 전/완료) minHeight만큼 커지면서
+     제목이 그 안에서 가운데로 온다 — 겹침 없이 두 경우 다 안전하게 처리됨. -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -14,66 +20,75 @@
     app:cardElevation="0dp"
     app:strokeWidth="0dp">
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/trip_card_min_height">
 
         <View
             android:id="@+id/tripCardDecoration"
             android:layout_width="130dp"
             android:layout_height="130dp"
-            android:layout_gravity="top|end"
             android:layout_marginTop="-30dp"
             android:layout_marginEnd="-30dp"
-            android:background="@drawable/oval_solid" />
+            android:background="@drawable/oval_solid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- 상태 라벨(알약형) + D-day — 항상 카드 상단 -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/tripCardTopRow"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xl"
+            android:layout_marginTop="@dimen/space_xl"
+            android:layout_marginEnd="@dimen/space_xl"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tripCardStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/trip_card_status_pill_height"
+                android:gravity="center"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_md"
+                android:textAppearance="@style/TextAppearance.Bag.LabelL"
+                android:textSize="@dimen/trip_card_status_text_size"
+                android:textColor="@color/bag_brand_default"
+                tools:text="진행중" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <com.example.mybaghackathon.ui.atoms.DDayBadgeView
+                android:id="@+id/tripCardDDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <!-- 아바타/진행률 — 항상 카드 하단 -->
+        <LinearLayout
+            android:id="@+id/tripCardBottomSection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xl"
+            android:layout_marginEnd="@dimen/space_xl"
+            android:layout_marginBottom="@dimen/space_xl"
             android:orientation="vertical"
-            android:padding="20dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tripCardStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Bag.LabelM"
-                        android:textColor="@color/bag_brand_default"
-                        tools:text="진행중" />
-
-                    <TextView
-                        android:id="@+id/tripCardTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:textAppearance="@style/TextAppearance.Bag.TitleL"
-                        android:textColor="@color/bag_text_on_inverse"
-                        tools:text="도쿄 벚꽃 여행" />
-                </LinearLayout>
-
-                <com.example.mybaghackathon.ui.atoms.DDayBadgeView
-                    android:id="@+id/tripCardDDay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <LinearLayout
                 android:id="@+id/tripCardBottomRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -92,7 +107,8 @@
                     android:id="@+id/tripCardProgressLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.Bag.BodyM"
+                    android:textAppearance="@style/TextAppearance.Bag.BodyMMedium"
+                    android:textSize="@dimen/trip_card_body_text_size"
                     android:textColor="@color/bag_text_on_inverse"
                     tools:text="체크리스트 68% 완료" />
             </LinearLayout>
@@ -102,7 +118,7 @@
                 style="@style/Widget.Bag.ProgressBar.OnDark"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/space_lg"
                 android:max="100"
                 tools:progress="68" />
 
@@ -110,11 +126,32 @@
                 android:id="@+id/tripCardHint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textAppearance="@style/TextAppearance.Bag.BodyM"
+                android:layout_marginTop="@dimen/space_2xs"
+                android:textAppearance="@style/TextAppearance.Bag.BodyMMedium"
+                android:textSize="@dimen/trip_card_body_text_size"
                 android:textColor="@color/bag_text_tertiary_safe"
                 android:visibility="gone"
                 tools:text="일정 사진 업로드 필요" />
         </LinearLayout>
-    </FrameLayout>
+
+        <!-- 여행방 이름 — 상단 영역과 하단 영역 사이 남는 공간의 세로 가운데 -->
+        <TextView
+            android:id="@+id/tripCardTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xl"
+            android:layout_marginTop="@dimen/space_sm"
+            android:layout_marginEnd="@dimen/space_xl"
+            android:layout_marginBottom="@dimen/space_lg"
+            android:textAppearance="@style/TextAppearance.Bag.TitleL"
+            android:textSize="@dimen/trip_card_title_text_size"
+            android:textColor="@color/bag_text_on_inverse"
+            app:layout_constraintBottom_toTopOf="@id/tripCardBottomSection"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tripCardTopRow"
+            app:layout_constraintVertical_bias="0.5"
+            tools:text="도쿄 벚꽃 여행" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

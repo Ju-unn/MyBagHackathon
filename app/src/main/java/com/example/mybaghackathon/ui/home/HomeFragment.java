@@ -72,7 +72,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         binding.homeEmptyState.emptyStateDesc.setText(R.string.home_empty_desc);
         binding.homeEmptyState.emptyStateAction.setText(R.string.empty_state_create_room);
         binding.homeEmptyState.emptyStateAction.setOnClickListener(v -> openCreateRoom());
-        binding.homeAddRoomWrapper.setOnClickListener(v -> openCreateRoom());
+        binding.homeAddRoomFab.setOnClickListener(v -> openCreateRoom());
 
         return root;
     }
@@ -113,7 +113,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         boolean empty = trips.isEmpty();
         binding.homeEmptyState.getRoot().setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.homeTripRecycler.setVisibility(empty ? View.GONE : View.VISIBLE);
-        binding.homeAddRoomWrapper.setVisibility(empty ? View.GONE : View.VISIBLE);
+        binding.homeAddRoomFab.setVisibility(empty ? View.GONE : View.VISIBLE);
         adapter.submitList(trips);
     }
 
@@ -125,8 +125,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             return TripRoomUiModel.active(trip.getTripId(), trip.getTripName(), ddayText,
                     toAvatarEntries(trip.getMembers()), progress);
         }
-        return TripRoomUiModel.upcoming(trip.getTripId(), trip.getTripName(), ddayText,
-                getString(R.string.home_upload_needed));
+        return TripRoomUiModel.upcoming(trip.getTripId(), trip.getTripName(), ddayText);
     }
 
     private List<AvatarStackHelper.Entry> toAvatarEntries(List<TripMember> members) {

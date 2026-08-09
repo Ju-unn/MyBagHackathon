@@ -53,6 +53,9 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         UserStorage userStorage = appContainer.userStorage;
         presenter = new ProfilePresenter(this, defaultItemRepository, authRepository, userStorage);
 
+        binding.profileTopAppBar.topAppBarTitle.setText(R.string.profile_title);
+        binding.profileTopAppBar.topAppBarAction.setVisibility(View.GONE);
+
         itemAdapter = new ProfileItemAdapter(null);
         binding.profileItemRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.profileItemRecycler.setAdapter(itemAdapter);

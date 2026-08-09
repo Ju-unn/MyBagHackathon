@@ -1,48 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S03 홈 — TopAppBar(Large) + TripRoomCard 목록 + DashedAddCard -->
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- S03 홈 — TopAppBar(Large) + TripRoomCard 목록 + 방 만들기 FAB -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bag_bg_base"
-    android:clipToPadding="false"
-    android:paddingStart="@dimen/screen_margin"
-    android:paddingTop="@dimen/screen_margin"
-    android:paddingEnd="@dimen/screen_margin"
-    android:paddingBottom="@dimen/space_4xl">
+    android:background="@color/bag_bg_base">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingTop="@dimen/screen_margin"
+        android:paddingEnd="@dimen/screen_margin"
+        android:paddingBottom="@dimen/space_4xl">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/homeTopAppBar"
+                layout="@layout/organism_top_app_bar_large" />
+
+            <include
+                android:id="@+id/homeEmptyState"
+                layout="@layout/organism_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/homeTripRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/homeAddRoomFab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/space_xl"
+        android:contentDescription="@string/home_add_room"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/bag_brand_default"
+        app:tint="@color/white_primitive" />
 
-        <include
-            android:id="@+id/homeTopAppBar"
-            layout="@layout/organism_top_app_bar_large" />
-
-        <include
-            android:id="@+id/homeEmptyState"
-            layout="@layout/organism_empty_state"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_xl"
-            android:visibility="gone" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/homeTripRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_xl"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="never" />
-
-        <FrameLayout
-            android:id="@+id/homeAddRoomWrapper"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg">
-
-            <include layout="@layout/molecule_dashed_add_card" />
-        </FrameLayout>
-
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

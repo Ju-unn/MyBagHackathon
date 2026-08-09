@@ -38,9 +38,36 @@
     <dimen name="avatar_size_xl">36dp</dimen>
     <dimen name="icon_button_size">36dp</dimen>
     <dimen name="checkbox_size">22dp</dimen>
-    <dimen name="button_height">52dp</dimen>
-    <dimen name="button_height_secondary">48dp</dimen>
-    <dimen name="text_field_height">52dp</dimen>
+    <dimen name="button_height">64dp</dimen>
+    <dimen name="button_height_secondary">58dp</dimen>
+    <dimen name="text_field_height">64dp</dimen>
     <dimen name="bottom_nav_height">64dp</dimen>
     <dimen name="tab_bar_height">48dp</dimen>
+
+    <!-- 여행방 카드(TripRoomCard) 최소 높이 — 상태별(진행중/예정/지난) 콘텐츠 양이
+         달라 wrap_content만으로는 카드 크기가 들쭉날쭉하고 작아 보이는 문제 보완 -->
+    <dimen name="trip_card_min_height">128dp</dimen>
+
+    <!-- 여행방 카드 안 텍스트 크기 — 기존 텍스트가 작고 두께감이 없다는
+         피드백으로 상태 라벨/제목/보조 텍스트를 한 단계씩 키움 -->
+    <dimen name="trip_card_status_text_size">14sp</dimen>
+    <dimen name="trip_card_title_text_size">23sp</dimen>
+    <dimen name="trip_card_body_text_size">15sp</dimen>
+
+    <!-- 여행방 카드 상태 라벨(진행중/준비 전/완료)을 D-day 배지처럼 알약형으로
+         감싸는 배경의 높이 -->
+    <dimen name="trip_card_status_pill_height">26dp</dimen>
+
+    <!-- 알림 설정 스위치 행 높이 — 스위치를 확대(scale)해도 여유 공간 확보 -->
+    <dimen name="notif_row_height">56dp</dimen>
+
+    <!-- 알림 설정 라벨("D-7 알림" 등) 텍스트 크기 -->
+    <dimen name="notif_label_text_size">17sp</dimen>
+    <!-- 스위치를 scaleX/Y로 확대하면 화면 끝 쪽으로 넘치므로, 그만큼 왼쪽으로
+         당겨오기 위한 여백 -->
+    <dimen name="notif_switch_margin_end">14dp</dimen>
+
+    <!-- 프로필 섹션 헤더("내 기본 물품", 개수, "설정") 텍스트 — 아래 하위
+         텍스트(TextAppearance.Bag.BodyL, 15sp)의 1.5배 크기 -->
+    <dimen name="profile_section_header_text_size">22.5sp</dimen>
 </resources>
