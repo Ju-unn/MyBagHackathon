@@ -15,6 +15,7 @@ import com.example.mybaghackathon.data.remote.dto.trip.TripMembersResponseDto;
 import com.example.mybaghackathon.model.Trip;
 import com.example.mybaghackathon.model.TripInvite;
 import com.example.mybaghackathon.model.TripMember;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -133,8 +134,25 @@ public class TripRepositoryImpl implements TripRepository {
     }
 
     private AppError toError(Response<?> response, ApiResponseDto<?> body) {
-        String message = body != null ? body.getMessage() : "요청에 실패했습니다.";
+        String message = body != null ? body.getMessage() : parseErrorMessage(response);
         return new AppError(response.code(), message);
+    }
+
+    // body가 null인 건 실패 응답(4xx/5xx)이라 Retrofit이 body()를 채워주지 않기 때문 —
+    // 실제 서버 메시지는 errorBody()에 같은 {success,message,data} 포맷으로 들어있다
+    private String parseErrorMessage(Response<?> response) {
+        if (response.errorBody() != null) {
+            try {
+                ApiResponseDto<?> errorBody =
+                        new Gson().fromJson(response.errorBody().string(), ApiResponseDto.class);
+                if (errorBody != null && errorBody.getMessage() != null) {
+                    return errorBody.getMessage();
+                }
+            } catch (IOException ignored) {
+                // 아래 기본 메시지로 폴백
+            }
+        }
+        return "요청에 실패했습니다.";
     }
 
     private AppError networkError() {
