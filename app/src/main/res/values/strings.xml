@@ -205,6 +205,12 @@
     <string name="notif_d1">D-1 알림</string>
     <string name="notif_warning">출발일이 정해지지 않은 방은 알림이 오지 않아요. 일정 검토에서 날짜를 입력해 주세요.</string>
 
+    <!-- FCM 푸시 알림 -->
+    <string name="fcm_channel_name">여행 알림</string>
+    <string name="fcm_channel_desc">출발 예정(D-7·D-3·D-1) 알림을 보내드려요</string>
+    <string name="fcm_departure_title_format">D-%1$d · %2$s</string>
+    <string name="fcm_departure_body_format">%1$s 출발이 다가와요. 준비물을 확인해보세요!</string>
+
     <!-- 오버레이 -->
     <string name="bs_invite_title">초대 링크 공유</string>
     <string name="bs_add_item_title">항목 직접 추가</string>
