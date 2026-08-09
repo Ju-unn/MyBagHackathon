@@ -210,4 +210,6 @@
     <string name="bs_add_item_name_label">물품명</string>
     <string name="bs_add_item_priority_label">중요도</string>
     <string name="bs_edit_item_title">개인 물품 수정</string>
+    <string name="item_name_required">물품 이름을 입력해주세요.</string>
+    <string name="item_name_too_long">물품 이름은 %1$d자 이하로 입력해주세요.</string>
 </resources>

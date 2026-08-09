@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,8 @@ import com.google.android.material.textfield.TextInputEditText;
  * 저장 시 리스너(OnItemAddedListener)로 값을 전달한 뒤 닫히는 바텀시트.
  */
 public class AddItemSheet extends BottomSheetDialogFragment {
+
+    private static final int MAX_ITEM_NAME_LENGTH = 20;
 
     private static final String ARG_ITEM_NAME = "item_name";
     private static final String ARG_PRIORITY = "priority";
@@ -78,7 +81,15 @@ public class AddItemSheet extends BottomSheetDialogFragment {
 
         binding.addItemSaveButton.setOnClickListener(v -> {
             String label = nameInput.getText() != null ? nameInput.getText().toString().trim() : "";
-            if (TextUtils.isEmpty(label)) return;
+            if (TextUtils.isEmpty(label)) {
+                Toast.makeText(getContext(), R.string.item_name_required, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (label.length() > MAX_ITEM_NAME_LENGTH) {
+                Toast.makeText(getContext(),
+                        getString(R.string.item_name_too_long, MAX_ITEM_NAME_LENGTH), Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             int priority = high.isActive() ? 0 : (mid.isActive() ? 1 : 2);
             if (listener != null) listener.onItemAdded(label, priority);
