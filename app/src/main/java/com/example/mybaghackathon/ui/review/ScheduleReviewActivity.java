@@ -112,12 +112,14 @@ public class ScheduleReviewActivity extends AppCompatActivity implements ReviewC
     public void showRestrictionWarning(String text) {
         View warningBanner = binding.reviewRestrictionWarning;
         warningBanner.setVisibility(View.VISIBLE);
+        binding.reviewRestrictionDisclaimer.setVisibility(View.VISIBLE);
         ((TextView) warningBanner.findViewById(R.id.warningBannerText)).setText(text);
     }
 
     @Override
     public void hideRestrictionWarning() {
         binding.reviewRestrictionWarning.setVisibility(View.GONE);
+        binding.reviewRestrictionDisclaimer.setVisibility(View.GONE);
     }
 
     @Override
