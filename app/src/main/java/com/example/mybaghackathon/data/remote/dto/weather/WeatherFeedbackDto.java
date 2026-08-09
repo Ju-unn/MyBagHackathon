@@ -13,6 +13,13 @@ import com.google.gson.annotations.SerializedName;
  */
 public class WeatherFeedbackDto {
 
+    // 아직 체크포인트 갱신 전이면 false — 이때 clothing/food/accommodation_notes는 안 옴
+    private boolean ready;
+
+    // 다음 자동 갱신 예정일(yyyy-MM-dd) 또는 null
+    @SerializedName("next_refresh_at")
+    private String nextRefreshAt;
+
     // 옷차림 조언
     private String clothing;
 
@@ -22,6 +29,14 @@ public class WeatherFeedbackDto {
     // 숙소 이용 시 유의사항
     @SerializedName("accommodation_notes")
     private String accommodationNotes;
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    public String getNextRefreshAt() {
+        return nextRefreshAt;
+    }
 
     public String getClothing() {
         return clothing;

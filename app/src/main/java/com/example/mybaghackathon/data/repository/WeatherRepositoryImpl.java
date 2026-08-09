@@ -9,6 +9,7 @@ import com.example.mybaghackathon.data.remote.dto.weather.WeatherFeedbackDto;
 import com.example.mybaghackathon.data.remote.dto.weather.WeatherForecastDto;
 import com.example.mybaghackathon.model.Weather;
 import com.example.mybaghackathon.model.WeatherFeedback;
+import com.example.mybaghackathon.model.WeatherForecast;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +38,24 @@ public class WeatherRepositoryImpl implements WeatherRepository {
             }
 
             return AppResult.success(WeatherMapper.from(body.getData().getDays()));
+        } catch (IOException e) {
+            return AppResult.failure(networkError());
+        }
+    }
+
+    // trip_id로 저장된 예보 조회 (라이브 호출 없음)
+    @Override
+    public AppResult<WeatherForecast> getForecastByTrip(long tripId) {
+        try {
+            Response<ApiResponseDto<WeatherForecastDto>> response =
+                    weatherApi.getForecastByTrip(tripId).execute();
+
+            ApiResponseDto<WeatherForecastDto> body = response.body();
+            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
+                return AppResult.failure(toError(response, body));
+            }
+
+            return AppResult.success(WeatherMapper.from(body.getData()));
         } catch (IOException e) {
             return AppResult.failure(networkError());
         }

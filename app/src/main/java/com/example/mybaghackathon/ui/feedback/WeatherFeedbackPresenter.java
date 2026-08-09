@@ -7,11 +7,10 @@ import com.example.mybaghackathon.common.AppResult;
 import com.example.mybaghackathon.data.repository.TripRepository;
 import com.example.mybaghackathon.data.repository.WeatherRepository;
 import com.example.mybaghackathon.model.Trip;
-import com.example.mybaghackathon.model.Weather;
 import com.example.mybaghackathon.model.WeatherFeedback;
+import com.example.mybaghackathon.model.WeatherForecast;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -54,22 +53,27 @@ public class WeatherFeedbackPresenter implements WeatherFeedbackContract.Present
                 Trip trip = tripResult.getData();
                 post(() -> view.showTrip(trip));
 
-                if (hasText(trip.getDestinationCity())
-                        && hasText(trip.getStartDate())
-                        && hasText(trip.getEndDate())) {
-                    AppResult<List<Weather>> forecastResult = weatherRepository.getForecast(
-                            trip.getDestinationCity(), trip.getStartDate(), trip.getEndDate());
-                    if (forecastResult.isSuccess()) {
-                        List<Weather> weather = forecastResult.getData() == null
-                                ? Collections.emptyList()
-                                : forecastResult.getData();
-                        post(() -> view.showForecast(weather));
+                AppResult<WeatherForecast> forecastResult = weatherRepository.getForecastByTrip(tripId);
+                if (forecastResult.isSuccess() && forecastResult.getData() != null) {
+                    WeatherForecast forecast = forecastResult.getData();
+                    if (forecast.isReady()) {
+                        post(() -> view.showForecast(
+                                forecast.getDays() == null ? Collections.emptyList() : forecast.getDays()));
+                    } else {
+                        post(() -> view.showPending(pendingMessage(forecast.getNextRefreshAt())));
                     }
+                } else {
+                    postError(messageOf(forecastResult, "날씨 예보를 불러오지 못했습니다."));
                 }
 
                 AppResult<WeatherFeedback> feedbackResult = weatherRepository.getFeedback(tripId);
                 if (feedbackResult.isSuccess() && feedbackResult.getData() != null) {
-                    post(() -> view.showFeedback(feedbackResult.getData()));
+                    WeatherFeedback feedback = feedbackResult.getData();
+                    if (feedback.isReady()) {
+                        post(() -> view.showFeedback(feedback));
+                    } else {
+                        post(() -> view.showPending(pendingMessage(feedback.getNextRefreshAt())));
+                    }
                 } else {
                     postError(messageOf(feedbackResult, "날씨 팁을 불러오지 못했습니다."));
                 }
@@ -106,5 +110,12 @@ public class WeatherFeedbackPresenter implements WeatherFeedbackContract.Present
 
     private boolean hasText(String value) {
         return value != null && !value.trim().isEmpty();
+    }
+
+    // ready=false일 때 보여줄 안내 문구. next_refresh_at 없으면(체크포인트가 이미 다 지남) 날짜 없이 안내
+    private String pendingMessage(String nextRefreshAt) {
+        return hasText(nextRefreshAt)
+                ? "현재 날씨 정보를 받아올 수 없어 " + nextRefreshAt + "에 갱신됩니다."
+                : "현재 날씨 정보를 받아올 수 없어 곧 갱신됩니다.";
     }
 }
