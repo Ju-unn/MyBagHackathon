@@ -23,4 +23,13 @@
         android:textAppearance="@style/TextAppearance.Bag.BodyM"
         android:textColor="@color/bag_text_primary"
         tools:text="보조배터리 등 3개 항목에 반입 규정이 있어요" />
+
+    <ImageView
+        android:id="@+id/warningBannerChevron"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_chevron_right" />
 </LinearLayout>

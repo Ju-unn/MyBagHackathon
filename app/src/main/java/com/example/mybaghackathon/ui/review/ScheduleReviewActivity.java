@@ -209,6 +209,7 @@ public class ScheduleReviewActivity extends AppCompatActivity implements ReviewC
     @Override
     public void setGenerating(boolean generating) {
         binding.reviewBottomCta.bottomCtaPrimary.setEnabled(!generating);
+        binding.reviewLoadingOverlay.setVisibility(generating ? View.VISIBLE : View.GONE);
     }
 
     @Override

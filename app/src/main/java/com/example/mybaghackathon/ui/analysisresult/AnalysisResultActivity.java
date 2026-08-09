@@ -14,6 +14,7 @@ import com.example.mybaghackathon.databinding.ActivityAnalysisResultBinding;
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.model.RestrictedItem;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
+import com.example.mybaghackathon.ui.StepTextAnimator;
 import com.example.mybaghackathon.ui.analyzing.AnalyzingActivity;
 import com.example.mybaghackathon.ui.overlay.EditFieldSheet;
 import com.example.mybaghackathon.ui.review.ScheduleReviewActivity;
@@ -29,6 +30,7 @@ public class AnalysisResultActivity extends AppCompatActivity implements Analysi
 
     private ActivityAnalysisResultBinding binding;
     private AnalysisResultContract.Presenter presenter;
+    private StepTextAnimator confirmLoadingAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,10 @@ public class AnalysisResultActivity extends AppCompatActivity implements Analysi
 
         presenter = new AnalysisResultPresenter(this, getApplicationContext(),
                 ((MyBagApplication) getApplication()).getAppContainer().analysisRepository);
+
+        confirmLoadingAnimator = new StepTextAnimator(binding.confirmLoadingStepText, new int[]{
+                R.string.analyzing_step1, R.string.analyzing_step2,
+                R.string.analyzing_step3, R.string.analyzing_step4});
 
         binding.confirmTopAppBar.topAppBarCompactTitle.setText(R.string.schedule_confirm_title);
         binding.confirmTopAppBar.topAppBarBack.setOnClickListener(v -> finish());
@@ -118,6 +124,12 @@ public class AnalysisResultActivity extends AppCompatActivity implements Analysi
     @Override
     public void setConfirming(boolean confirming) {
         binding.confirmNextButton.setEnabled(!confirming);
+        binding.confirmLoadingOverlay.setVisibility(confirming ? View.VISIBLE : View.GONE);
+        if (confirming) {
+            confirmLoadingAnimator.start();
+        } else {
+            confirmLoadingAnimator.stop();
+        }
     }
 
     @Override
@@ -208,6 +220,7 @@ public class AnalysisResultActivity extends AppCompatActivity implements Analysi
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        confirmLoadingAnimator.stop();
         presenter.onDestroy();
     }
 }
