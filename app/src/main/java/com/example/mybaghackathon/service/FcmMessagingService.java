@@ -1,15 +1,34 @@
 package com.example.mybaghackathon.service;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.os.Build;
 import android.provider.Settings;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import com.example.mybaghackathon.BuildConfig;
+import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.app.AppContainer;
 import com.example.mybaghackathon.app.MyBagApplication;
+import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-// FCM 토큰 발급/갱신과 data 메시지 수신을 처리. 알림 UI(아이콘·채널·매니페스트 등록)는 안드로이드팀이 붙일 예정
+import java.util.Map;
+
+// FCM 토큰 발급/갱신과 data 메시지 수신을 처리한다. 서버는 data 페이로드만 보내므로
+// (notification 페이로드 없음) 알림 채널·문구·딥링크는 전부 이 서비스가 직접 구성한다.
+// 여기서는 프로필 알림 설정(D-7/D-3/D-1) 범위인 DEPARTURE_D* 타입만 처리한다.
+// data 필드는 mybagbackend의 DepartureNotificationService 기준. CHECKLIST_ASSIGNED 등
+// 다른 타입은 담당 기능 구현 시 별도로 추가될 예정이라 여기서는 조용히 무시한다.
 public class FcmMessagingService extends FirebaseMessagingService {
+
+    private static final String CHANNEL_ID = "trip_notifications";
+    private static final String DEPARTURE_PREFIX = "DEPARTURE_D";
 
     // 토큰이 새로 발급/갱신되면 서버에 등록한다. 로그인 전이면 서버가 401을 줄 것이므로 스킵
     @Override
@@ -25,10 +44,93 @@ public class FcmMessagingService extends FirebaseMessagingService {
         appContainer.authRepository.registerFcmToken(token, deviceId, "ANDROID", BuildConfig.VERSION_NAME);
     }
 
-    // data 메시지 수신 지점. 실제 알림 표시(채널 생성, 아이콘, 딥링크 등)는 안드로이드팀이 여기 이어서 구현
     @Override
     public void onMessageReceived(RemoteMessage message) {
         super.onMessageReceived(message);
-        // TODO(android팀): message.getData()를 읽어 로컬 알림으로 표시
+
+        Map<String, String> data = message.getData();
+        String type = data.get("type");
+        if (type == null) {
+            return;
+        }
+
+        if (!type.startsWith(DEPARTURE_PREFIX)) {
+            // 담당자 지정(CHECKLIST_ASSIGNED) 등 D-day 알림 범위 밖의 타입은 다루지 않는다
+            return;
+        }
+
+        int days = parseDays(type);
+        String title = getString(R.string.fcm_departure_title_format, days, valueOf(data, "trip_name"));
+        String body = getString(R.string.fcm_departure_body_format, valueOf(data, "destination_city"));
+
+        showNotification(title, body, data.get("trip_id"));
+    }
+
+    private void showNotification(String title, String body, String tripId) {
+        ensureChannel();
+
+        PendingIntent contentIntent = buildContentIntent(tripId);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        if (contentIntent != null) {
+            builder.setContentIntent(contentIntent);
+        }
+
+        int notificationId = tripId != null ? tripId.hashCode() : (int) System.currentTimeMillis();
+        NotificationManagerCompat.from(this).notify(notificationId, builder.build());
+    }
+
+    private PendingIntent buildContentIntent(String tripId) {
+        if (tripId == null) {
+            return null;
+        }
+        long parsedTripId;
+        try {
+            parsedTripId = Long.parseLong(tripId);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
+        Intent intent = new Intent(this, RoomDetailActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(RoomDetailActivity.EXTRA_TRIP_ID, parsedTripId);
+
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        return PendingIntent.getActivity(this, (int) parsedTripId, intent, flags);
+    }
+
+    private void ensureChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (manager == null || manager.getNotificationChannel(CHANNEL_ID) != null) {
+            return;
+        }
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID, getString(R.string.fcm_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(getString(R.string.fcm_channel_desc));
+        manager.createNotificationChannel(channel);
+    }
+
+    private int parseDays(String type) {
+        // "DEPARTURE_D7" -> 7
+        try {
+            return Integer.parseInt(type.substring(DEPARTURE_PREFIX.length()));
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return 0;
+        }
+    }
+
+    private String valueOf(Map<String, String> data, String key) {
+        String value = data.get(key);
+        return value == null ? "" : value;
     }
 }

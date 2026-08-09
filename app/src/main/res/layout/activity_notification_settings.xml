@@ -40,8 +40,7 @@
                 android:id="@+id/notifSwitchD7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                app:thumbTint="@color/bag_brand_default" />
+                android:checked="true" />
         </LinearLayout>
 
         <LinearLayout
