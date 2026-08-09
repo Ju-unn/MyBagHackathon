@@ -25,7 +25,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/touch_target_min"
+            android:layout_height="@dimen/notif_row_height"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -34,18 +34,22 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/notif_d7"
-                android:textAppearance="@style/TextAppearance.Bag.BodyL" />
+                android:textAppearance="@style/TextAppearance.Bag.BodyL"
+                android:textSize="@dimen/notif_label_text_size" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/notifSwitchD7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true" />
+                android:layout_marginEnd="@dimen/notif_switch_margin_end"
+                android:checked="true"
+                android:scaleX="1.3"
+                android:scaleY="1.3" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/touch_target_min"
+            android:layout_height="@dimen/notif_row_height"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -54,18 +58,22 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/notif_d3"
-                android:textAppearance="@style/TextAppearance.Bag.BodyL" />
+                android:textAppearance="@style/TextAppearance.Bag.BodyL"
+                android:textSize="@dimen/notif_label_text_size" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/notifSwitchD3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true" />
+                android:layout_marginEnd="@dimen/notif_switch_margin_end"
+                android:checked="true"
+                android:scaleX="1.3"
+                android:scaleY="1.3" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/touch_target_min"
+            android:layout_height="@dimen/notif_row_height"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -74,13 +82,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/notif_d1"
-                android:textAppearance="@style/TextAppearance.Bag.BodyL" />
+                android:textAppearance="@style/TextAppearance.Bag.BodyL"
+                android:textSize="@dimen/notif_label_text_size" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/notifSwitchD1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="false" />
+                android:layout_marginEnd="@dimen/notif_switch_margin_end"
+                android:checked="false"
+                android:scaleX="1.3"
+                android:scaleY="1.3" />
         </LinearLayout>
 
         <!-- 정보 배너 (M8 WarningBanner를 info 색상으로 사용) -->

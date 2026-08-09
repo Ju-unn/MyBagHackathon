@@ -18,29 +18,27 @@ public class TripRoomUiModel {
     public final String ddayText;
     public final List<AvatarStackHelper.Entry> avatars;
     public final int progressPercent;
-    public final String hint;
 
     private TripRoomUiModel(long tripId, State state, String title, String ddayText,
-                             List<AvatarStackHelper.Entry> avatars, int progressPercent, String hint) {
+                             List<AvatarStackHelper.Entry> avatars, int progressPercent) {
         this.tripId = tripId;
         this.state = state;
         this.title = title;
         this.ddayText = ddayText;
         this.avatars = avatars;
         this.progressPercent = progressPercent;
-        this.hint = hint;
     }
 
     public static TripRoomUiModel active(long tripId, String title, String ddayText,
                                           List<AvatarStackHelper.Entry> avatars, int progressPercent) {
-        return new TripRoomUiModel(tripId, State.ACTIVE, title, ddayText, avatars, progressPercent, null);
+        return new TripRoomUiModel(tripId, State.ACTIVE, title, ddayText, avatars, progressPercent);
     }
 
-    public static TripRoomUiModel upcoming(long tripId, String title, String ddayText, String hint) {
-        return new TripRoomUiModel(tripId, State.UPCOMING, title, ddayText, null, 0, hint);
+    public static TripRoomUiModel upcoming(long tripId, String title, String ddayText) {
+        return new TripRoomUiModel(tripId, State.UPCOMING, title, ddayText, null, 0);
     }
 
     public static TripRoomUiModel past(long tripId, String title) {
-        return new TripRoomUiModel(tripId, State.PAST, title, null, null, 0, null);
+        return new TripRoomUiModel(tripId, State.PAST, title, null, null, 0);
     }
 }

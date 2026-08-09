@@ -17,9 +17,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <include
+            android:id="@+id/profileTopAppBar"
+            layout="@layout/organism_top_app_bar_large" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
             android:background="@drawable/bg_card_surface_border"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -41,6 +46,11 @@
 
         </LinearLayout>
 
+        <View
+            style="@style/Widget.Bag.Divider"
+            android:layout_marginTop="@dimen/space_lg"
+            android:background="@color/bag_text_primary" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,7 +63,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/profile_my_items"
-                android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+                android:textAppearance="@style/TextAppearance.Bag.TitleS"
+                android:textSize="@dimen/profile_section_header_text_size" />
 
             <TextView
                 android:id="@+id/profileItemCount"
@@ -61,9 +72,12 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Bag.LabelM"
                 android:textColor="@color/bag_text_secondary"
+                android:textSize="@dimen/profile_section_header_text_size"
                 tools:text="12개" />
 
         </LinearLayout>
+
+        <View style="@style/Widget.Bag.Divider" android:layout_marginTop="@dimen/space_lg" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/profileItemRecycler"
@@ -98,14 +112,18 @@
 
         </LinearLayout>
 
-        <View style="@style/Widget.Bag.Divider" android:layout_marginTop="@dimen/space_lg" />
+        <View
+            style="@style/Widget.Bag.Divider"
+            android:layout_marginTop="@dimen/space_lg"
+            android:background="@color/bag_text_primary" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xl"
             android:text="@string/profile_settings"
-            android:textAppearance="@style/TextAppearance.Bag.TitleS" />
+            android:textAppearance="@style/TextAppearance.Bag.TitleS"
+            android:textSize="@dimen/profile_section_header_text_size" />
 
         <LinearLayout
             android:id="@+id/profileNotifRow"

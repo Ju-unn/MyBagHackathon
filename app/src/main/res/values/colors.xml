@@ -75,6 +75,9 @@
     <color name="bag_border_default">@color/sand_200</color>
     <color name="bag_border_strong">@color/stone_300</color>
     <color name="bag_border_divider">@color/sand_250</color>
+    <!-- 진행중 여행방 카드(bg/inverse) 위에 얹는 브랜드 톤 보더 — 카드가
+         너무 밋밋해 보인다는 피드백으로 은은한 입체감을 주기 위해 추가 -->
+    <color name="bag_border_brand_on_inverse">@color/blue_300</color>
 
     <!-- 중요도 -->
     <color name="bag_priority_high">@color/blue_500</color>

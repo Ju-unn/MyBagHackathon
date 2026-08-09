@@ -5,7 +5,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
+import androidx.core.content.ContextCompat;
 
+import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.ui.atoms.AvatarView;
 
 import java.util.List;
@@ -16,7 +18,8 @@ import java.util.List;
  *
  * 기능: 참여자 목록(이니셜+색상)을 받아서 AvatarView를 필요한 개수만큼 코드로
  * 생성하고 겹쳐서 배치해주는 정적 헬퍼. 방 상세, 홈 화면의 여행방 카드 등에서
- * 아바타를 겹쳐 보여줄 때 사용됨.
+ * 아바타를 겹쳐 보여줄 때 사용됨. 겹치는 아바타끼리 구분되도록 항상 흰 테두리로
+ * 감싼다(pen.dev 디자인 스펙).
  */
 public class AvatarStackHelper {
 
@@ -30,17 +33,12 @@ public class AvatarStackHelper {
         }
     }
 
-    /**
-     * @param onDark true when the stack sits on a dark card (TripRoomCard
-     *               Active) — the separator stroke should match that
-     *               surface instead of the default white background.
-     */
     public static void populate(Context context, LinearLayout container, List<Entry> entries,
-                                 boolean onDark, int avatarSizeDp) {
+                                 int avatarSizeDp) {
         container.removeAllViews();
         int sizePx = dp(context, avatarSizeDp);
         int overlapPx = -dp(context, 8);
-        int strokeColor = onDark ? 0xFF16181C : 0xFFFFFFFF;
+        int strokeColor = ContextCompat.getColor(context, R.color.white_primitive);
 
         for (int i = 0; i < entries.size(); i++) {
             Entry e = entries.get(i);
