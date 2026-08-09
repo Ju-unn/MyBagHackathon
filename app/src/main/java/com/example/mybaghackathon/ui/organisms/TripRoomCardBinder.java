@@ -98,40 +98,6 @@ public class TripRoomCardBinder {
         root.findViewById(R.id.tripCardHint).setVisibility(View.GONE);
     }
 
-    /**
-     * 아카이브 "진행 중" 탭에서 체크리스트 진행률 데이터가 아직 없는 여행방
-     * 카드용 — Upcoming과 같은 밝은 카드 스타일이지만 "일정 업로드 필요" 힌트
-     * 없이 상태 라벨만 "진행중"으로 보여줌.
-     */
-    public static void bindPlanned(View root, String title, String ddayText) {
-        Context ctx = root.getContext();
-        MaterialCardView card = (MaterialCardView) root;
-        card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_surface));
-        card.setStrokeColor(ContextCompat.getColor(ctx, R.color.bag_text_primary));
-        card.setStrokeWidth(dp(ctx, 1));
-        card.setAlpha(1f);
-
-        root.findViewById(R.id.tripCardDecoration).setVisibility(View.GONE);
-
-        TextView status = root.findViewById(R.id.tripCardStatus);
-        status.setText(R.string.home_status_active);
-        status.setBackgroundResource(R.drawable.bg_pill_neutral);
-        status.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_secondary));
-
-        TextView titleView = root.findViewById(R.id.tripCardTitle);
-        titleView.setText(title);
-        titleView.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_primary));
-
-        DDayBadgeView dday = root.findViewById(R.id.tripCardDDay);
-        dday.setVisibility(View.VISIBLE);
-        dday.setText(ddayText);
-        dday.setBrand(false);
-
-        root.findViewById(R.id.tripCardBottomRow).setVisibility(View.GONE);
-        root.findViewById(R.id.tripCardProgressBar).setVisibility(View.GONE);
-        root.findViewById(R.id.tripCardHint).setVisibility(View.GONE);
-    }
-
     public static void bindPast(View root, String title) {
         Context ctx = root.getContext();
         MaterialCardView card = (MaterialCardView) root;
