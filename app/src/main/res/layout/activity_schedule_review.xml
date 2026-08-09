@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- S08 일정 검토 — 세로로 긴 스크롤 화면 (NestedScrollView) -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bag_bg_base"
+    android:background="@color/bag_bg_base">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <androidx.core.widget.NestedScrollView
@@ -178,3 +182,38 @@
         layout="@layout/organism_bottom_cta" />
 
 </LinearLayout>
+
+    <!-- 방 생성 처리 중에만 노출, S06 분석중 화면과 동일한 스타일 -->
+    <FrameLayout
+        android:id="@+id/reviewLoadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bag_bg_base"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:indeterminateTint="@color/bag_brand_default" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:gravity="center"
+                android:text="@string/review_generating_message"
+                android:textAppearance="@style/TextAppearance.Bag.BodyLMedium"
+                android:textColor="@color/bag_text_primary" />
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>
