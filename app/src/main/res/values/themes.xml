@@ -74,4 +74,16 @@
         <item name="colorSurfaceContainerLowest">@color/white</item>
         <item name="colorOutline">@color/bag_border_default</item>
     </style>
+
+    <!-- 여행방 삭제/나가기 확인 다이얼로그 배경을 각 화면 루트 배경(bag_bg_base)과 맞춤.
+         M3 AlertDialog는 colorSurface가 아니라 surfaceContainer 계열 토큰을 배경으로
+         쓰기 때문에 DatePicker 오버레이와 동일하게 그 토큰들도 다 같이 눌러줘야 함. -->
+    <style name="ThemeOverlay.Bag.ConfirmDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/bag_bg_base</item>
+        <item name="colorSurfaceContainer">@color/bag_bg_base</item>
+        <item name="colorSurfaceContainerHigh">@color/bag_bg_base</item>
+        <item name="colorSurfaceContainerHighest">@color/bag_bg_base</item>
+        <item name="colorSurfaceContainerLow">@color/bag_bg_base</item>
+        <item name="colorSurfaceContainerLowest">@color/bag_bg_base</item>
+    </style>
 </resources>

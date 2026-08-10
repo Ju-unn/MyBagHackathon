@@ -26,10 +26,12 @@ public class AvatarStackHelper {
     public static class Entry {
         public final String initial;
         @ColorInt public final int color;
+        public final String imageUrl;
 
-        public Entry(String initial, @ColorInt int color) {
+        public Entry(String initial, @ColorInt int color, String imageUrl) {
             this.initial = initial;
             this.color = color;
+            this.imageUrl = imageUrl;
         }
     }
 
@@ -49,6 +51,7 @@ public class AvatarStackHelper {
             av.setAvatarColor(e.color);
             av.setInitial(e.initial);
             av.setStrokeEnabled(true, strokeColor);
+            av.setImageUrl(e.imageUrl);
             container.addView(av);
         }
     }

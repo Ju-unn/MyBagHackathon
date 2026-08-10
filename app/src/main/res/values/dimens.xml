@@ -77,4 +77,14 @@
     <dimen name="trip_delete_button_size">64dp</dimen>
     <!-- 여행방 카드 뒤 그림자가 오른쪽/아래로 삐져나오는 정도(왼쪽 위에서 빛이 오는 느낌) -->
     <dimen name="card_shadow_offset">2dp</dimen>
+
+    <!-- S03 홈의 빈 상태 일러스트를 S14 공용여행의 세그먼트 컨트롤(진행중/지난 여행)
+         높이만큼 아래로 밀어서, 탭 전환 시 빈 상태 일러스트가 같은 높이에 있는 것처럼
+         보이게 함. 세그먼트 행 marginTop(space_lg 16dp) + 행 높이(40dp + 상하 패딩 4dp*2) = 64dp -->
+    <dimen name="home_empty_state_segment_offset">64dp</dimen>
+
+    <!-- S03/S14 빈 상태(EmptyState) 상단 여백 — 화면 중앙에 더 가깝게 보이도록
+         일반 간격 스케일(space_xl 20dp)보다 더 내림. 홈/아카이브 둘 다 같은 값을
+         써야 두 탭의 빈 상태 일러스트 높이가 계속 맞는다. -->
+    <dimen name="empty_state_top_margin">56dp</dimen>
 </resources>

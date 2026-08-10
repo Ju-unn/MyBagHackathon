@@ -122,6 +122,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
     private void updateEmptyState() {
         boolean empty = adapter.isEmpty();
+        binding.homeEmptyStateSpacer.setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.homeEmptyState.getRoot().setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.homeTripRecycler.setVisibility(empty ? View.GONE : View.VISIBLE);
         binding.homeAddRoomFab.setVisibility(empty ? View.GONE : View.VISIBLE);
@@ -131,7 +132,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         if (getContext() == null) {
             return;
         }
-        new MaterialAlertDialogBuilder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
                 .setTitle(R.string.trip_delete_dialog_title)
                 .setMessage(getString(R.string.trip_delete_dialog_message_format, title))
                 .setNegativeButton(R.string.action_cancel, null)
@@ -143,7 +144,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         if (getContext() == null) {
             return;
         }
-        new MaterialAlertDialogBuilder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
                 .setTitle(R.string.trip_leave_dialog_title)
                 .setMessage(getString(R.string.trip_leave_dialog_message_format, title))
                 .setNegativeButton(R.string.action_cancel, null)
@@ -191,7 +192,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             String nickname = members.get(i).getNickname();
             String initial = nickname == null || nickname.isEmpty() ? "" : nickname.substring(0, 1);
             int color = ContextCompat.getColor(requireContext(), AVATAR_COLORS[i % AVATAR_COLORS.length]);
-            entries.add(new AvatarStackHelper.Entry(initial, color));
+            entries.add(new AvatarStackHelper.Entry(initial, color, members.get(i).getProfileImageUrl()));
         }
         return entries;
     }
