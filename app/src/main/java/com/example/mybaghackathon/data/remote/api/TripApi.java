@@ -3,6 +3,7 @@ package com.example.mybaghackathon.data.remote.api;
 import com.example.mybaghackathon.data.remote.dto.common.ApiResponseDto;
 import com.example.mybaghackathon.data.remote.dto.trip.TripCreateRequestDto;
 import com.example.mybaghackathon.data.remote.dto.trip.TripDetailResponseDto;
+import com.example.mybaghackathon.data.remote.dto.trip.TripIdRequestDto;
 import com.example.mybaghackathon.data.remote.dto.trip.TripInviteDto;
 import com.example.mybaghackathon.data.remote.dto.trip.TripJoinRequestDto;
 import com.example.mybaghackathon.data.remote.dto.trip.TripJoinResponseDto;
@@ -41,4 +42,12 @@ public interface TripApi {
     // 초대코드로 참여
     @POST("api/trips/join.php")
     Call<ApiResponseDto<TripJoinResponseDto>> join(@Body TripJoinRequestDto body);
+
+    // 방 삭제 — 방장 전용, 완전 삭제(멤버/체크리스트/업로드까지)
+    @POST("api/trips/delete.php")
+    Call<ApiResponseDto<Object>> delete(@Body TripIdRequestDto body);
+
+    // 방 나가기 — 참여자 본인만, 방장은 서버가 400으로 거절
+    @POST("api/trips/leave.php")
+    Call<ApiResponseDto<Object>> leave(@Body TripIdRequestDto body);
 }

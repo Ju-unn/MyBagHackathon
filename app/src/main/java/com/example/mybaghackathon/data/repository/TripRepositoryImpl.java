@@ -7,6 +7,7 @@ import com.example.mybaghackathon.data.remote.api.TripApi;
 import com.example.mybaghackathon.data.remote.dto.common.ApiResponseDto;
 import com.example.mybaghackathon.data.remote.dto.trip.TripCreateRequestDto;
 import com.example.mybaghackathon.data.remote.dto.trip.TripDetailResponseDto;
+import com.example.mybaghackathon.data.remote.dto.trip.TripIdRequestDto;
 import com.example.mybaghackathon.data.remote.dto.trip.TripInviteDto;
 import com.example.mybaghackathon.data.remote.dto.trip.TripJoinRequestDto;
 import com.example.mybaghackathon.data.remote.dto.trip.TripJoinResponseDto;
@@ -128,6 +129,34 @@ public class TripRepositoryImpl implements TripRepository {
                 return AppResult.failure(toError(response, body));
             }
             return AppResult.success(body.getData().getTripId());
+        } catch (IOException e) {
+            return AppResult.failure(networkError());
+        }
+    }
+
+    @Override
+    public AppResult<Void> deleteTrip(long tripId) {
+        try {
+            Response<ApiResponseDto<Object>> response = tripApi.delete(new TripIdRequestDto(tripId)).execute();
+            ApiResponseDto<Object> body = response.body();
+            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
+                return AppResult.failure(toError(response, body));
+            }
+            return AppResult.success(null);
+        } catch (IOException e) {
+            return AppResult.failure(networkError());
+        }
+    }
+
+    @Override
+    public AppResult<Void> leaveTrip(long tripId) {
+        try {
+            Response<ApiResponseDto<Object>> response = tripApi.leave(new TripIdRequestDto(tripId)).execute();
+            ApiResponseDto<Object> body = response.body();
+            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
+                return AppResult.failure(toError(response, body));
+            }
+            return AppResult.success(null);
         } catch (IOException e) {
             return AppResult.failure(networkError());
         }
