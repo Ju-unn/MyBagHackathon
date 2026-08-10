@@ -17,7 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 
 /**
- * BS03 · 개인 항목 수정 — 사용자의 기본 항목 중 하나의 이름/우선순위를 바꾸거나 삭제함.
+ * BS03 · 물품 수정 — 체크리스트 또는 기본 물품의 이름/우선순위를 바꾸거나 삭제함.
  *
  * 기능: 전달받은 기존 라벨과 우선순위를 입력창/칩에 채워주고, 저장/삭제 버튼에
  * 따라 리스너(OnItemEditedListener)로 결과를 알려주는 바텀시트.

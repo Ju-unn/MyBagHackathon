@@ -19,6 +19,10 @@ public interface ChecklistContract {
 
         void showError(String message);
 
+        void showRetryableError(String message);
+
+        void showLoading(boolean loading);
+
         void showDeleteUndo(PackingItem item);
     }
 

@@ -2,7 +2,6 @@
 <!-- S15 내 기본 물품 전체보기 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
@@ -38,14 +37,51 @@
                 android:textAppearance="@style/TextAppearance.Bag.LabelM"
                 android:textColor="@color/bag_text_secondary" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/profileItemsRecycler"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_lg"
-                android:nestedScrollingEnabled="false"
-                tools:itemCount="12"
-                tools:listitem="@layout/molecule_default_item_row" />
+                android:orientation="horizontal">
+
+                <com.example.mybaghackathon.ui.atoms.ChipView
+                    android:id="@+id/profileItemsFilterAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    app:chipActive="true"
+                    app:chipLabel="@string/profile_items_filter_all" />
+
+                <com.example.mybaghackathon.ui.atoms.ChipView
+                    android:id="@+id/profileItemsFilterHigh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    app:chipActive="false"
+                    app:chipLabel="@string/review_priority_high" />
+
+                <com.example.mybaghackathon.ui.atoms.ChipView
+                    android:id="@+id/profileItemsFilterMid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    app:chipActive="false"
+                    app:chipLabel="@string/review_priority_mid" />
+
+                <com.example.mybaghackathon.ui.atoms.ChipView
+                    android:id="@+id/profileItemsFilterLow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:chipActive="false"
+                    app:chipLabel="@string/review_priority_low" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/profileItemsGroupedSections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:orientation="vertical" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

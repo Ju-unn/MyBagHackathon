@@ -5,7 +5,6 @@
     android:id="@+id/defaultItemRowLabel"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:textAppearance="@style/TextAppearance.Bag.BodyL"
     tools:text="선크림" />

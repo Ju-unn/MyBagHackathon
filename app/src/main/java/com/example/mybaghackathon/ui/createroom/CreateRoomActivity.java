@@ -3,6 +3,10 @@ package com.example.mybaghackathon.ui.createroom;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
@@ -27,7 +31,8 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     private static final int MEMBER_COUNT_MIN = 1;
     private static final int MEMBER_COUNT_MAX = 10;
-    private static final int MEMBER_COUNT_DEFAULT = 3;
+    private static final int MEMBER_COUNT_DEFAULT = 1;
+    private static final int ROOM_NAME_MAX_LENGTH = 20;
 
     private ActivityCreateRoomBinding binding;
     private int memberCount = MEMBER_COUNT_DEFAULT;
@@ -49,6 +54,23 @@ public class CreateRoomActivity extends AppCompatActivity {
                 return true;
             }
             return false;
+        });
+        binding.createRoomNameField.textFieldInput.setFilters(
+                new InputFilter[]{new InputFilter.LengthFilter(ROOM_NAME_MAX_LENGTH)});
+        binding.createRoomNameField.textFieldInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                binding.createRoomNameLengthNotice.setVisibility(
+                        s.length() >= ROOM_NAME_MAX_LENGTH ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         updateMemberCountLabel();

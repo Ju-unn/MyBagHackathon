@@ -16,7 +16,7 @@
         android:layout_height="@dimen/text_field_height"
         android:hint="@string/create_room_name_hint"
         android:textAppearance="@style/TextAppearance.Bag.BodyL"
-        android:inputType="text"
+        android:inputType="text|textNoSuggestions"
         android:maxLines="1"
         android:imeOptions="actionDone" />
 </com.google.android.material.textfield.TextInputLayout>

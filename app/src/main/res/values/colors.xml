@@ -96,6 +96,7 @@
          bag_text_tertiary_safe나 bag_status_danger와 짝지어 사용할 것. -->
     <color name="bag_status_warning">@color/amber_500</color>
     <color name="bag_status_warning_bg">#1FE8A33D</color>
+    <color name="bag_loading_scrim">#B3FFFFFF</color>
 
     <!-- 아바타 -->
     <color name="bag_avatar_1">@color/amber_500</color>

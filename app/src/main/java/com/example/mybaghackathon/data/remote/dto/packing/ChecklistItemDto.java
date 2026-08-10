@@ -17,6 +17,9 @@ public class ChecklistItemDto {
     @SerializedName("trip_id")
     private long tripId;
 
+    @SerializedName("created_by_user_id")
+    private long createdByUserId;
+
     @SerializedName("item_name")
     private String itemName;
 
@@ -61,6 +64,10 @@ public class ChecklistItemDto {
 
     public long getTripId() {
         return tripId;
+    }
+
+    public long getCreatedByUserId() {
+        return createdByUserId;
     }
 
     public String getItemName() {
