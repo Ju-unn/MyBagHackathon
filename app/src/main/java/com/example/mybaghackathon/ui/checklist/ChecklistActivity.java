@@ -302,6 +302,11 @@ public class ChecklistActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean isCurrentUserHost() {
+        return isHost;
+    }
+
+    @Override
     public int getTripMemberCount() {
         return memberCount;
     }

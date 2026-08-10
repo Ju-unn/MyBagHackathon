@@ -72,6 +72,32 @@ public class ChecklistPresenterTest {
         assertEquals(0, fixture.packingRepository.deleteCalls);
     }
 
+    @Test
+    public void nonHostCannotDeleteCommonItem() {
+        Fixture fixture = new Fixture(false);
+        PackingItem common = fixture.replaceWithCommonItem(CURRENT_USER_ID);
+        fixture.loadInitialData();
+
+        fixture.presenter.requestDelete(common);
+
+        assertEquals(1, fixture.view.items.size());
+        assertFalse(fixture.view.deleteUndoShown);
+        assertTrue(fixture.view.errorShown);
+    }
+
+    @Test
+    public void assignedUserCanUnassignCommonItem() {
+        Fixture fixture = new Fixture(false);
+        PackingItem common = fixture.replaceWithCommonItem(CURRENT_USER_ID);
+        fixture.loadInitialData();
+
+        fixture.presenter.assignItem(common, null);
+        fixture.executor.runNext();
+
+        assertEquals(1, fixture.packingRepository.assignCalls);
+        assertEquals(null, fixture.packingRepository.lastAssigneeUserId);
+    }
+
     private static final class Fixture {
         private final RecordingView view = new RecordingView();
         private final FakeTripRepository tripRepository = new FakeTripRepository();
@@ -80,9 +106,13 @@ public class ChecklistPresenterTest {
         private final ChecklistPresenter presenter;
 
         private Fixture() {
+            this(true);
+        }
+
+        private Fixture(boolean currentUserIsHost) {
             Trip trip = new Trip();
             trip.setTripId(TRIP_ID);
-            trip.setOwnerUserId(CURRENT_USER_ID);
+            trip.setOwnerUserId(currentUserIsHost ? CURRENT_USER_ID : 99L);
             trip.setTripName("테스트 여행");
             trip.setMembers(Collections.singletonList(
                     new TripMember(CURRENT_USER_ID, "여행자", null,
@@ -109,6 +139,20 @@ public class ChecklistPresenterTest {
             );
         }
 
+        private PackingItem replaceWithCommonItem(long assigneeUserId) {
+            packingRepository.items.clear();
+            PackingItem item = new PackingItem();
+            item.setPackingItemId(22L);
+            item.setTripId(TRIP_ID);
+            item.setCreatedByUserId(99L);
+            item.setItemName("여권");
+            item.setScope("COMMON");
+            item.setAssigneeUserId(assigneeUserId);
+            item.setItemStatus("ACTIVE");
+            packingRepository.items.add(item);
+            return item;
+        }
+
         private void loadInitialData() {
             presenter.loadChecklist(TRIP_ID, false);
             executor.runNext();
@@ -122,6 +166,7 @@ public class ChecklistPresenterTest {
         private boolean host;
         private boolean loading;
         private boolean deleteUndoShown;
+        private boolean errorShown;
 
         @Override
         public void showChecklist(String tripName, List<PackingItem> items,
@@ -134,6 +179,7 @@ public class ChecklistPresenterTest {
 
         @Override
         public void showError(String message) {
+            errorShown = true;
         }
 
         @Override
@@ -242,12 +288,24 @@ public class ChecklistPresenterTest {
         public AppResult<Long> joinByCode(String inviteCode) {
             return AppResult.success(0L);
         }
+
+        @Override
+        public AppResult<Void> deleteTrip(long tripId) {
+            return AppResult.success(null);
+        }
+
+        @Override
+        public AppResult<Void> leaveTrip(long tripId) {
+            return AppResult.success(null);
+        }
     }
 
     private static final class FakePackingRepository implements PackingRepository {
         private final List<PackingItem> items = new ArrayList<>();
         private int addCalls;
         private int deleteCalls;
+        private int assignCalls;
+        private Long lastAssigneeUserId;
 
         @Override
         public AppResult<List<PackingItem>> listItems(long tripId, String since) {
@@ -268,6 +326,8 @@ public class ChecklistPresenterTest {
 
         @Override
         public AppResult<Void> assign(long itemId, Long assigneeUserId) {
+            assignCalls++;
+            lastAssigneeUserId = assigneeUserId;
             return AppResult.success(null);
         }
 
