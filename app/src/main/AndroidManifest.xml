@@ -66,6 +66,29 @@
             android:name=".ui.roomdetail.RoomDetailActivity"
             android:exported="false" />
 
+        <!-- 카카오톡/웹 초대 링크 진입 -->
+        <activity
+            android:name=".ui.invite.InviteJoinActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="kakaolink"
+                    android:scheme="kakao${kakaoNativeAppKey}" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="mybag.duckdns.org"
+                    android:pathPrefix="/invite/"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+
         <!-- S10 날씨 피드백 -->
         <activity
             android:name=".ui.feedback.WeatherFeedbackActivity"

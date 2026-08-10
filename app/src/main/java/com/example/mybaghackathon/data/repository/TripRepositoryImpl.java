@@ -107,7 +107,11 @@ public class TripRepositoryImpl implements TripRepository {
             }
             TripDetailResponseDto data = body.getData();
             Trip trip = TripMapper.from(data.getTrip(), data.getMembers());
-            trip.setInviteCode(data.getInviteCode());
+            // 서버 응답 버전에 따라 invite_code가 data 또는 data.trip에 위치할 수 있다.
+            // TripMapper가 읽은 중첩 값을 최상위 값이 있을 때만 덮어쓴다.
+            if (data.getInviteCode() != null && !data.getInviteCode().trim().isEmpty()) {
+                trip.setInviteCode(data.getInviteCode());
+            }
             return AppResult.success(trip);
         } catch (IOException e) {
             Log.e(TAG, "네트워크 요청 실패", e);

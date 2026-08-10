@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 public class ReviewPresenter implements ReviewContract.Presenter {
 
     private static final String SCOPE_COMMON = "COMMON";
-    private static final String SCOPE_PERSONAL = "PERSONAL";
 
     private final ReviewContract.View view;
     private final Context appContext;
@@ -81,7 +80,11 @@ public class ReviewPresenter implements ReviewContract.Presenter {
 
     @Override
     public void onItemScopeToggled(String itemName, boolean checked) {
-        itemScopeByName.put(itemName, checked ? SCOPE_COMMON : SCOPE_PERSONAL);
+        if (checked) {
+            itemScopeByName.put(itemName, SCOPE_COMMON);
+        } else {
+            itemScopeByName.remove(itemName);
+        }
     }
 
     @Override
@@ -121,7 +124,7 @@ public class ReviewPresenter implements ReviewContract.Presenter {
         List<ReviewContract.ItemView> recommended = new ArrayList<>();
         List<ReviewContract.ItemView> optional = new ArrayList<>();
         for (PackingItem item : recommendedItems) {
-            itemScopeByName.put(item.getItemName(), SCOPE_PERSONAL);
+            // 체크 안 한 항목은 itemScopeByName에 아예 안 들어가서 방 생성 시 제외됨 (onItemScopeToggled 참고)
             ReviewContract.ItemView itemView = new ReviewContract.ItemView(
                     item.getItemName(), restrictionTagType(item.getItemName()));
 

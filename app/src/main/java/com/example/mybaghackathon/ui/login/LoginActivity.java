@@ -13,6 +13,7 @@ import com.example.mybaghackathon.app.MyBagApplication;
 import com.example.mybaghackathon.data.repository.AuthRepository;
 import com.example.mybaghackathon.databinding.ActivityLoginBinding;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
+import com.example.mybaghackathon.ui.invite.InviteJoinActivity;
 import com.kakao.sdk.auth.model.OAuthToken;
 import com.kakao.sdk.common.model.ClientError;
 import com.kakao.sdk.common.model.ClientErrorCause;
@@ -22,6 +23,7 @@ import kotlin.Unit;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.View {
 
+    public static final String EXTRA_POST_LOGIN_INVITE_CODE = "post_login_invite_code";
     private static final String TAG = "KakaoLogin";
 
     private ActivityLoginBinding binding;
@@ -104,6 +106,16 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     @Override
     public void navigateToMain() {
+        String inviteCode = getIntent().getStringExtra(EXTRA_POST_LOGIN_INVITE_CODE);
+        if (inviteCode != null && !inviteCode.trim().isEmpty()) {
+            Log.d(TAG, "서버 로그인 성공, 초대 참여 화면으로 이동");
+            Intent inviteIntent = new Intent(this, InviteJoinActivity.class);
+            inviteIntent.putExtra(InviteJoinActivity.EXTRA_INVITE_CODE, inviteCode.trim());
+            startActivity(inviteIntent);
+            finish();
+            return;
+        }
+
         Log.d(TAG, "서버 로그인 성공, MainActivity로 이동");
         startActivity(new Intent(this, MainActivity.class));
         finish();
