@@ -21,6 +21,9 @@ public interface PackingRepository {
     // 담당자 지정(본인 userId)/해제(null) — 본인만 가능(서버 검증)
     AppResult<Void> assign(long itemId, Long assigneeUserId);
 
+    // 공용 물품 1개를 여러 멤버에게 동시 배정 — 방장 전용, COMMON 물품만(서버 검증)
+    AppResult<Void> assignMultiple(long itemId, List<Long> assigneeUserIds);
+
     // 항목 수정 — 안 고친 필드는 null로 넘기면 기존 값 유지됨
     AppResult<Void> updateItem(long itemId, String itemName, String category, String priority, String scope);
 

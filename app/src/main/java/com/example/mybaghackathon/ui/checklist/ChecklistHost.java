@@ -30,13 +30,14 @@ public interface ChecklistHost {
 
     void assignChecklistItem(PackingItem item, Long userId);
 
-    /** 서버 다중 배정 API 연결 전까지 담당자 지정 오버레이의 선택 상태를 보관한다. */
-    List<Long> getDraftAssigneeIds(long itemId);
+    /** 공용 물품 1개를 여러 멤버에게 동시 배정 — 방장 전용(서버 검증). */
+    void assignChecklistItems(PackingItem item, List<Long> userIds);
 
-    boolean hasDraftAssigneeIds(long itemId);
-
-    /** API 요청 없이 현재 체크리스트 화면 안에서만 복수 담당자 선택을 저장한다. */
-    void saveDraftAssigneeIds(long itemId, List<Long> userIds);
+    /** 이미 여러 명에게 배정된 공용 물품 그룹의 배정을 새 선택 목록으로 재조정 — 방장 전용. */
+    void reassignGroupedItem(List<PackingItem> groupItems, List<Long> userIds);
 
     void deleteChecklistItemWithUndo(PackingItem item);
+
+    /** 실행취소 안내 없이 즉시 삭제 — 방장이 공용 물품을 지울 때 사용. */
+    void deleteChecklistItem(PackingItem item);
 }

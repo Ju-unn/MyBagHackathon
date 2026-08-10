@@ -12,6 +12,7 @@ import com.example.mybaghackathon.model.TripMember;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -140,6 +141,116 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
     }
 
     @Override
+    public void assignItems(PackingItem item, List<Long> userIds) {
+        if (item == null || !ChecklistItemVisibility.isCommon(item)) {
+            return;
+        }
+        if (!isHost) {
+            view.showError("공용 물품을 여러 명에게 배정하는 건 방장만 할 수 있습니다.");
+            return;
+        }
+        if (userIds == null || userIds.isEmpty()) {
+            view.showError("배정할 멤버를 선택해주세요.");
+            return;
+        }
+        runRepositoryAction(() -> packingRepository.assignMultiple(item.getPackingItemId(), userIds));
+    }
+
+    @Override
+    public void reassignGroup(List<PackingItem> groupItems, List<Long> userIds) {
+        if (groupItems == null || groupItems.isEmpty()) {
+            return;
+        }
+        if (!isHost) {
+            view.showError("공용 물품을 여러 명에게 배정하는 건 방장만 할 수 있습니다.");
+            return;
+        }
+        List<Long> desiredIds = new ArrayList<>(new LinkedHashSet<>(
+                userIds == null ? Collections.emptyList() : userIds));
+        runRepositoryAction(() -> reassignGroupOnWorker(groupItems, desiredIds));
+    }
+
+    // groupItems: 같은 이름의 COMMON row 전체. 그대로 남는 사람의 row는 손대지 않고,
+    // 빠지는 사람의 row만 지우거나(또는 새로 추가되는 사람 배정에 재사용해서 API 호출을 아끼고)
+    // 부족한 만큼만 assignMultiple로 새로 만든다.
+    private AppResult<?> reassignGroupOnWorker(List<PackingItem> groupItems, List<Long> desiredIds) {
+        if (desiredIds.isEmpty()) {
+            PackingItem anchor = groupItems.get(0);
+            AppResult<Void> unassigned = packingRepository.assign(anchor.getPackingItemId(), null);
+            if (!unassigned.isSuccess()) {
+                return unassigned;
+            }
+            for (PackingItem row : groupItems) {
+                if (row != anchor) {
+                    AppResult<Void> deleted = packingRepository.deleteItem(row.getPackingItemId());
+                    if (!deleted.isSuccess()) {
+                        return deleted;
+                    }
+                }
+            }
+            return AppResult.success(null);
+        }
+
+        List<PackingItem> staying = new ArrayList<>();
+        List<PackingItem> leaving = new ArrayList<>();
+        for (PackingItem row : groupItems) {
+            Long assignee = row.getAssigneeUserId();
+            if (assignee != null && desiredIds.contains(assignee)) {
+                staying.add(row);
+            } else {
+                leaving.add(row);
+            }
+        }
+        List<Long> toAdd = new ArrayList<>();
+        for (Long id : desiredIds) {
+            boolean alreadyStaying = false;
+            for (PackingItem row : staying) {
+                if (id.equals(row.getAssigneeUserId())) {
+                    alreadyStaying = true;
+                    break;
+                }
+            }
+            if (!alreadyStaying) {
+                toAdd.add(id);
+            }
+        }
+
+        PackingItem anchor;
+        List<Long> anchorCallIds;
+        List<PackingItem> toDelete;
+        if (!staying.isEmpty()) {
+            anchor = staying.get(0);
+            anchorCallIds = new ArrayList<>();
+            anchorCallIds.add(anchor.getAssigneeUserId());
+            anchorCallIds.addAll(toAdd);
+            toDelete = leaving;
+        } else {
+            anchor = leaving.get(0);
+            anchorCallIds = desiredIds;
+            toDelete = leaving.subList(1, leaving.size());
+        }
+
+        if (anchorCallIds.size() == 1) {
+            AppResult<Void> assigned = packingRepository.assign(anchor.getPackingItemId(), anchorCallIds.get(0));
+            if (!assigned.isSuccess()) {
+                return assigned;
+            }
+        } else if (anchorCallIds.size() > 1) {
+            AppResult<Void> assigned = packingRepository.assignMultiple(anchor.getPackingItemId(), anchorCallIds);
+            if (!assigned.isSuccess()) {
+                return assigned;
+            }
+        }
+        for (PackingItem row : toDelete) {
+            AppResult<Void> deleted = packingRepository.deleteItem(row.getPackingItemId());
+            if (!deleted.isSuccess()) {
+                return deleted;
+            }
+        }
+        return AppResult.success(null);
+    }
+
+    @Override
     public void requestDelete(PackingItem item) {
         if (destroyed || item == null || loading) {
             return;
@@ -183,6 +294,18 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
         PendingDelete pending = pendingDelete;
         pendingDelete = null;
         deleteOnServer(pending.item);
+    }
+
+    @Override
+    public void deleteItem(PackingItem item) {
+        if (item == null) {
+            return;
+        }
+        if (!canDelete(item)) {
+            view.showError(permissionMessage(item));
+            return;
+        }
+        deleteOnServer(item);
     }
 
     @Override

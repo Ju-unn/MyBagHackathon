@@ -98,6 +98,94 @@ public class ChecklistPresenterTest {
         assertEquals(null, fixture.packingRepository.lastAssigneeUserId);
     }
 
+    @Test
+    public void hostCanAssignCommonItemToMultipleMembers() {
+        Fixture fixture = new Fixture(true);
+        PackingItem common = fixture.replaceWithCommonItem(CURRENT_USER_ID);
+        fixture.loadInitialData();
+
+        fixture.presenter.assignItems(common, java.util.Arrays.asList(CURRENT_USER_ID, 8L, 9L));
+        fixture.executor.runNext();
+
+        assertEquals(1, fixture.packingRepository.assignMultipleCalls);
+        assertEquals(java.util.Arrays.asList(CURRENT_USER_ID, 8L, 9L),
+                fixture.packingRepository.lastAssigneeUserIds);
+    }
+
+    @Test
+    public void hostDeletesCommonItemImmediately_withoutUndoState() {
+        Fixture fixture = new Fixture(true);
+        PackingItem common = fixture.replaceWithCommonItem(CURRENT_USER_ID);
+        fixture.loadInitialData();
+
+        fixture.presenter.deleteItem(common);
+        fixture.executor.runNext();
+
+        assertEquals(1, fixture.packingRepository.deleteCalls);
+        assertFalse(fixture.view.deleteUndoShown);
+    }
+
+    @Test
+    public void nonHostCannotDeleteCommonItemImmediately() {
+        Fixture fixture = new Fixture(false);
+        PackingItem common = fixture.replaceWithCommonItem(99L);
+        fixture.loadInitialData();
+
+        fixture.presenter.deleteItem(common);
+
+        assertEquals(0, fixture.packingRepository.deleteCalls);
+        assertTrue(fixture.view.errorShown);
+    }
+
+    @Test
+    public void reassignGroup_keepsStayingRow_reusesFreedRowForAdd_deletesTheRest() {
+        Fixture fixture = new Fixture(true);
+        fixture.loadInitialData();
+
+        PackingItem staying = fixture.commonItem(101L, CURRENT_USER_ID);
+        PackingItem leavingA = fixture.commonItem(102L, 8L);
+        PackingItem leavingB = fixture.commonItem(103L, 9L);
+        List<PackingItem> group = java.util.Arrays.asList(staying, leavingA, leavingB);
+
+        fixture.presenter.reassignGroup(group, java.util.Arrays.asList(CURRENT_USER_ID, 10L));
+        fixture.executor.runNext();
+
+        // staying(101, user=CURRENT_USER_ID)의 row는 건드리지 않고 그대로 anchor로 재사용해서
+        // 10을 추가로 클론(assignMultiple), 빠지는 8/9의 row 2개는 둘 다 삭제
+        assertEquals(1, fixture.packingRepository.assignMultipleCalls);
+        assertEquals(java.util.Arrays.asList(CURRENT_USER_ID, 10L), fixture.packingRepository.lastAssigneeUserIds);
+        assertEquals(2, fixture.packingRepository.deleteCalls);
+    }
+
+    @Test
+    public void reassignGroup_emptySelection_unassignsAnchorAndDeletesRest() {
+        Fixture fixture = new Fixture(true);
+        fixture.loadInitialData();
+
+        PackingItem itemA = fixture.commonItem(101L, 8L);
+        PackingItem itemB = fixture.commonItem(102L, 9L);
+        List<PackingItem> group = java.util.Arrays.asList(itemA, itemB);
+
+        fixture.presenter.reassignGroup(group, Collections.emptyList());
+        fixture.executor.runNext();
+
+        assertEquals(1, fixture.packingRepository.assignCalls);
+        assertEquals(null, fixture.packingRepository.lastAssigneeUserId);
+        assertEquals(1, fixture.packingRepository.deleteCalls);
+    }
+
+    @Test
+    public void nonHostCannotAssignCommonItemToMultipleMembers() {
+        Fixture fixture = new Fixture(false);
+        PackingItem common = fixture.replaceWithCommonItem(CURRENT_USER_ID);
+        fixture.loadInitialData();
+
+        fixture.presenter.assignItems(common, java.util.Arrays.asList(CURRENT_USER_ID, 8L));
+
+        assertEquals(0, fixture.packingRepository.assignMultipleCalls);
+        assertTrue(fixture.view.errorShown);
+    }
+
     private static final class Fixture {
         private final RecordingView view = new RecordingView();
         private final FakeTripRepository tripRepository = new FakeTripRepository();
@@ -156,6 +244,18 @@ public class ChecklistPresenterTest {
         private void loadInitialData() {
             presenter.loadChecklist(TRIP_ID, false);
             executor.runNext();
+        }
+
+        private PackingItem commonItem(long packingItemId, long assigneeUserId) {
+            PackingItem item = new PackingItem();
+            item.setPackingItemId(packingItemId);
+            item.setTripId(TRIP_ID);
+            item.setCreatedByUserId(99L);
+            item.setItemName("속옷");
+            item.setScope("COMMON");
+            item.setAssigneeUserId(assigneeUserId);
+            item.setItemStatus("ACTIVE");
+            return item;
         }
     }
 
@@ -306,6 +406,8 @@ public class ChecklistPresenterTest {
         private int deleteCalls;
         private int assignCalls;
         private Long lastAssigneeUserId;
+        private int assignMultipleCalls;
+        private List<Long> lastAssigneeUserIds;
 
         @Override
         public AppResult<List<PackingItem>> listItems(long tripId, String since) {
@@ -328,6 +430,13 @@ public class ChecklistPresenterTest {
         public AppResult<Void> assign(long itemId, Long assigneeUserId) {
             assignCalls++;
             lastAssigneeUserId = assigneeUserId;
+            return AppResult.success(null);
+        }
+
+        @Override
+        public AppResult<Void> assignMultiple(long itemId, List<Long> assigneeUserIds) {
+            assignMultipleCalls++;
+            lastAssigneeUserIds = assigneeUserIds;
             return AppResult.success(null);
         }
 

@@ -21,8 +21,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.kakao.sdk.share.ShareClient;
 import com.kakao.sdk.share.WebSharerClient;
 import com.kakao.sdk.template.model.Button;
+import com.kakao.sdk.template.model.Content;
+import com.kakao.sdk.template.model.FeedTemplate;
 import com.kakao.sdk.template.model.Link;
-import com.kakao.sdk.template.model.TextTemplate;
 
 import java.util.Collections;
 import java.util.Map;
@@ -39,6 +40,9 @@ public class InviteShareSheet extends BottomSheetDialogFragment {
 
     private static final String ARG_LINK = "link";
     private static final String ARG_INVITE_CODE = "invite_code";
+    // 카카오 공유 카드·초대 랜딩 페이지(html/invite/index.php)가 같이 쓰는 앱 아이콘. 서버 정적 파일이라
+    // 두 곳에 URL이 중복되지만, 배포 파이프라인이 다른 두 프로젝트라 상수 공유는 하지 않는다.
+    private static final String APP_ICON_URL = "https://mybag.duckdns.org/assets/app_icon.png";
 
     private SheetInviteBinding binding;
 
@@ -91,9 +95,16 @@ public class InviteShareSheet extends BottomSheetDialogFragment {
                 executionParams,
                 Collections.emptyMap()
         );
-        TextTemplate template = new TextTemplate(
-                getString(R.string.invite_share_message),
+        Content content = new Content(
+                getString(R.string.invite_share_title),
+                APP_ICON_URL,
                 templateLink,
+                getString(R.string.invite_share_message)
+        );
+        FeedTemplate template = new FeedTemplate(
+                content,
+                null,
+                null,
                 Collections.singletonList(
                         new Button(getString(R.string.invite_share_button), templateLink)
                 )
@@ -120,7 +131,7 @@ public class InviteShareSheet extends BottomSheetDialogFragment {
         });
     }
 
-    private void openWebSharer(TextTemplate template) {
+    private void openWebSharer(FeedTemplate template) {
         try {
             Uri sharerUrl = WebSharerClient.getInstance().makeDefaultUrl(template);
             startActivity(new Intent(Intent.ACTION_VIEW, sharerUrl));

@@ -93,6 +93,21 @@ public class PackingRepositoryImpl implements PackingRepository {
     }
 
     @Override
+    public AppResult<Void> assignMultiple(long itemId, List<Long> assigneeUserIds) {
+        try {
+            Response<ApiResponseDto<Object>> response =
+                    packingApi.assign(new ChecklistAssignRequestDto(itemId, assigneeUserIds)).execute();
+            ApiResponseDto<Object> body = response.body();
+            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
+                return AppResult.failure(toError(response, body));
+            }
+            return AppResult.success(null);
+        } catch (IOException e) {
+            return AppResult.failure(networkError());
+        }
+    }
+
+    @Override
     public AppResult<Void> updateItem(long itemId, String itemName, String category, String priority, String scope) {
         ChecklistUpdateRequestDto body = new ChecklistUpdateRequestDto(itemId)
                 .setItemName(itemName)

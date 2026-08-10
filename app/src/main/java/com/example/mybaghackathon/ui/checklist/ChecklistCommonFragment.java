@@ -27,7 +27,9 @@ import com.example.mybaghackathon.ui.overlay.AssignItemSheet;
 import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /** S11 · 공용 체크리스트 탭. */
 public class ChecklistCommonFragment extends Fragment implements ChecklistDataConsumer {
@@ -35,6 +37,9 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
     private FragmentChecklistCommonBinding binding;
     private ChecklistHost host;
     private int selectedPriority = -1;
+    // 같은 이름으로 여러 명에게 배정된(row가 인원 수만큼 나뉜) 공용 물품을 화면에서 한 줄로 묶어
+    // 보여주기 위한 맵 — 대표(첫 번째) packing_item_id -> 그룹 전체. renderChecklist()마다 새로 채워짐.
+    private final Map<Long, List<PackingItem>> groupsByAnchorId = new LinkedHashMap<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,8 +53,21 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                     }
                     long itemId = result.getLong(AssignItemSheet.RESULT_ITEM_ID, -1L);
                     long[] selectedIds = result.getLongArray(AssignItemSheet.RESULT_SELECTED_IDS);
-                    if (itemId > 0L) {
-                        host.saveDraftAssigneeIds(itemId, boxedIds(selectedIds));
+                    List<Long> userIds = boxedIds(selectedIds);
+
+                    List<PackingItem> group = groupsByAnchorId.get(itemId);
+                    if (group != null) {
+                        host.reassignGroupedItem(group, userIds);
+                        return;
+                    }
+                    PackingItem item = findItem(itemId);
+                    if (item == null) {
+                        return;
+                    }
+                    if (userIds.size() > 1) {
+                        host.assignChecklistItems(item, userIds);
+                    } else {
+                        host.assignChecklistItem(item, userIds.isEmpty() ? null : userIds.get(0));
                     }
                 });
     }
@@ -112,6 +130,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                 host.isCurrentUserHost() ? View.VISIBLE : View.GONE);
         LinearLayout sections = binding.checklistCommonSections;
         sections.removeAllViews();
+        groupsByAnchorId.clear();
         boolean hasVisibleItems = false;
         boolean hasAnyCommonItems = false;
         for (PackingItem item : host.getChecklistItems()) {
@@ -146,12 +165,14 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         }
     }
 
-    private void addSection(LinearLayout sections, int level, String label, List<PackingItem> group) {
+    private void addSection(LinearLayout sections, int level, String label, List<PackingItem> items) {
+        List<List<PackingItem>> groups = groupByName(items);
+
         View header = LayoutInflater.from(requireContext())
                 .inflate(R.layout.molecule_section_header, sections, false);
         ((PriorityDotView) header.findViewById(R.id.sectionHeaderDot)).setLevel(level);
         ((TextView) header.findViewById(R.id.sectionHeaderLabel))
-                .setText(label + " · " + group.size());
+                .setText(label + " · " + groups.size());
         LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         if (sections.getChildCount() > 0) {
@@ -159,25 +180,59 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         }
         sections.addView(header, headerParams);
 
-        for (PackingItem item : group) {
-            sections.addView(createItemRow(sections, item));
+        for (List<PackingItem> group : groups) {
+            sections.addView(createItemRow(sections, group));
         }
     }
 
-    private View createItemRow(LinearLayout parent, PackingItem item) {
+    // 이름이 같은 row(다중 배정으로 인원 수만큼 나뉜 것)를 한 그룹으로 묶는다 — 순서는 등장 순서 유지
+    private List<List<PackingItem>> groupByName(List<PackingItem> items) {
+        Map<String, List<PackingItem>> byName = new LinkedHashMap<>();
+        for (PackingItem item : items) {
+            String key = ChecklistDuplicateDetector.normalizedName(item.getItemName());
+            byName.computeIfAbsent(key, ignored -> new ArrayList<>()).add(item);
+        }
+        return new ArrayList<>(byName.values());
+    }
+
+    private View createItemRow(LinearLayout parent, List<PackingItem> group) {
+        PackingItem first = group.get(0);
+        boolean grouped = group.size() > 1;
+
         View row = LayoutInflater.from(requireContext())
                 .inflate(R.layout.molecule_checklist_item_row, parent, false);
         TextView label = row.findViewById(R.id.checklistItemLabel);
-        label.setText(item.getItemName());
+        label.setText(first.getItemName());
 
+        boolean allCompleted = true;
+        for (PackingItem item : group) {
+            if (!item.isCompleted()) {
+                allCompleted = false;
+                break;
+            }
+        }
+        boolean targetCompleted = !allCompleted;
         CheckboxView checkbox = row.findViewById(R.id.checklistItemCheckbox);
-        checkbox.setState(item.isCompleted() ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
+        checkbox.setState(allCompleted ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
         checkbox.setEnabled(host.isCurrentUserHost());
         if (host.isCurrentUserHost()) {
-            checkbox.setOnCheckChangeListener(state -> host.toggleChecklistItem(item));
+            checkbox.setOnCheckChangeListener(state -> {
+                for (PackingItem item : group) {
+                    if (item.isCompleted() != targetCompleted) {
+                        host.toggleChecklistItem(item);
+                    }
+                }
+            });
         }
 
-        TripMember assignee = findMember(item.getAssigneeUserId());
+        Long firstAssigneeId = null;
+        for (PackingItem item : group) {
+            if (item.getAssigneeUserId() != null) {
+                firstAssigneeId = item.getAssigneeUserId();
+                break;
+            }
+        }
+        TripMember assignee = findMember(firstAssigneeId);
         if (assignee != null) {
             AvatarView avatar = row.findViewById(R.id.checklistItemAvatar);
             avatar.setVisibility(View.VISIBLE);
@@ -185,31 +240,46 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
             avatar.setAvatarColor(ContextCompat.getColor(requireContext(), avatarColor(assignee.getUserId())));
         }
 
-        bindRestriction(row, item.getRestrictionType());
-        bindItemActions(row, item);
+        if (grouped) {
+            TextView badge = row.findViewById(R.id.checklistItemDuplicateBadge);
+            badge.setVisibility(View.VISIBLE);
+            badge.setText(getString(R.string.checklist_group_assigned_count, group.size()));
+            badge.setTextColor(ContextCompat.getColor(requireContext(), R.color.bag_text_secondary));
+            groupsByAnchorId.put(first.getPackingItemId(), group);
+        }
+
+        bindRestriction(row, first.getRestrictionType());
+        bindItemActions(row, group);
         if (host.isCurrentUserHost()) {
-            row.setOnClickListener(v -> showAssigneePicker(item));
+            row.setOnClickListener(v -> showAssigneePicker(group));
         }
         return row;
     }
 
-    private void bindItemActions(View row, PackingItem item) {
+    private void bindItemActions(View row, List<PackingItem> group) {
         View moreButton = row.findViewById(R.id.checklistItemMoreButton);
         if (!host.isCurrentUserHost()) {
             moreButton.setVisibility(View.GONE);
             return;
         }
+        boolean grouped = group.size() > 1;
         moreButton.setVisibility(View.VISIBLE);
         moreButton.setOnClickListener(v -> {
             PopupMenu menu = new PopupMenu(requireContext(), moreButton);
             menu.inflate(R.menu.checklist_common_host_actions);
+            if (grouped) {
+                // 그룹 전체를 대상으로 이름/우선순위를 부분 수정하는 건 애매해서 이번엔 삭제만 지원
+                menu.getMenu().findItem(R.id.actionEditChecklistItem).setVisible(false);
+            }
             menu.setOnMenuItemClickListener(menuItem -> {
                 if (menuItem.getItemId() == R.id.actionEditChecklistItem) {
-                    showEditSheet(item);
+                    showEditSheet(group.get(0));
                     return true;
                 }
                 if (menuItem.getItemId() == R.id.actionDeleteChecklistItem) {
-                    host.deleteChecklistItemWithUndo(item);
+                    for (PackingItem item : group) {
+                        host.deleteChecklistItem(item);
+                    }
                     return true;
                 }
                 return false;
@@ -218,22 +288,33 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         });
     }
 
-    private void showAssigneePicker(PackingItem item) {
+    private void showAssigneePicker(List<PackingItem> group) {
         if (!host.isCurrentUserHost()) {
             return;
         }
 
         List<TripMember> members = host.getTripMembers();
-        List<Long> selectedIds = host.getDraftAssigneeIds(item.getPackingItemId());
-        if (!host.hasDraftAssigneeIds(item.getPackingItemId())
-                && item.getAssigneeUserId() != null) {
-            selectedIds = new ArrayList<>();
-            selectedIds.add(item.getAssigneeUserId());
+        List<Long> selectedIds = new ArrayList<>();
+        for (PackingItem item : group) {
+            Long assigneeId = item.getAssigneeUserId();
+            if (assigneeId != null && !selectedIds.contains(assigneeId)) {
+                selectedIds.add(assigneeId);
+            }
         }
 
+        PackingItem anchor = group.get(0);
         AssignItemSheet sheet = AssignItemSheet.newInstance(
-                item.getPackingItemId(), item.getItemName(), members, selectedIds);
+                anchor.getPackingItemId(), anchor.getItemName(), members, selectedIds);
         sheet.show(getParentFragmentManager(), "assign_common_item");
+    }
+
+    private PackingItem findItem(long itemId) {
+        for (PackingItem item : host.getChecklistItems()) {
+            if (item.getPackingItemId() == itemId) {
+                return item;
+            }
+        }
+        return null;
     }
 
     private List<Long> boxedIds(@Nullable long[] ids) {
@@ -257,7 +338,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
 
             @Override
             public void onItemDeleted() {
-                host.deleteChecklistItemWithUndo(item);
+                host.deleteChecklistItem(item);
             }
         });
         sheet.show(getParentFragmentManager(), "edit_common_item");
