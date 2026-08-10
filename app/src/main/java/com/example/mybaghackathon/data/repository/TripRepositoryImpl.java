@@ -174,6 +174,34 @@ public class TripRepositoryImpl implements TripRepository {
         }
     }
 
+    @Override
+    public AppResult<Void> deleteTrip(long tripId) {
+        try {
+            Response<ApiResponseDto<Object>> response = tripApi.delete(new TripIdRequestDto(tripId)).execute();
+            ApiResponseDto<Object> body = response.body();
+            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
+                return AppResult.failure(toError(response, body));
+            }
+            return AppResult.success(null);
+        } catch (IOException e) {
+            return AppResult.failure(networkError());
+        }
+    }
+
+    @Override
+    public AppResult<Void> leaveTrip(long tripId) {
+        try {
+            Response<ApiResponseDto<Object>> response = tripApi.leave(new TripIdRequestDto(tripId)).execute();
+            ApiResponseDto<Object> body = response.body();
+            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
+                return AppResult.failure(toError(response, body));
+            }
+            return AppResult.success(null);
+        } catch (IOException e) {
+            return AppResult.failure(networkError());
+        }
+    }
+
     private AppError toError(Response<?> response, ApiResponseDto<?> body) {
         String message = body != null ? body.getMessage() : parseErrorMessage(response);
         return new AppError(response.code(), message);
