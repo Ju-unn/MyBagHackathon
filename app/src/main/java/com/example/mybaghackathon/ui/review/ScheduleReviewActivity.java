@@ -223,6 +223,9 @@ public class ScheduleReviewActivity extends AppCompatActivity implements ReviewC
         roomDetailIntent.putExtra(EXTRA_TRIP_ID, tripId);
         roomDetailIntent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, roomName);
         roomDetailIntent.putExtra(RoomDetailActivity.EXTRA_INVITE_CODE, inviteCode);
+        // 방 만들기를 공용여행 탭에서 시작했을 수도 있으니, 방 상세에서 뒤로 나갈 때
+        // 그 탭이 아니라 홈 탭으로 보이게 하라는 표시를 남겨 전달한다.
+        roomDetailIntent.putExtra(RoomDetailActivity.EXTRA_FROM_CREATION, true);
         startActivity(roomDetailIntent);
         finish();
     }
