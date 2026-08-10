@@ -55,6 +55,7 @@
     <string name="create_room_member_count_format">%1$d명</string>
     <string name="create_room_submit">다음</string>
     <string name="create_room_name_required">방 이름을 입력하세요</string>
+    <string name="create_room_name_length_notice">방 이름은 20자 이내로 입력해주세요</string>
 
     <!-- S05 방 상세 -->
     <string name="room_detail_schedule_title">일정 정보</string>
