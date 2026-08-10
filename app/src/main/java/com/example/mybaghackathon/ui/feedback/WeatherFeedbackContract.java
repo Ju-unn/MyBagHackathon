@@ -10,6 +10,10 @@ import java.util.List;
 public interface WeatherFeedbackContract {
 
     interface View {
+        void showLoading(boolean loading);
+
+        void showLoadError(String message);
+
         void showTrip(Trip trip);
 
         void showForecast(List<Weather> weather);
@@ -19,11 +23,19 @@ public interface WeatherFeedbackContract {
         // 예보/팁이 아직 체크포인트 갱신 전(ready=false)일 때 안내 문구를 보여준다. 에러 아님(showError와 구분)
         void showPending(String message);
 
+        void showEmpty();
+
         void showError(String message);
+
+        void showRetryableError(String message);
     }
 
     interface Presenter {
         void loadFeedback(long tripId);
+
+        void restoreFeedbackContext(long tripId);
+
+        void retry();
 
         void onDestroy();
     }

@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- S09 · 방 상세 & 팁 허브 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bag_bg_base"
-    android:orientation="vertical">
+    android:background="@color/bag_bg_base">
+
+    <LinearLayout
+        android:id="@+id/roomDetailContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -60,6 +65,7 @@
                     android:text="@string/room_detail_destination_value"
                     android:textAppearance="@style/TextAppearance.Bag.TitleM"
                     android:textStyle="bold" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -102,6 +108,16 @@
                     android:text="@string/room_detail_weather_title"
                     android:textAppearance="@style/TextAppearance.Bag.TitleS"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/roomDetailWeatherState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.Bag.BodyM"
+                    android:textColor="@color/bag_text_secondary"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/roomDetailWeatherRow1"
@@ -315,4 +331,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</LinearLayout>
+    </LinearLayout>
+
+    <include
+        android:id="@+id/roomDetailState"
+        layout="@layout/organism_screen_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+</FrameLayout>
