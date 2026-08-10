@@ -27,9 +27,10 @@ import java.util.Set;
 /**
  * BS07 · 공용 물품 담당자 지정 바텀시트.
  *
- * <p>현재 단계에서는 참여자 복수 선택과 선택 결과 전달까지만 담당한다. 서버의
- * 다대다 담당자 API가 준비되면 Fragment Result로 전달되는 선택 ID 목록을
- * Presenter에 넘겨 저장하도록 연결한다.</p>
+ * <p>참여자 복수 선택 후 완료 시 선택된 ID 목록을 Fragment Result로 돌려준다.
+ * 1명 선택 시 단일 배정(ChecklistPresenter.assignItem), 2명 이상 선택 시 방장 전용
+ * 다중 배정(ChecklistPresenter.assignItems, 서버가 COMMON row를 인원 수만큼 복제)으로
+ * 갈린다 — 분기는 호출부(ChecklistCommonFragment)에서 처리한다.</p>
  */
 public class AssignItemSheet extends BottomSheetDialogFragment {
 

@@ -262,6 +262,7 @@
     <string name="action_complete">완료</string>
 
     <!-- 초대 공유 및 참여 -->
+    <string name="invite_share_title">함께 짐을 챙겨요!</string>
     <string name="invite_share_message">함께 여행 준비해요! 초대 링크를 눌러 여행방에 참여해 주세요.</string>
     <string name="invite_share_button">여행방 참여하기</string>
     <string name="invite_share_error">카카오톡 공유 화면을 열지 못했습니다.</string>

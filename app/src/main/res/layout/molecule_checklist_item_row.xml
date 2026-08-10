@@ -44,6 +44,16 @@
             android:visibility="gone"
             app:avatarInitial="유" />
 
+        <!-- 여러 명에게 배정된 물품용 — 아바타를 겹쳐서 보여주는 컨테이너(checklistItemAvatar 대신 사용) -->
+        <LinearLayout
+            android:id="@+id/checklistItemAvatarGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:layout_marginEnd="@dimen/space_md"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone" />
+
         <ImageButton
             android:id="@+id/checklistItemMoreButton"
             android:layout_width="40dp"
