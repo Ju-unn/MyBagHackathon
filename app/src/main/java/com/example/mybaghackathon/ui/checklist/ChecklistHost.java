@@ -30,5 +30,13 @@ public interface ChecklistHost {
 
     void assignChecklistItem(PackingItem item, Long userId);
 
+    /** 서버 다중 배정 API 연결 전까지 담당자 지정 오버레이의 선택 상태를 보관한다. */
+    List<Long> getDraftAssigneeIds(long itemId);
+
+    boolean hasDraftAssigneeIds(long itemId);
+
+    /** API 요청 없이 현재 체크리스트 화면 안에서만 복수 담당자 선택을 저장한다. */
+    void saveDraftAssigneeIds(long itemId, List<Long> userIds);
+
     void deleteChecklistItemWithUndo(PackingItem item);
 }
