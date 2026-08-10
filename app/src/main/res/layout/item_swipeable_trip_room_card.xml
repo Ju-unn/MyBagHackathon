@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- S03/S14 여행방 리스트 행. organism_trip_room_card를 왼쪽으로 스와이프하면
-     뒤에 깔린 삭제 버튼(tripSwipeDeleteButton)이 드러남. -->
+     뒤에 깔린 액션 버튼(tripSwipeDeleteButton)이 드러남 — 방장이면 삭제, 참여자면 나가기. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -22,12 +22,14 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/tripSwipeActionIcon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_trash"
                 android:contentDescription="@string/action_delete" />
 
             <TextView
+                android:id="@+id/tripSwipeActionLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_2xs"

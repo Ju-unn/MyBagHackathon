@@ -3,6 +3,8 @@ package com.example.mybaghackathon.ui.archive.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,14 +33,21 @@ public class ArchiveTripAdapter extends RecyclerView.Adapter<ArchiveTripAdapter.
         void onTripDelete(ArchiveTripUiModel trip);
     }
 
+    public interface OnTripLeaveListener {
+        void onTripLeave(ArchiveTripUiModel trip);
+    }
+
     private List<ArchiveTripUiModel> items = Collections.emptyList();
     private final OnTripClickListener clickListener;
     private final OnTripDeleteListener deleteListener;
+    private final OnTripLeaveListener leaveListener;
     private final SwipeRevealHelper.Tracker swipeTracker = new SwipeRevealHelper.Tracker();
 
-    public ArchiveTripAdapter(OnTripClickListener clickListener, OnTripDeleteListener deleteListener) {
+    public ArchiveTripAdapter(OnTripClickListener clickListener, OnTripDeleteListener deleteListener,
+                               OnTripLeaveListener leaveListener) {
         this.clickListener = clickListener;
         this.deleteListener = deleteListener;
+        this.leaveListener = leaveListener;
     }
 
     public void submitList(List<ArchiveTripUiModel> newItems) {
@@ -102,10 +111,22 @@ public class ArchiveTripAdapter extends RecyclerView.Adapter<ArchiveTripAdapter.
             }
             clickListener.onTripClick(trip);
         });
-        holder.deleteButton.setOnClickListener(v -> {
-            SwipeRevealHelper.closeOpenRow(swipeTracker);
-            deleteListener.onTripDelete(trip);
-        });
+
+        if (trip.isOwner) {
+            holder.actionIcon.setImageResource(R.drawable.ic_trash);
+            holder.actionLabel.setText(R.string.action_delete);
+            holder.deleteButton.setOnClickListener(v -> {
+                SwipeRevealHelper.closeOpenRow(swipeTracker);
+                deleteListener.onTripDelete(trip);
+            });
+        } else {
+            holder.actionIcon.setImageResource(R.drawable.ic_leave_white);
+            holder.actionLabel.setText(R.string.action_leave);
+            holder.deleteButton.setOnClickListener(v -> {
+                SwipeRevealHelper.closeOpenRow(swipeTracker);
+                leaveListener.onTripLeave(trip);
+            });
+        }
     }
 
     @Override
@@ -116,11 +137,15 @@ public class ArchiveTripAdapter extends RecyclerView.Adapter<ArchiveTripAdapter.
     static class ViewHolder extends RecyclerView.ViewHolder {
         final View foreground;
         final View deleteButton;
+        final ImageView actionIcon;
+        final TextView actionLabel;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             foreground = itemView.findViewById(R.id.tripSwipeForeground);
             deleteButton = itemView.findViewById(R.id.tripSwipeDeleteButton);
+            actionIcon = itemView.findViewById(R.id.tripSwipeActionIcon);
+            actionLabel = itemView.findViewById(R.id.tripSwipeActionLabel);
         }
     }
 }

@@ -20,27 +20,31 @@ public class ArchiveTripUiModel {
     public final String ddayText;
     public final List<AvatarStackHelper.Entry> avatars;
     public final int progressPercent;
+    /** 현재 로그인한 사용자가 이 방의 방장인지 여부 — 스와이프 액션이 삭제/나가기 중 무엇인지 결정한다. */
+    public final boolean isOwner;
 
     private ArchiveTripUiModel(long tripId, State state, String title, String ddayText,
-                                List<AvatarStackHelper.Entry> avatars, int progressPercent) {
+                                List<AvatarStackHelper.Entry> avatars, int progressPercent, boolean isOwner) {
         this.tripId = tripId;
         this.state = state;
         this.title = title;
         this.ddayText = ddayText;
         this.avatars = avatars;
         this.progressPercent = progressPercent;
+        this.isOwner = isOwner;
     }
 
     public static ArchiveTripUiModel ongoing(long tripId, String title, String ddayText,
-                                              List<AvatarStackHelper.Entry> avatars, int progressPercent) {
-        return new ArchiveTripUiModel(tripId, State.ONGOING, title, ddayText, avatars, progressPercent);
+                                              List<AvatarStackHelper.Entry> avatars, int progressPercent,
+                                              boolean isOwner) {
+        return new ArchiveTripUiModel(tripId, State.ONGOING, title, ddayText, avatars, progressPercent, isOwner);
     }
 
-    public static ArchiveTripUiModel planned(long tripId, String title, String ddayText) {
-        return new ArchiveTripUiModel(tripId, State.PLANNED, title, ddayText, null, 0);
+    public static ArchiveTripUiModel planned(long tripId, String title, String ddayText, boolean isOwner) {
+        return new ArchiveTripUiModel(tripId, State.PLANNED, title, ddayText, null, 0, isOwner);
     }
 
-    public static ArchiveTripUiModel past(long tripId, String title) {
-        return new ArchiveTripUiModel(tripId, State.PAST, title, null, null, 0);
+    public static ArchiveTripUiModel past(long tripId, String title, boolean isOwner) {
+        return new ArchiveTripUiModel(tripId, State.PAST, title, null, null, 0, isOwner);
     }
 }

@@ -46,6 +46,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     private FragmentHomeBinding binding;
     private TripRoomAdapter adapter;
     private HomeContract.Presenter presenter;
+    private long currentUserId;
 
     @Nullable
     @Override
@@ -56,6 +57,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
         AppContainer appContainer = ((MyBagApplication) requireActivity().getApplication()).getAppContainer();
         presenter = new HomePresenter(this, appContainer.tripRepository, appContainer.packingRepository);
+        currentUserId = appContainer.tokenStorage.getUserId();
 
         binding.homeTopAppBar.topAppBarTitle.setText(R.string.home_title);
         binding.homeTopAppBar.topAppBarAction.setVisibility(View.GONE);
@@ -67,7 +69,8 @@ public class HomeFragment extends Fragment implements HomeContract.View {
                     intent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, trip.title);
                     startActivity(intent);
                 },
-                trip -> confirmDeleteTrip(trip.tripId, trip.title));
+                trip -> confirmDeleteTrip(trip.tripId, trip.title),
+                trip -> confirmLeaveTrip(trip.tripId, trip.title));
         binding.homeTripRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.homeTripRecycler.setAdapter(adapter);
 
@@ -136,6 +139,18 @@ public class HomeFragment extends Fragment implements HomeContract.View {
                 .show();
     }
 
+    private void confirmLeaveTrip(long tripId, String title) {
+        if (getContext() == null) {
+            return;
+        }
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.trip_leave_dialog_title)
+                .setMessage(getString(R.string.trip_leave_dialog_message_format, title))
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.action_leave, (dialog, which) -> presenter.leaveTrip(tripId))
+                .show();
+    }
+
     @Override
     public void onTripDeleted(long tripId) {
         if (binding == null) {
@@ -146,15 +161,26 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         Toast.makeText(getContext(), R.string.trip_deleted_toast, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onTripLeft(long tripId) {
+        if (binding == null) {
+            return;
+        }
+        adapter.removeItem(tripId);
+        updateEmptyState();
+        Toast.makeText(getContext(), R.string.trip_left_toast, Toast.LENGTH_SHORT).show();
+    }
+
     /** 오늘이 여행 기간 안이면(=진행중) Active, 아니면 Upcoming 카드로 그린다. */
     private TripRoomUiModel toUiModel(Trip trip, Map<Long, Integer> progressByTripId) {
         String ddayText = DateUtils.formatDday(trip.getStartDate());
+        boolean isOwner = trip.getOwnerUserId() == currentUserId;
         if (DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate())) {
             int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
             return TripRoomUiModel.active(trip.getTripId(), trip.getTripName(), ddayText,
-                    toAvatarEntries(trip.getMembers()), progress);
+                    toAvatarEntries(trip.getMembers()), progress, isOwner);
         }
-        return TripRoomUiModel.upcoming(trip.getTripId(), trip.getTripName(), ddayText);
+        return TripRoomUiModel.upcoming(trip.getTripId(), trip.getTripName(), ddayText, isOwner);
     }
 
     private List<AvatarStackHelper.Entry> toAvatarEntries(List<TripMember> members) {

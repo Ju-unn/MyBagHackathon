@@ -53,6 +53,7 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
     private TextView activeChip;
     private TextView pastChip;
     private boolean showingOngoing = true;
+    private long currentUserId;
 
     @Nullable
     @Override
@@ -63,6 +64,7 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
 
         AppContainer appContainer = ((MyBagApplication) requireActivity().getApplication()).getAppContainer();
         presenter = new ArchivePresenter(this, appContainer.tripRepository, appContainer.packingRepository);
+        currentUserId = appContainer.tokenStorage.getUserId();
 
         binding.archiveTopAppBar.topAppBarTitle.setText(R.string.archive_title);
         binding.archiveTopAppBar.topAppBarAction.setVisibility(View.GONE);
@@ -77,7 +79,8 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
                     intent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, trip.title);
                     startActivity(intent);
                 },
-                trip -> confirmDeleteTrip(trip.tripId, trip.title));
+                trip -> confirmDeleteTrip(trip.tripId, trip.title),
+                trip -> confirmLeaveTrip(trip.tripId, trip.title));
         binding.archiveTripRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.archiveTripRecycler.setAdapter(adapter);
 
@@ -150,7 +153,8 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         }
         List<ArchiveTripUiModel> uiModels = new ArrayList<>();
         for (Trip trip : trips) {
-            uiModels.add(ArchiveTripUiModel.past(trip.getTripId(), trip.getTripName()));
+            boolean isOwner = trip.getOwnerUserId() == currentUserId;
+            uiModels.add(ArchiveTripUiModel.past(trip.getTripId(), trip.getTripName(), isOwner));
         }
         bindTrips(uiModels);
     }
@@ -187,6 +191,18 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
                 .show();
     }
 
+    private void confirmLeaveTrip(long tripId, String title) {
+        if (getContext() == null) {
+            return;
+        }
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.trip_leave_dialog_title)
+                .setMessage(getString(R.string.trip_leave_dialog_message_format, title))
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.action_leave, (dialog, which) -> presenter.leaveTrip(tripId))
+                .show();
+    }
+
     @Override
     public void onTripDeleted(long tripId) {
         if (binding == null) {
@@ -197,15 +213,26 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         Toast.makeText(getContext(), R.string.trip_deleted_toast, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onTripLeft(long tripId) {
+        if (binding == null) {
+            return;
+        }
+        adapter.removeItem(tripId);
+        updateEmptyState();
+        Toast.makeText(getContext(), R.string.trip_left_toast, Toast.LENGTH_SHORT).show();
+    }
+
     /** 오늘이 여행 기간 안이면(=진행중) Ongoing 카드, 아니면 Planned 카드로 그린다. */
     private ArchiveTripUiModel toOngoingUiModel(Trip trip, Map<Long, Integer> progressByTripId) {
         String ddayText = DateUtils.formatDday(trip.getStartDate());
+        boolean isOwner = trip.getOwnerUserId() == currentUserId;
         if (DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate())) {
             int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
             return ArchiveTripUiModel.ongoing(trip.getTripId(), trip.getTripName(), ddayText,
-                    toAvatarEntries(trip.getMembers()), progress);
+                    toAvatarEntries(trip.getMembers()), progress, isOwner);
         }
-        return ArchiveTripUiModel.planned(trip.getTripId(), trip.getTripName(), ddayText);
+        return ArchiveTripUiModel.planned(trip.getTripId(), trip.getTripName(), ddayText, isOwner);
     }
 
     private List<AvatarStackHelper.Entry> toAvatarEntries(List<TripMember> members) {

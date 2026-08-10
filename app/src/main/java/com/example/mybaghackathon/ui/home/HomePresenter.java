@@ -85,6 +85,18 @@ public class HomePresenter implements HomeContract.Presenter {
     }
 
     @Override
+    public void leaveTrip(long tripId) {
+        executor.execute(() -> {
+            AppResult<Void> result = tripRepository.leaveTrip(tripId);
+            if (result.isSuccess()) {
+                postToView(() -> view.onTripLeft(tripId));
+            } else {
+                postError(result);
+            }
+        });
+    }
+
+    @Override
     public void onDestroy() {
         destroyed = true;
         executor.shutdownNow();
