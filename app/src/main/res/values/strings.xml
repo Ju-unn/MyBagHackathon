@@ -260,7 +260,6 @@
     <string name="bs_assign_item_title_format">%1$s 담당자 지정</string>
     <string name="bs_assign_item_subtitle">여러 명이 함께 챙길 수 있어요</string>
     <string name="action_complete">완료</string>
-    <string name="checklist_group_assigned_count">%1$d명에게 배정됨</string>
 
     <!-- 초대 공유 및 참여 -->
     <string name="invite_share_title">함께 짐을 챙겨요!</string>

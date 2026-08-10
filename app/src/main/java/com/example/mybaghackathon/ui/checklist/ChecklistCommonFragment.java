@@ -225,27 +225,22 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
             });
         }
 
-        Long firstAssigneeId = null;
+        List<TripMember> assignees = new ArrayList<>();
         for (PackingItem item : group) {
-            if (item.getAssigneeUserId() != null) {
-                firstAssigneeId = item.getAssigneeUserId();
-                break;
+            TripMember member = findMember(item.getAssigneeUserId());
+            if (member != null && !containsMember(assignees, member.getUserId())) {
+                assignees.add(member);
             }
         }
-        TripMember assignee = findMember(firstAssigneeId);
-        if (assignee != null) {
+        if (grouped) {
+            bindAvatarStack(row, assignees);
+            groupsByAnchorId.put(first.getPackingItemId(), group);
+        } else if (!assignees.isEmpty()) {
+            TripMember assignee = assignees.get(0);
             AvatarView avatar = row.findViewById(R.id.checklistItemAvatar);
             avatar.setVisibility(View.VISIBLE);
             avatar.setInitial(initial(assignee.getNickname()));
             avatar.setAvatarColor(ContextCompat.getColor(requireContext(), avatarColor(assignee.getUserId())));
-        }
-
-        if (grouped) {
-            TextView badge = row.findViewById(R.id.checklistItemDuplicateBadge);
-            badge.setVisibility(View.VISIBLE);
-            badge.setText(getString(R.string.checklist_group_assigned_count, group.size()));
-            badge.setTextColor(ContextCompat.getColor(requireContext(), R.color.bag_text_secondary));
-            groupsByAnchorId.put(first.getPackingItemId(), group);
         }
 
         bindRestriction(row, first.getRestrictionType());
@@ -254,6 +249,57 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
             row.setOnClickListener(v -> showAssigneePicker(group));
         }
         return row;
+    }
+
+    // 여러 명에게 배정된 물품 — 아바타를 최대 2개까지 겹쳐 보여주고, 그 이상은 "+N"으로 표시
+    private void bindAvatarStack(View row, List<TripMember> assignees) {
+        LinearLayout stack = row.findViewById(R.id.checklistItemAvatarGroup);
+        stack.removeAllViews();
+        if (assignees.isEmpty()) {
+            return;
+        }
+        stack.setVisibility(View.VISIBLE);
+
+        int strokeColor = ContextCompat.getColor(requireContext(), R.color.bag_bg_surface);
+        int shown = Math.min(assignees.size(), 2);
+        for (int index = 0; index < shown; index++) {
+            TripMember member = assignees.get(index);
+            stack.addView(buildStackedAvatar(
+                    initial(member.getNickname()),
+                    ContextCompat.getColor(requireContext(), avatarColor(member.getUserId())),
+                    strokeColor,
+                    index > 0));
+        }
+        int remaining = assignees.size() - shown;
+        if (remaining > 0) {
+            stack.addView(buildStackedAvatar(
+                    "+" + remaining,
+                    ContextCompat.getColor(requireContext(), R.color.bag_text_secondary),
+                    strokeColor,
+                    true));
+        }
+    }
+
+    private AvatarView buildStackedAvatar(String initial, int color, int strokeColor, boolean overlap) {
+        AvatarView avatar = new AvatarView(requireContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dp(26), dp(26));
+        if (overlap) {
+            params.leftMargin = dp(-10);
+        }
+        avatar.setLayoutParams(params);
+        avatar.setInitial(initial);
+        avatar.setAvatarColor(color);
+        avatar.setStrokeEnabled(true, strokeColor);
+        return avatar;
+    }
+
+    private boolean containsMember(List<TripMember> members, long userId) {
+        for (TripMember member : members) {
+            if (member.getUserId() == userId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void bindItemActions(View row, List<PackingItem> group) {
