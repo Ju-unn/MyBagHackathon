@@ -113,6 +113,11 @@
     <color name="kakao_yellow">#FFFEE500</color>
     <color name="kakao_text">#D9000000</color>
 
+    <!-- S01 스플래시 전용. img_splash.png 하단 가장자리 색을 그대로 샘플링한 값 —
+         3버튼 내비게이션 바 배경을 이미지와 이어 붙여서 흰 줄이 보이지 않게 함.
+         팔레트 토큰이 아니라 이 이미지 한 장에만 종속된 색이라 별도로 둠. -->
+    <color name="bag_splash_nav_bar">#FFAFCAEA</color>
+
     <!-- 템플릿 기본 색상 (AppCompat 기본값 유지용으로 남겨둠) -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
