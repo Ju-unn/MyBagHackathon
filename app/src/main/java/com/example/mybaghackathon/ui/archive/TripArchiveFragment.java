@@ -250,7 +250,8 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
             return ArchiveTripUiModel.ongoing(trip.getTripId(), trip.getTripName(), ddayText,
                     toAvatarEntries(trip.getMembers()), progress, isOwner);
         }
-        return ArchiveTripUiModel.planned(trip.getTripId(), trip.getTripName(), ddayText, isOwner);
+        boolean isOngoing = DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate());
+        return ArchiveTripUiModel.planned(trip.getTripId(), trip.getTripName(), ddayText, isOwner, isOngoing);
     }
 
     private List<AvatarStackHelper.Entry> toAvatarEntries(List<TripMember> members) {

@@ -67,7 +67,7 @@ public class TripRoomCardBinder {
         root.findViewById(R.id.tripCardHint).setVisibility(View.GONE);
     }
 
-    public static void bindUpcoming(View root, String title, String ddayText) {
+    public static void bindUpcoming(View root, String title, String ddayText, boolean isOngoing) {
         Context ctx = root.getContext();
         MaterialCardView card = root.findViewById(R.id.tripCardRoot);
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_surface));
@@ -76,7 +76,8 @@ public class TripRoomCardBinder {
         root.findViewById(R.id.tripCardDecoration).setVisibility(View.GONE);
 
         TextView status = root.findViewById(R.id.tripCardStatus);
-        status.setText(R.string.home_status_upcoming);
+        // 오늘이 여행 기간 안이면 흰색 카드라도 상태 라벨은 "진행중"으로 보여준다.
+        status.setText(isOngoing ? R.string.home_status_active : R.string.home_status_upcoming);
         status.setBackgroundResource(R.drawable.bg_pill_neutral);
         status.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_secondary));
 

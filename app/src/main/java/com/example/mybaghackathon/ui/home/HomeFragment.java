@@ -191,7 +191,8 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             return TripRoomUiModel.active(trip.getTripId(), trip.getTripName(), ddayText,
                     toAvatarEntries(trip.getMembers()), progress, isOwner);
         }
-        return TripRoomUiModel.upcoming(trip.getTripId(), trip.getTripName(), ddayText, isOwner);
+        boolean isOngoing = DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate());
+        return TripRoomUiModel.upcoming(trip.getTripId(), trip.getTripName(), ddayText, isOwner, isOngoing);
     }
 
     private List<AvatarStackHelper.Entry> toAvatarEntries(List<TripMember> members) {
