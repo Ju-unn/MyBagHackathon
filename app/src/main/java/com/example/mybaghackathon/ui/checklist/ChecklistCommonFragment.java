@@ -23,8 +23,8 @@ import com.example.mybaghackathon.ui.atoms.ChipView;
 import com.example.mybaghackathon.ui.atoms.PriorityDotView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
+import com.example.mybaghackathon.ui.overlay.AssignItemSheet;
 import com.example.mybaghackathon.ui.overlay.EditItemSheet;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +35,24 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
     private FragmentChecklistCommonBinding binding;
     private ChecklistHost host;
     private int selectedPriority = -1;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getParentFragmentManager().setFragmentResultListener(
+                AssignItemSheet.RESULT_REQUEST_KEY,
+                this,
+                (requestKey, result) -> {
+                    if (host == null) {
+                        return;
+                    }
+                    long itemId = result.getLong(AssignItemSheet.RESULT_ITEM_ID, -1L);
+                    long[] selectedIds = result.getLongArray(AssignItemSheet.RESULT_SELECTED_IDS);
+                    if (itemId > 0L) {
+                        host.saveDraftAssigneeIds(itemId, boxedIds(selectedIds));
+                    }
+                });
+    }
 
     @Nullable
     @Override
@@ -206,29 +224,26 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         }
 
         List<TripMember> members = host.getTripMembers();
-        String[] labels = new String[members.size() + 1];
-        labels[0] = getString(R.string.checklist_assignee_none);
-        int checkedIndex = 0;
-        for (int index = 0; index < members.size(); index++) {
-            TripMember member = members.get(index);
-            labels[index + 1] = hasText(member.getNickname())
-                    ? member.getNickname().trim()
-                    : getString(R.string.checklist_member_fallback);
-            if (item.getAssigneeUserId() != null
-                    && item.getAssigneeUserId() == member.getUserId()) {
-                checkedIndex = index + 1;
-            }
+        List<Long> selectedIds = host.getDraftAssigneeIds(item.getPackingItemId());
+        if (!host.hasDraftAssigneeIds(item.getPackingItemId())
+                && item.getAssigneeUserId() != null) {
+            selectedIds = new ArrayList<>();
+            selectedIds.add(item.getAssigneeUserId());
         }
 
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.checklist_assign_title, item.getItemName()))
-                .setSingleChoiceItems(labels, checkedIndex, (dialog, which) -> {
-                    Long assigneeUserId = which == 0 ? null : members.get(which - 1).getUserId();
-                    host.assignChecklistItem(item, assigneeUserId);
-                    dialog.dismiss();
-                })
-                .setNegativeButton(R.string.action_cancel, null)
-                .show();
+        AssignItemSheet sheet = AssignItemSheet.newInstance(
+                item.getPackingItemId(), item.getItemName(), members, selectedIds);
+        sheet.show(getParentFragmentManager(), "assign_common_item");
+    }
+
+    private List<Long> boxedIds(@Nullable long[] ids) {
+        List<Long> result = new ArrayList<>();
+        if (ids != null) {
+            for (long id : ids) {
+                result.add(id);
+            }
+        }
+        return result;
     }
 
     private void showEditSheet(PackingItem item) {

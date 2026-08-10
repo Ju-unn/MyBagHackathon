@@ -3,6 +3,7 @@ package com.example.mybaghackathon.ui.checklist;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -20,11 +21,16 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /** S11~S13 체크리스트 View. 화면 전환과 표시, 사용자 입력 전달만 담당한다. */
 public class ChecklistActivity extends AppCompatActivity
         implements ChecklistContract.View, ChecklistHost {
+
+    private static final String STATE_DRAFT_ITEM_IDS = "draft_item_ids";
+    private static final String STATE_DRAFT_ASSIGNEE_IDS_PREFIX = "draft_assignee_ids_";
 
     public static final String EXTRA_TRIP_ID = "trip_id";
     public static final String EXTRA_MEMBER_COUNT = "member_count";
@@ -35,6 +41,7 @@ public class ChecklistActivity extends AppCompatActivity
     private ChecklistContract.Presenter presenter;
     private final List<PackingItem> items = new ArrayList<>();
     private final List<TripMember> members = new ArrayList<>();
+    private final Map<Long, List<Long>> draftAssigneeIds = new HashMap<>();
 
     private long tripId;
     private long currentUserId;
@@ -48,6 +55,7 @@ public class ChecklistActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         readArguments();
+        restoreDraftAssignees(savedInstanceState);
         initializePresenter();
         inflateModeLayout(savedInstanceState);
         presenter.loadChecklist(tripId, isHost);
@@ -282,6 +290,24 @@ public class ChecklistActivity extends AppCompatActivity
     }
 
     @Override
+    public List<Long> getDraftAssigneeIds(long itemId) {
+        List<Long> userIds = draftAssigneeIds.get(itemId);
+        return userIds == null
+                ? Collections.emptyList()
+                : Collections.unmodifiableList(new ArrayList<>(userIds));
+    }
+
+    @Override
+    public boolean hasDraftAssigneeIds(long itemId) {
+        return draftAssigneeIds.containsKey(itemId);
+    }
+
+    @Override
+    public void saveDraftAssigneeIds(long itemId, List<Long> userIds) {
+        draftAssigneeIds.put(itemId, new ArrayList<>(userIds));
+    }
+
+    @Override
     public void deleteChecklistItemWithUndo(PackingItem item) {
         presenter.requestDelete(item);
     }
@@ -314,6 +340,50 @@ public class ChecklistActivity extends AppCompatActivity
     @Override
     public boolean isChecklistLoaded() {
         return loaded;
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        long[] itemIds = new long[draftAssigneeIds.size()];
+        int index = 0;
+        for (Map.Entry<Long, List<Long>> entry : draftAssigneeIds.entrySet()) {
+            long itemId = entry.getKey();
+            itemIds[index++] = itemId;
+            outState.putLongArray(
+                    STATE_DRAFT_ASSIGNEE_IDS_PREFIX + itemId,
+                    toLongArray(entry.getValue()));
+        }
+        outState.putLongArray(STATE_DRAFT_ITEM_IDS, itemIds);
+        super.onSaveInstanceState(outState);
+    }
+
+    private void restoreDraftAssignees(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return;
+        }
+        long[] itemIds = savedInstanceState.getLongArray(STATE_DRAFT_ITEM_IDS);
+        if (itemIds == null) {
+            return;
+        }
+        for (long itemId : itemIds) {
+            long[] userIds = savedInstanceState.getLongArray(
+                    STATE_DRAFT_ASSIGNEE_IDS_PREFIX + itemId);
+            ArrayList<Long> restored = new ArrayList<>();
+            if (userIds != null) {
+                for (long userId : userIds) {
+                    restored.add(userId);
+                }
+            }
+            draftAssigneeIds.put(itemId, restored);
+        }
+    }
+
+    private long[] toLongArray(List<Long> values) {
+        long[] result = new long[values.size()];
+        for (int index = 0; index < values.size(); index++) {
+            result[index] = values.get(index);
+        }
+        return result;
     }
 
     @Override
