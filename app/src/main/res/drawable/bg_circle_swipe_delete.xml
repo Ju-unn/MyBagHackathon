@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S03/S14 스와이프 삭제/나가기 버튼 배경 — 동그란 영역만 색을 채운다 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/bag_swipe_delete_bg" />
+</shape>
