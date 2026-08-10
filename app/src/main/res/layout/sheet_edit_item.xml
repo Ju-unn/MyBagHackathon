@@ -34,6 +34,16 @@
             android:textAppearance="@style/TextAppearance.Bag.BodyL" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- 물품 이름이 최대 길이에 도달하면만 노출 -->
+    <TextView
+        android:id="@+id/editItemNameLengthNotice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_2xs"
+        android:textAppearance="@style/TextAppearance.Bag.Caption"
+        android:textColor="@color/bag_status_warning"
+        android:visibility="gone" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
