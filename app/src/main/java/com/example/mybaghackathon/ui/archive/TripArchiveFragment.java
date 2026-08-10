@@ -165,7 +165,8 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         List<ArchiveTripUiModel> uiModels = new ArrayList<>();
         for (Trip trip : trips) {
             boolean isOwner = trip.getOwnerUserId() == currentUserId;
-            uiModels.add(ArchiveTripUiModel.past(trip.getTripId(), trip.getTripName(), isOwner));
+            String ddayText = DateUtils.formatDday(trip.getStartDate());
+            uiModels.add(ArchiveTripUiModel.past(trip.getTripId(), trip.getTripName(), ddayText, isOwner));
         }
         bindTrips(uiModels);
     }

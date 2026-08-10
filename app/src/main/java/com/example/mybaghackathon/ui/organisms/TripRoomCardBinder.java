@@ -19,8 +19,8 @@ import java.util.List;
  * O4 · 여행방 카드(TripRoomCard) — pen.dev 스펙 기준 세 가지 상태(진행중/예정/
  * 지난 여행) 모두 동일하게 inflate된 organism_trip_room_card.xml에 값을 바인딩함:
  * 진행중 = bg/inverse + 데코레이션 + 아바타들 + 진행률.
- * 예정 = bg/surface + 1dp 테두리 + 뉴트럴 디데이, 아바타/진행률 없음.
- * 지난 여행 = bg/subtle, 불투명도 0.7, 디데이/아바타/진행률 없음.
+ * 예정 = bg/surface + 뉴트럴 디데이, 아바타/진행률 없음.
+ * 지난 여행 = bg/surface + 뉴트럴 디데이(지난 일수), 아바타/진행률 없음.
  *
  * 기능: 하나의 카드 레이아웃을 상태별로(bindActive/bindUpcoming/bindPast)
  * 색상·표시 여부·텍스트를 다르게 채워주는 정적 바인더.
@@ -95,10 +95,12 @@ public class TripRoomCardBinder {
         root.findViewById(R.id.tripCardHint).setVisibility(View.GONE);
     }
 
-    public static void bindPast(View root, String title) {
+    public static void bindPast(View root, String title, String ddayText) {
         Context ctx = root.getContext();
         MaterialCardView card = root.findViewById(R.id.tripCardRoot);
-        card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_subtle));
+        // 완료 카드도 예정 카드와 같은 흰색 배경을 써야 뉴트럴 알약(완료/D-day)이 배경에
+        // 묻히지 않고 또렷하게 보인다.
+        card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_surface));
         card.setAlpha(1f);
 
         root.findViewById(R.id.tripCardDecoration).setVisibility(View.GONE);
@@ -112,7 +114,11 @@ public class TripRoomCardBinder {
         titleView.setText(title);
         titleView.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_primary));
 
-        root.findViewById(R.id.tripCardDDay).setVisibility(View.GONE);
+        DDayBadgeView dday = root.findViewById(R.id.tripCardDDay);
+        dday.setVisibility(View.VISIBLE);
+        dday.setText(ddayText);
+        dday.setBrand(false);
+
         root.findViewById(R.id.tripCardBottomRow).setVisibility(View.GONE);
         root.findViewById(R.id.tripCardProgressBar).setVisibility(View.GONE);
         root.findViewById(R.id.tripCardHint).setVisibility(View.GONE);

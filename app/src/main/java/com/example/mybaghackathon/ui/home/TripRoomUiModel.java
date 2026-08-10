@@ -47,7 +47,7 @@ public class TripRoomUiModel {
         return new TripRoomUiModel(tripId, State.UPCOMING, title, ddayText, null, 0, isOwner, isOngoing);
     }
 
-    public static TripRoomUiModel past(long tripId, String title, boolean isOwner) {
-        return new TripRoomUiModel(tripId, State.PAST, title, null, null, 0, isOwner, false);
+    public static TripRoomUiModel past(long tripId, String title, String ddayText, boolean isOwner) {
+        return new TripRoomUiModel(tripId, State.PAST, title, ddayText, null, 0, isOwner, false);
     }
 }

@@ -80,7 +80,7 @@ public class TripRoomAdapter extends RecyclerView.Adapter<TripRoomAdapter.ViewHo
                 TripRoomCardBinder.bindUpcoming(holder.foreground, trip.title, trip.ddayText, trip.isOngoing);
                 break;
             case PAST:
-                TripRoomCardBinder.bindPast(holder.foreground, trip.title);
+                TripRoomCardBinder.bindPast(holder.foreground, trip.title, trip.ddayText);
                 break;
         }
 

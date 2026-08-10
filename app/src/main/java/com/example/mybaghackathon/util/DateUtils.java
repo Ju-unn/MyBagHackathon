@@ -38,7 +38,10 @@ public final class DateUtils {
             if (days == 0) {
                 return "D-DAY";
             }
-            return days > 0 ? "D-" + days : "D+" + Math.abs(days);
+            // 1년(365일)을 넘어가는 차이는 배지 안에서 숫자가 너무 길어지므로 "365+"로 캡핑한다.
+            long absDays = Math.abs(days);
+            String magnitude = absDays > 365 ? "365+" : String.valueOf(absDays);
+            return days > 0 ? "D-" + magnitude : "D+" + magnitude;
         } catch (ParseException e) {
             return "";
         }

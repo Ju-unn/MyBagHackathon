@@ -49,7 +49,7 @@ public class ArchiveTripUiModel {
         return new ArchiveTripUiModel(tripId, State.PLANNED, title, ddayText, null, 0, isOwner, isOngoing);
     }
 
-    public static ArchiveTripUiModel past(long tripId, String title, boolean isOwner) {
-        return new ArchiveTripUiModel(tripId, State.PAST, title, null, null, 0, isOwner, false);
+    public static ArchiveTripUiModel past(long tripId, String title, String ddayText, boolean isOwner) {
+        return new ArchiveTripUiModel(tripId, State.PAST, title, ddayText, null, 0, isOwner, false);
     }
 }
