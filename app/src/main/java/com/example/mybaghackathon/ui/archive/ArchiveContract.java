@@ -19,6 +19,8 @@ public interface ArchiveContract {
         void showError(String message);
 
         void onTripDeleted(long tripId);
+
+        void onTripLeft(long tripId);
     }
 
     interface Presenter {
@@ -27,6 +29,8 @@ public interface ArchiveContract {
         void loadPastTrips();
 
         void deleteTrip(long tripId);
+
+        void leaveTrip(long tripId);
 
         // Fragment의 뷰가 파괴될 때 호출 — 이후 View 콜백을 막는다
         void onDestroy();

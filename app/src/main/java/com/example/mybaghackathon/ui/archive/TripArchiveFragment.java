@@ -53,6 +53,7 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
     private TextView activeChip;
     private TextView pastChip;
     private boolean showingOngoing = true;
+    private long currentUserId;
 
     @Nullable
     @Override
@@ -63,6 +64,7 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
 
         AppContainer appContainer = ((MyBagApplication) requireActivity().getApplication()).getAppContainer();
         presenter = new ArchivePresenter(this, appContainer.tripRepository, appContainer.packingRepository);
+        currentUserId = appContainer.tokenStorage.getUserId();
 
         binding.archiveTopAppBar.topAppBarTitle.setText(R.string.archive_title);
         binding.archiveTopAppBar.topAppBarAction.setVisibility(View.GONE);
@@ -77,7 +79,8 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
                     intent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, trip.title);
                     startActivity(intent);
                 },
-                trip -> confirmDeleteTrip(trip.tripId, trip.title));
+                trip -> confirmDeleteTrip(trip.tripId, trip.title),
+                trip -> confirmLeaveTrip(trip.tripId, trip.title));
         binding.archiveTripRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.archiveTripRecycler.setAdapter(adapter);
 
@@ -137,8 +140,8 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
             return;
         }
         List<ArchiveTripUiModel> uiModels = new ArrayList<>();
-        for (Trip trip : trips) {
-            uiModels.add(toOngoingUiModel(trip, progressByTripId));
+        for (int i = 0; i < trips.size(); i++) {
+            uiModels.add(toOngoingUiModel(trips.get(i), progressByTripId, i == 0));
         }
         bindTrips(uiModels);
     }
@@ -150,7 +153,8 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         }
         List<ArchiveTripUiModel> uiModels = new ArrayList<>();
         for (Trip trip : trips) {
-            uiModels.add(ArchiveTripUiModel.past(trip.getTripId(), trip.getTripName()));
+            boolean isOwner = trip.getOwnerUserId() == currentUserId;
+            uiModels.add(ArchiveTripUiModel.past(trip.getTripId(), trip.getTripName(), isOwner));
         }
         bindTrips(uiModels);
     }
@@ -179,11 +183,23 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         if (getContext() == null) {
             return;
         }
-        new MaterialAlertDialogBuilder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
                 .setTitle(R.string.trip_delete_dialog_title)
                 .setMessage(getString(R.string.trip_delete_dialog_message_format, title))
                 .setNegativeButton(R.string.action_cancel, null)
                 .setPositiveButton(R.string.action_delete, (dialog, which) -> presenter.deleteTrip(tripId))
+                .show();
+    }
+
+    private void confirmLeaveTrip(long tripId, String title) {
+        if (getContext() == null) {
+            return;
+        }
+        new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
+                .setTitle(R.string.trip_leave_dialog_title)
+                .setMessage(getString(R.string.trip_leave_dialog_message_format, title))
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.action_leave, (dialog, which) -> presenter.leaveTrip(tripId))
                 .show();
     }
 
@@ -192,20 +208,38 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         if (binding == null) {
             return;
         }
-        adapter.removeItem(tripId);
-        updateEmptyState();
         Toast.makeText(getContext(), R.string.trip_deleted_toast, Toast.LENGTH_SHORT).show();
+        reloadCurrentSegment();
     }
 
-    /** 오늘이 여행 기간 안이면(=진행중) Ongoing 카드, 아니면 Planned 카드로 그린다. */
-    private ArchiveTripUiModel toOngoingUiModel(Trip trip, Map<Long, Integer> progressByTripId) {
+    @Override
+    public void onTripLeft(long tripId) {
+        if (binding == null) {
+            return;
+        }
+        Toast.makeText(getContext(), R.string.trip_left_toast, Toast.LENGTH_SHORT).show();
+        reloadCurrentSegment();
+    }
+
+    // 맨 앞 방이 지워졌을 수 있으니 현재 보고 있는 세그먼트를 다시 불러와 검정 강조 카드를 새로 계산한다.
+    private void reloadCurrentSegment() {
+        if (showingOngoing) {
+            presenter.loadOngoingTrips();
+        } else {
+            presenter.loadPastTrips();
+        }
+    }
+
+    /** 정렬된 목록의 맨 앞(가장 임박한/진행중인 방) 하나만 Ongoing 카드로, 나머지는 Planned 카드로 그린다. */
+    private ArchiveTripUiModel toOngoingUiModel(Trip trip, Map<Long, Integer> progressByTripId, boolean highlight) {
         String ddayText = DateUtils.formatDday(trip.getStartDate());
-        if (DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate())) {
+        boolean isOwner = trip.getOwnerUserId() == currentUserId;
+        if (highlight) {
             int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
             return ArchiveTripUiModel.ongoing(trip.getTripId(), trip.getTripName(), ddayText,
-                    toAvatarEntries(trip.getMembers()), progress);
+                    toAvatarEntries(trip.getMembers()), progress, isOwner);
         }
-        return ArchiveTripUiModel.planned(trip.getTripId(), trip.getTripName(), ddayText);
+        return ArchiveTripUiModel.planned(trip.getTripId(), trip.getTripName(), ddayText, isOwner);
     }
 
     private List<AvatarStackHelper.Entry> toAvatarEntries(List<TripMember> members) {
@@ -217,7 +251,7 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
             String nickname = members.get(i).getNickname();
             String initial = nickname == null || nickname.isEmpty() ? "" : nickname.substring(0, 1);
             int color = ContextCompat.getColor(requireContext(), AVATAR_COLORS[i % AVATAR_COLORS.length]);
-            entries.add(new AvatarStackHelper.Entry(initial, color));
+            entries.add(new AvatarStackHelper.Entry(initial, color, members.get(i).getProfileImageUrl()));
         }
         return entries;
     }

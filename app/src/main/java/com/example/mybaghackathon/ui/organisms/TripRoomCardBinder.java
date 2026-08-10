@@ -30,10 +30,8 @@ public class TripRoomCardBinder {
     public static void bindActive(View root, String title, String ddayText,
                                    List<AvatarStackHelper.Entry> avatars, int percent) {
         Context ctx = root.getContext();
-        MaterialCardView card = (MaterialCardView) root;
+        MaterialCardView card = root.findViewById(R.id.tripCardRoot);
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_inverse));
-        card.setStrokeColor(ContextCompat.getColor(ctx, R.color.bag_border_brand_on_inverse));
-        card.setStrokeWidth(dp(ctx, 1));
         card.setAlpha(1f);
 
         root.findViewById(R.id.tripCardDecoration).setVisibility(View.VISIBLE);
@@ -71,10 +69,8 @@ public class TripRoomCardBinder {
 
     public static void bindUpcoming(View root, String title, String ddayText) {
         Context ctx = root.getContext();
-        MaterialCardView card = (MaterialCardView) root;
+        MaterialCardView card = root.findViewById(R.id.tripCardRoot);
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_surface));
-        card.setStrokeColor(ContextCompat.getColor(ctx, R.color.bag_text_primary));
-        card.setStrokeWidth(dp(ctx, 1));
         card.setAlpha(1f);
 
         root.findViewById(R.id.tripCardDecoration).setVisibility(View.GONE);
@@ -100,10 +96,8 @@ public class TripRoomCardBinder {
 
     public static void bindPast(View root, String title) {
         Context ctx = root.getContext();
-        MaterialCardView card = (MaterialCardView) root;
+        MaterialCardView card = root.findViewById(R.id.tripCardRoot);
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_subtle));
-        card.setStrokeColor(ContextCompat.getColor(ctx, R.color.bag_text_primary));
-        card.setStrokeWidth(dp(ctx, 1));
         card.setAlpha(1f);
 
         root.findViewById(R.id.tripCardDecoration).setVisibility(View.GONE);
@@ -121,9 +115,5 @@ public class TripRoomCardBinder {
         root.findViewById(R.id.tripCardBottomRow).setVisibility(View.GONE);
         root.findViewById(R.id.tripCardProgressBar).setVisibility(View.GONE);
         root.findViewById(R.id.tripCardHint).setVisibility(View.GONE);
-    }
-
-    private static int dp(Context ctx, int value) {
-        return Math.round(value * ctx.getResources().getDisplayMetrics().density);
     }
 }

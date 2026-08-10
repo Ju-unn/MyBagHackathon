@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 여행방 카드 뒤에 오른쪽/아래로만 살짝 offset해서 깔아두는 그림자 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#14000000" />
+    <corners android:radius="@dimen/radius_xl" />
+</shape>
