@@ -1,5 +1,7 @@
 package com.example.mybaghackathon.data.repository;
 
+import android.util.Log;
+
 import com.example.mybaghackathon.common.AppError;
 import com.example.mybaghackathon.common.AppResult;
 import com.example.mybaghackathon.data.mapper.TripMapper;
@@ -27,6 +29,8 @@ import retrofit2.Response;
 
 // TripRepository의 실제 구현체 (TripApi 호출). 네트워크 호출이라 반드시 메인 스레드 밖에서 호출할 것
 public class TripRepositoryImpl implements TripRepository {
+
+    private static final String TAG = "TripRepositoryImpl";
 
     private final TripApi tripApi;
 
@@ -58,6 +62,7 @@ public class TripRepositoryImpl implements TripRepository {
             TripInviteDto dto = apiBody.getData();
             return AppResult.success(new TripInvite(dto.getTripId(), dto.getInviteCode()));
         } catch (IOException e) {
+            Log.e(TAG, "네트워크 요청 실패", e);
             return AppResult.failure(networkError());
         }
     }
@@ -72,6 +77,7 @@ public class TripRepositoryImpl implements TripRepository {
             }
             return AppResult.success(TripMapper.fromList(body.getData().getTrips()));
         } catch (IOException e) {
+            Log.e(TAG, "네트워크 요청 실패", e);
             return AppResult.failure(networkError());
         }
     }
@@ -86,6 +92,7 @@ public class TripRepositoryImpl implements TripRepository {
             }
             return AppResult.success(TripMapper.fromList(body.getData().getTrips()));
         } catch (IOException e) {
+            Log.e(TAG, "네트워크 요청 실패", e);
             return AppResult.failure(networkError());
         }
     }
@@ -101,6 +108,7 @@ public class TripRepositoryImpl implements TripRepository {
             TripDetailResponseDto data = body.getData();
             return AppResult.success(TripMapper.from(data.getTrip(), data.getMembers()));
         } catch (IOException e) {
+            Log.e(TAG, "네트워크 요청 실패", e);
             return AppResult.failure(networkError());
         }
     }
@@ -115,6 +123,7 @@ public class TripRepositoryImpl implements TripRepository {
             }
             return AppResult.success(TripMapper.fromMembers(body.getData().getMembers()));
         } catch (IOException e) {
+            Log.e(TAG, "네트워크 요청 실패", e);
             return AppResult.failure(networkError());
         }
     }
@@ -130,6 +139,7 @@ public class TripRepositoryImpl implements TripRepository {
             }
             return AppResult.success(body.getData().getTripId());
         } catch (IOException e) {
+            Log.e(TAG, "네트워크 요청 실패", e);
             return AppResult.failure(networkError());
         }
     }

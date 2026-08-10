@@ -24,6 +24,7 @@ import com.example.mybaghackathon.ui.home.adapter.TripRoomAdapter;
 import com.example.mybaghackathon.ui.molecules.AvatarStackHelper;
 import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
 import com.example.mybaghackathon.util.DateUtils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,12 +60,14 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         binding.homeTopAppBar.topAppBarTitle.setText(R.string.home_title);
         binding.homeTopAppBar.topAppBarAction.setVisibility(View.GONE);
 
-        adapter = new TripRoomAdapter(trip -> {
-            Intent intent = new Intent(getContext(), RoomDetailActivity.class);
-            intent.putExtra(RoomDetailActivity.EXTRA_TRIP_ID, trip.tripId);
-            intent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, trip.title);
-            startActivity(intent);
-        });
+        adapter = new TripRoomAdapter(
+                trip -> {
+                    Intent intent = new Intent(getContext(), RoomDetailActivity.class);
+                    intent.putExtra(RoomDetailActivity.EXTRA_TRIP_ID, trip.tripId);
+                    intent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, trip.title);
+                    startActivity(intent);
+                },
+                trip -> confirmDeleteTrip(trip.tripId, trip.title));
         binding.homeTripRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.homeTripRecycler.setAdapter(adapter);
 
@@ -110,11 +113,37 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     }
 
     private void bindTrips(List<TripRoomUiModel> trips) {
-        boolean empty = trips.isEmpty();
+        adapter.submitList(trips);
+        updateEmptyState();
+    }
+
+    private void updateEmptyState() {
+        boolean empty = adapter.isEmpty();
         binding.homeEmptyState.getRoot().setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.homeTripRecycler.setVisibility(empty ? View.GONE : View.VISIBLE);
         binding.homeAddRoomFab.setVisibility(empty ? View.GONE : View.VISIBLE);
-        adapter.submitList(trips);
+    }
+
+    private void confirmDeleteTrip(long tripId, String title) {
+        if (getContext() == null) {
+            return;
+        }
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.trip_delete_dialog_title)
+                .setMessage(getString(R.string.trip_delete_dialog_message_format, title))
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.action_delete, (dialog, which) -> presenter.deleteTrip(tripId))
+                .show();
+    }
+
+    @Override
+    public void onTripDeleted(long tripId) {
+        if (binding == null) {
+            return;
+        }
+        adapter.removeItem(tripId);
+        updateEmptyState();
+        Toast.makeText(getContext(), R.string.trip_deleted_toast, Toast.LENGTH_SHORT).show();
     }
 
     /** 오늘이 여행 기간 안이면(=진행중) Active, 아니면 Upcoming 카드로 그린다. */

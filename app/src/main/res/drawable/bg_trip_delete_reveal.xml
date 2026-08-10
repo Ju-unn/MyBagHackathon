@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 여행방 카드를 왼쪽으로 스와이프하면 카드 뒤에서 드러나는 삭제 배경.
+     카드(radius_xl)와 같은 곡률을 써서 반쯤 드러났을 때도 모서리가 어색하게 튀지 않게 함. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/bag_swipe_delete_bg" />
+    <corners android:radius="@dimen/radius_xl" />
+</shape>

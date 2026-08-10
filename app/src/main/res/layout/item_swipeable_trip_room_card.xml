@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S03/S14 여행방 리스트 행. organism_trip_room_card를 왼쪽으로 스와이프하면
+     뒤에 깔린 삭제 버튼(tripSwipeDeleteButton)이 드러남. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/tripSwipeDeleteButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_trip_delete_reveal">
+
+        <!-- 실제로 드러나는 폭(trip_delete_reveal_width)만큼만 잡아서 그 안에서
+             가운데 정렬 — 배경 자체는 전체 폭이지만 스와이프로 보이는 건 이 폭뿐이라
+             아이콘/텍스트가 그 드러난 공간의 정중앙에 오게 된다. -->
+        <LinearLayout
+            android:layout_width="@dimen/trip_delete_reveal_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_trash"
+                android:contentDescription="@string/action_delete" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xs"
+                android:text="@string/action_delete"
+                android:textAppearance="@style/TextAppearance.Bag.LabelS"
+                android:textColor="@color/white_primitive" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <include
+        android:id="@+id/tripSwipeForeground"
+        layout="@layout/organism_trip_room_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</FrameLayout>

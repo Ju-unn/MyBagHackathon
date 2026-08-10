@@ -104,7 +104,7 @@ public class TripRoomCardBinder {
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_subtle));
         card.setStrokeColor(ContextCompat.getColor(ctx, R.color.bag_text_primary));
         card.setStrokeWidth(dp(ctx, 1));
-        card.setAlpha(0.7f);
+        card.setAlpha(1f);
 
         root.findViewById(R.id.tripCardDecoration).setVisibility(View.GONE);
 

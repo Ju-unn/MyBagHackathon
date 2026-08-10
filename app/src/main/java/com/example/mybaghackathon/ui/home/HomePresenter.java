@@ -2,6 +2,7 @@ package com.example.mybaghackathon.ui.home;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.example.mybaghackathon.common.AppResult;
 import com.example.mybaghackathon.data.repository.PackingRepository;
@@ -22,6 +23,8 @@ import java.util.concurrent.Executors;
 // HomeContract.Presenter 구현체 — 진행중인 여행방 목록을 불러와 가장 임박한 순으로
 // 정렬하고, 그중 오늘 여행 중인 방이 있으면 참여자·체크리스트 완료율을 추가로 불러온다.
 public class HomePresenter implements HomeContract.Presenter {
+
+    private static final String TAG = "HomePresenter";
 
     private final HomeContract.View view;
     private final TripRepository tripRepository;
@@ -70,6 +73,18 @@ public class HomePresenter implements HomeContract.Presenter {
     }
 
     @Override
+    public void deleteTrip(long tripId) {
+        executor.execute(() -> {
+            AppResult<Void> result = tripRepository.deleteTrip(tripId);
+            if (result.isSuccess()) {
+                postToView(() -> view.onTripDeleted(tripId));
+            } else {
+                postError(result);
+            }
+        });
+    }
+
+    @Override
     public void onDestroy() {
         destroyed = true;
         executor.shutdownNow();
@@ -104,9 +119,11 @@ public class HomePresenter implements HomeContract.Presenter {
     }
 
     private void postError(AppResult<?> result) {
+        int httpStatus = result.getError() == null ? 0 : result.getError().getHttpStatus();
         String message = result.getError() == null || result.getError().getMessage() == null
                 ? "여행 목록을 불러오지 못했습니다."
                 : result.getError().getMessage();
+        Log.e(TAG, "API 실패 (status=" + httpStatus + "): " + message);
         postToView(() -> view.showError(message));
     }
 
