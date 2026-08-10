@@ -110,6 +110,10 @@ public class RoomDetailPresenter implements RoomDetailContract.Presenter {
             if (currentUserId > 0L) {
                 isHost = trip.getOwnerUserId() == currentUserId;
             }
+            // 상세 API가 항상 최신 초대 코드를 내려주므로, 홈에서 재진입해 생성 시점 Intent extra가 없는 경우도 여기서 채워짐
+            if (hasText(trip.getInviteCode())) {
+                inviteCode = trip.getInviteCode();
+            }
             post(() -> view.showTrip(trip, isHost));
 
             AppResult<WeatherForecast> weatherResult =
