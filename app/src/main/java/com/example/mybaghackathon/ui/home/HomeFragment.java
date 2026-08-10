@@ -185,16 +185,17 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         presenter.loadTrips();
     }
 
-    /** 정렬된 목록의 맨 앞(가장 임박한/진행중인 방) 하나만 Active 카드로, 나머지는 Upcoming 카드로 그린다. */
+    /** 정렬된 목록의 맨 앞(가장 임박한/진행중인 방)은 항상 Active 카드(검정 강조)로 그리되,
+     *  상태 라벨은 오늘이 여행 기간 안인지(D-day 도래)에 따라 진행중/여행 전으로 갈린다. */
     private TripRoomUiModel toUiModel(Trip trip, Map<Long, Integer> progressByTripId, boolean highlight) {
         String ddayText = DateUtils.formatDday(trip.getStartDate());
         boolean isOwner = trip.getOwnerUserId() == currentUserId;
+        boolean isOngoing = DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate());
         if (highlight) {
             int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
             return TripRoomUiModel.active(trip.getTripId(), trip.getTripName(), ddayText,
-                    toAvatarEntries(trip.getMembers()), progress, isOwner);
+                    toAvatarEntries(trip.getMembers()), progress, isOwner, isOngoing);
         }
-        boolean isOngoing = DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate());
         return TripRoomUiModel.upcoming(trip.getTripId(), trip.getTripName(), ddayText, isOwner, isOngoing);
     }
 

@@ -40,8 +40,9 @@ public class ArchiveTripUiModel {
 
     public static ArchiveTripUiModel ongoing(long tripId, String title, String ddayText,
                                               List<AvatarStackHelper.Entry> avatars, int progressPercent,
-                                              boolean isOwner) {
-        return new ArchiveTripUiModel(tripId, State.ONGOING, title, ddayText, avatars, progressPercent, isOwner, true);
+                                              boolean isOwner, boolean isOngoing) {
+        return new ArchiveTripUiModel(
+                tripId, State.ONGOING, title, ddayText, avatars, progressPercent, isOwner, isOngoing);
     }
 
     public static ArchiveTripUiModel planned(long tripId, String title, String ddayText, boolean isOwner,

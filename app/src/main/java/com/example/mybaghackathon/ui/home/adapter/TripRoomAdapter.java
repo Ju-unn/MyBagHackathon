@@ -74,7 +74,7 @@ public class TripRoomAdapter extends RecyclerView.Adapter<TripRoomAdapter.ViewHo
         switch (trip.state) {
             case ACTIVE:
                 TripRoomCardBinder.bindActive(holder.foreground, trip.title, trip.ddayText,
-                        trip.avatars, trip.progressPercent);
+                        trip.avatars, trip.progressPercent, trip.isOngoing);
                 break;
             case UPCOMING:
                 TripRoomCardBinder.bindUpcoming(holder.foreground, trip.title, trip.ddayText, trip.isOngoing);

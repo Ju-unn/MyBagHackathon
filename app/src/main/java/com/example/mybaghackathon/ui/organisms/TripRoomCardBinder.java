@@ -28,7 +28,7 @@ import java.util.List;
 public class TripRoomCardBinder {
 
     public static void bindActive(View root, String title, String ddayText,
-                                   List<AvatarStackHelper.Entry> avatars, int percent) {
+                                   List<AvatarStackHelper.Entry> avatars, int percent, boolean isOngoing) {
         Context ctx = root.getContext();
         MaterialCardView card = root.findViewById(R.id.tripCardRoot);
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_inverse));
@@ -39,7 +39,9 @@ public class TripRoomCardBinder {
                 .setTint(0x593A7CA5); // brand @ 35% opacity
 
         TextView status = root.findViewById(R.id.tripCardStatus);
-        status.setText(R.string.home_status_active);
+        // 목록 맨 앞 방은 항상 이 검정 강조 카드로 그리되, D-day가 아직 안 됐으면
+        // "여행 전"으로, 여행 기간 안이면 "진행중"으로 라벨만 달리 보여준다.
+        status.setText(isOngoing ? R.string.home_status_active : R.string.home_status_upcoming);
         status.setBackgroundResource(R.drawable.bg_pill_brand_subtle);
         status.setTextColor(ContextCompat.getColor(ctx, R.color.bag_brand_default));
 
