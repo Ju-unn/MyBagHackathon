@@ -201,7 +201,8 @@
 
     <!-- S15 내 기본 물품 전체보기 -->
     <string name="profile_items_title">내 기본 물품</string>
-    <string name="profile_items_click_hint">선택하면 수정하거나 삭제할 수 있어요</string>
+    <string name="profile_items_click_hint">물품을 선택하면 수정하거나 삭제할 수 있어요</string>
+    <string name="profile_items_filter_all">전체</string>
     <string name="profile_items_swipe_hint">물품을 선택하면 수정하거나 삭제할 수 있어요</string>
 
     <!-- S15 알림 설정 -->
