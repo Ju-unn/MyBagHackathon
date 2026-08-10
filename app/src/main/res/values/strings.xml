@@ -237,4 +237,7 @@
     <string name="bs_edit_item_title">물품 수정</string>
     <string name="item_name_required">물품 이름을 입력해주세요.</string>
     <string name="item_name_too_long">물품 이름은 %1$d자 이하로 입력해주세요.</string>
+    <string name="bs_assign_item_title_format">%1$s 담당자 지정</string>
+    <string name="bs_assign_item_subtitle">여러 명이 함께 챙길 수 있어요</string>
+    <string name="action_complete">완료</string>
 </resources>

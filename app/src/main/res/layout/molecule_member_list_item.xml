@@ -27,6 +27,7 @@
         android:id="@+id/memberHostBadge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
         android:background="@drawable/bg_pill_brand_subtle"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
