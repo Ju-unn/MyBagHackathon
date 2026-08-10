@@ -270,6 +270,6 @@
     <string name="invite_join_error_title">여행방에 참여하지 못했어요</string>
     <string name="invite_join_invalid">유효하지 않은 초대 링크입니다.</string>
     <string name="invite_join_login_title">로그인이 필요해요</string>
-    <string name="invite_join_login_message">로그인한 뒤 초대 링크를 다시 눌러 주세요.</string>
+    <string name="invite_join_login_message">로그인하면 초대받은 여행방 참여를 계속 진행합니다.</string>
     <string name="invite_join_login_action">로그인하기</string>
 </resources>

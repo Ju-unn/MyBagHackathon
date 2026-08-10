@@ -18,6 +18,7 @@ import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
 /** 카카오톡 또는 웹 초대 링크로 진입해 여행방 참여를 처리한다. */
 public class InviteJoinActivity extends AppCompatActivity implements InviteJoinContract.View {
 
+    public static final String EXTRA_INVITE_CODE = "invite_code";
     private static final String PARAM_INVITE_CODE = "invite_code";
 
     private ActivityInviteJoinBinding binding;
@@ -33,38 +34,48 @@ public class InviteJoinActivity extends AppCompatActivity implements InviteJoinC
         AppContainer container = ((MyBagApplication) getApplication()).getAppContainer();
         presenter = new InviteJoinPresenter(this, container.tripRepository);
 
-        String inviteCode = readInviteCode(getIntent().getData());
+        String inviteCode = readInviteCode(getIntent());
         if (inviteCode == null) {
             showJoinError(getString(R.string.invite_join_invalid));
             return;
         }
         if (!container.tokenStorage.isLoggedIn()) {
-            showLoginRequired();
+            showLoginRequired(inviteCode);
             return;
         }
         presenter.join(inviteCode);
     }
 
-    private String readInviteCode(Uri uri) {
+    private String readInviteCode(Intent intent) {
+        String code = intent.getStringExtra(EXTRA_INVITE_CODE);
+        if (code != null && !code.trim().isEmpty()) {
+            return code.trim();
+        }
+
+        Uri uri = intent.getData();
         if (uri == null) {
             return null;
         }
 
-        String code = uri.getQueryParameter(PARAM_INVITE_CODE);
+        code = uri.getQueryParameter(PARAM_INVITE_CODE);
         if (code == null && "https".equalsIgnoreCase(uri.getScheme())) {
             code = uri.getLastPathSegment();
         }
         return code == null || code.trim().isEmpty() ? null : code.trim();
     }
 
-    private void showLoginRequired() {
+    private void showLoginRequired(String inviteCode) {
         binding.inviteJoinState.screenStateProgress.setVisibility(View.GONE);
         binding.inviteJoinState.screenStateTitle.setText(R.string.invite_join_login_title);
         binding.inviteJoinState.screenStateMessage.setText(R.string.invite_join_login_message);
         binding.inviteJoinState.screenStateRetry.setText(R.string.invite_join_login_action);
         binding.inviteJoinState.screenStateRetry.setVisibility(View.VISIBLE);
-        binding.inviteJoinState.screenStateRetry.setOnClickListener(v ->
-                startActivity(new Intent(this, LoginActivity.class)));
+        binding.inviteJoinState.screenStateRetry.setOnClickListener(v -> {
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            loginIntent.putExtra(LoginActivity.EXTRA_POST_LOGIN_INVITE_CODE, inviteCode);
+            startActivity(loginIntent);
+            finish();
+        });
     }
 
     @Override
