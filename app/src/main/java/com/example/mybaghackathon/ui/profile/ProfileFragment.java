@@ -33,7 +33,7 @@ import java.util.List;
  * 행을 누르면 EditItemSheet로 수정/삭제하게 하며, "전체보기"로
  * ProfileItemsActivity 전체 목록으로, 알림 설정 행으로
  * NotificationSettingsActivity로 이동하고, 로그아웃 행을 누르면 로그인
- * 화면으로 돌아가는 화면
+ * 화면으로 돌아가는 화면.
  */
 public class ProfileFragment extends Fragment implements ProfileContract.View {
 
