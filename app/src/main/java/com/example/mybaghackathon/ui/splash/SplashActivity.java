@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.MainActivity;
+import com.example.mybaghackathon.app.AppContainer;
 import com.example.mybaghackathon.app.MyBagApplication;
 import com.example.mybaghackathon.databinding.ActivitySplashBinding;
 import com.example.mybaghackathon.ui.login.LoginActivity;
@@ -44,8 +45,8 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
             getWindow().setNavigationBarContrastEnforced(false);
         }
 
-        presenter = new SplashPresenter(this,
-                ((MyBagApplication) getApplication()).getAppContainer().tokenStorage);
+        AppContainer appContainer = ((MyBagApplication) getApplication()).getAppContainer();
+        presenter = new SplashPresenter(this, appContainer.tokenStorage, appContainer.authRepository);
 
         requestNotificationPermission();
     }
