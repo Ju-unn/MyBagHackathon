@@ -98,16 +98,16 @@ public class TripRoomCardBinder {
     public static void bindPast(View root, String title, String ddayText) {
         Context ctx = root.getContext();
         MaterialCardView card = root.findViewById(R.id.tripCardRoot);
-        // 완료 카드도 예정 카드와 같은 흰색 배경을 써야 뉴트럴 알약(완료/D-day)이 배경에
-        // 묻히지 않고 또렷하게 보인다.
-        card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_surface));
+        // 지난 여행 카드는 뉴트럴(bg/subtle) 배경. 완료/D-day 알약이 같은 톤에 묻히지
+        // 않도록 알약 쪽은 한 단계 더 진한 회색(bg_pill_neutral_strong)을 쓴다.
+        card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_subtle));
         card.setAlpha(1f);
 
         root.findViewById(R.id.tripCardDecoration).setVisibility(View.GONE);
 
         TextView status = root.findViewById(R.id.tripCardStatus);
         status.setText(R.string.home_status_past);
-        status.setBackgroundResource(R.drawable.bg_pill_neutral);
+        status.setBackgroundResource(R.drawable.bg_pill_neutral_strong);
         status.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_secondary));
 
         TextView titleView = root.findViewById(R.id.tripCardTitle);
@@ -117,7 +117,7 @@ public class TripRoomCardBinder {
         DDayBadgeView dday = root.findViewById(R.id.tripCardDDay);
         dday.setVisibility(View.VISIBLE);
         dday.setText(ddayText);
-        dday.setBrand(false);
+        dday.setBrand(false, true);
 
         root.findViewById(R.id.tripCardBottomRow).setVisibility(View.GONE);
         root.findViewById(R.id.tripCardProgressBar).setVisibility(View.GONE);
