@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.mybaghackathon.MainActivity;
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.app.AppContainer;
 import com.example.mybaghackathon.app.MyBagApplication;
@@ -46,6 +47,8 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
     public static final String EXTRA_ROOM_NAME = "room_name";
     public static final String EXTRA_IS_HOST = "is_host";
     public static final String EXTRA_INVITE_CODE = "invite_code";
+    /** 방금 방을 새로 만들고 도착한 화면인지 — true면 뒤로 나갈 때 홈 탭으로 보낸다. */
+    public static final String EXTRA_FROM_CREATION = "from_creation";
 
     private static final String DEFAULT_ROOM_NAME = "여행방";
     private static final String INVITE_URL_BASE = "https://mybag.duckdns.org/invite/";
@@ -59,6 +62,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
     private String lastWeatherState;
     private boolean lastIsHost;
     private boolean screenReady;
+    private boolean fromCreation;
     private long currentUserId = -1L;
     private boolean resumedOnce;
 
@@ -113,6 +117,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
                 currentUserId
         );
 
+        fromCreation = getIntent().getBooleanExtra(EXTRA_FROM_CREATION, false);
         bindActions();
         Object retained = getLastCustomNonConfigurationInstance();
         if (retained instanceof RoomScreenSnapshot) {
@@ -137,7 +142,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
     }
 
     private void bindActions() {
-        binding.roomDetailTopBar.topAppBarBack.setOnClickListener(v -> finish());
+        binding.roomDetailTopBar.topAppBarBack.setOnClickListener(v -> exitRoomDetail());
         binding.roomDetailInviteButton.setOnClickListener(v -> presenter.onInviteClicked());
 
         MaterialButton viewTips = binding.roomDetailBottomCta.bottomCtaSecondary;
@@ -510,6 +515,24 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
 
     private boolean canUpdateUi() {
         return binding != null && !isFinishing() && !isDestroyed();
+    }
+
+    // 방 생성 직후 도착한 화면이면, 방 만들기를 어느 탭에서 시작했든 홈 탭으로 돌아가게
+    // MainActivity를 새로 띄운다(CLEAR_TOP + standard 런치모드 → 기존 인스턴스는 종료되고
+    // 새 인스턴스가 onCreate에서 기본값인 홈 탭으로 시작한다). 기존 방을 눌러 들어온
+    // 경우엔 원래 있던 탭으로 그냥 돌아가면 되므로 finish()만 한다.
+    private void exitRoomDetail() {
+        if (fromCreation) {
+            Intent mainIntent = new Intent(this, MainActivity.class);
+            mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(mainIntent);
+        }
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        exitRoomDetail();
     }
 
     @Override

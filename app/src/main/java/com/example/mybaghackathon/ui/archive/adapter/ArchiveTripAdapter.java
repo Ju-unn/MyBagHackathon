@@ -74,7 +74,7 @@ public class ArchiveTripAdapter extends RecyclerView.Adapter<ArchiveTripAdapter.
         switch (trip.state) {
             case ONGOING:
                 TripRoomCardBinder.bindActive(holder.foreground, trip.title, trip.ddayText,
-                        trip.avatars, trip.progressPercent);
+                        trip.avatars, trip.progressPercent, trip.isOngoing);
                 break;
             case PLANNED:
                 TripRoomCardBinder.bindUpcoming(holder.foreground, trip.title, trip.ddayText, trip.isOngoing);

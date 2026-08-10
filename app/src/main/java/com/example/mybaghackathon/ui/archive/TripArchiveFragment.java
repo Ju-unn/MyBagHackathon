@@ -110,6 +110,16 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         super.onDestroyView();
     }
 
+    // 방 생성/삭제/나가기 화면을 갔다가 이 탭이 보이는 채로 MainActivity로 돌아올 때
+    // (탭 전환이 아니라 하위 액티비티에서의 복귀) 반영하기 위해 필요하다.
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (binding != null) {
+            reloadCurrentSegment();
+        }
+    }
+
     // MainActivity가 탭 전환을 replace() 대신 hide()/show()로 처리하기 때문에,
     // 다른 탭에 있다 이 탭으로 돌아올 때는 onResume이 다시 불리지 않는다.
     // 그동안 방이 생성/삭제됐을 수 있으니 다시 보일 때마다 현재 세그먼트를 다시 불러온다.
@@ -245,16 +255,17 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         }
     }
 
-    /** 정렬된 목록의 맨 앞(가장 임박한/진행중인 방) 하나만 Ongoing 카드로, 나머지는 Planned 카드로 그린다. */
+    /** 정렬된 목록의 맨 앞(가장 임박한/진행중인 방)은 항상 Ongoing 카드(검정 강조)로 그리되,
+     *  상태 라벨은 오늘이 여행 기간 안인지(D-day 도래)에 따라 진행중/여행 전으로 갈린다. */
     private ArchiveTripUiModel toOngoingUiModel(Trip trip, Map<Long, Integer> progressByTripId, boolean highlight) {
         String ddayText = DateUtils.formatDday(trip.getStartDate());
         boolean isOwner = trip.getOwnerUserId() == currentUserId;
+        boolean isOngoing = DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate());
         if (highlight) {
             int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
             return ArchiveTripUiModel.ongoing(trip.getTripId(), trip.getTripName(), ddayText,
-                    toAvatarEntries(trip.getMembers()), progress, isOwner);
+                    toAvatarEntries(trip.getMembers()), progress, isOwner, isOngoing);
         }
-        boolean isOngoing = DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate());
         return ArchiveTripUiModel.planned(trip.getTripId(), trip.getTripName(), ddayText, isOwner, isOngoing);
     }
 

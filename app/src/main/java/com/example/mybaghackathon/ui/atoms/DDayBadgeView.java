@@ -60,11 +60,18 @@ public class DDayBadgeView extends FrameLayout {
     }
 
     public void setBrand(boolean brand) {
+        setBrand(brand, false);
+    }
+
+    // strongNeutral: 카드 배경이 뉴트럴(bg/subtle)일 때, 같은 톤에 배지가 묻히지
+    // 않도록 한 단계 더 진한 회색(border/strong)을 쓰는 변형 — 지난 여행 카드 전용.
+    public void setBrand(boolean brand, boolean strongNeutral) {
         if (brand) {
             binding.ddayLabel.setBackgroundResource(R.drawable.bg_pill_brand);
             binding.ddayLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.bag_text_on_brand));
         } else {
-            binding.ddayLabel.setBackgroundResource(R.drawable.bg_pill_neutral);
+            binding.ddayLabel.setBackgroundResource(
+                    strongNeutral ? R.drawable.bg_pill_neutral_strong : R.drawable.bg_pill_neutral);
             binding.ddayLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.bag_text_tertiary_safe));
         }
     }

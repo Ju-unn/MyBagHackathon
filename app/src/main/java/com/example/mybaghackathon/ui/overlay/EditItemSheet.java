@@ -1,7 +1,10 @@
 package com.example.mybaghackathon.ui.overlay;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +27,7 @@ import com.google.android.material.textfield.TextInputEditText;
  */
 public class EditItemSheet extends BottomSheetDialogFragment {
 
-    private static final int MAX_ITEM_NAME_LENGTH = 20;
+    private static final int MAX_ITEM_NAME_LENGTH = 15;
 
     private static final String ARG_LABEL = "label";
     private static final String ARG_PRIORITY = "priority";
@@ -74,6 +77,24 @@ public class EditItemSheet extends BottomSheetDialogFragment {
         mid.setOnClickListener(v -> selectPriority(high, mid, low, mid));
         low.setOnClickListener(v -> selectPriority(high, mid, low, low));
 
+        nameInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_ITEM_NAME_LENGTH)});
+        binding.editItemNameLengthNotice.setText(getString(R.string.item_name_too_long, MAX_ITEM_NAME_LENGTH));
+        nameInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                binding.editItemNameLengthNotice.setVisibility(
+                        s.length() >= MAX_ITEM_NAME_LENGTH ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
         binding.editItemDeleteButton.setOnClickListener(v -> {
             if (listener != null) listener.onItemDeleted();
             dismiss();
@@ -83,11 +104,6 @@ public class EditItemSheet extends BottomSheetDialogFragment {
             String label = nameInput.getText() != null ? nameInput.getText().toString().trim() : "";
             if (TextUtils.isEmpty(label)) {
                 Toast.makeText(getContext(), R.string.item_name_required, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (label.length() > MAX_ITEM_NAME_LENGTH) {
-                Toast.makeText(getContext(),
-                        getString(R.string.item_name_too_long, MAX_ITEM_NAME_LENGTH), Toast.LENGTH_SHORT).show();
                 return;
             }
             int priority = high.isActive() ? 0 : (mid.isActive() ? 1 : 2);
