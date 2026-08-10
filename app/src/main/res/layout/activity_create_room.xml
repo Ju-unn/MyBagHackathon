@@ -42,6 +42,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_sm" />
 
+            <!-- 방 이름이 20자를 넘으면만 노출 -->
+            <TextView
+                android:id="@+id/createRoomNameLengthNotice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xs"
+                android:text="@string/create_room_name_length_notice"
+                android:textAppearance="@style/TextAppearance.Bag.Caption"
+                android:textColor="@color/bag_status_warning"
+                android:visibility="gone" />
+
             <!-- 초대 인원 스테퍼 (펜슬 StepperField) -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,7 +96,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="3명"
+                        android:text="1명"
                         android:textAppearance="@style/TextAppearance.Bag.TitleS" />
 
                     <FrameLayout
