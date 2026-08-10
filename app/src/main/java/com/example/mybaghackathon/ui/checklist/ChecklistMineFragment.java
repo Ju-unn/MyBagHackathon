@@ -22,9 +22,11 @@ import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
 import com.example.mybaghackathon.ui.overlay.EditItemSheet;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /** S12 · 내 목록. 체크, 수정, 스와이프 삭제와 실행 취소를 제공한다. */
 public class ChecklistMineFragment extends Fragment implements ChecklistDataConsumer {
@@ -70,6 +72,9 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
             }
         }
 
+        Set<Long> duplicateItemIds = ChecklistDuplicateDetector.findDuplicateItemIds(
+                host.getChecklistItems(), currentUserId);
+
         boolean empty = host.isChecklistLoaded() && myItems.isEmpty();
         binding.checklistMineEmptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
         list.setVisibility(empty ? View.GONE : View.VISIBLE);
@@ -79,19 +84,24 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         }
 
         for (PackingItem item : myItems) {
-            list.addView(createItemRow(list, item));
+            list.addView(createItemRow(
+                    list, item, duplicateItemIds.contains(item.getPackingItemId())));
         }
     }
 
-    private View createItemRow(LinearLayout parent, PackingItem item) {
+    private View createItemRow(LinearLayout parent, PackingItem item, boolean duplicate) {
         View swipeContainer = LayoutInflater.from(requireContext())
                 .inflate(R.layout.molecule_checklist_swipe_delete_row, parent, false);
         View row = swipeContainer.findViewById(R.id.checklistSwipeContent);
-        row.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bag_bg_base));
+        row.setBackgroundResource(duplicate
+                ? R.drawable.bg_checklist_item_duplicate
+                : R.drawable.bg_checklist_item_normal);
         TextView label = row.findViewById(R.id.checklistItemLabel);
         label.setText(item.getItemName());
         updateCompletedStyle(label, item.isCompleted());
         row.findViewById(R.id.checklistItemAvatar).setVisibility(View.GONE);
+        TextView duplicateBadge = row.findViewById(R.id.checklistItemDuplicateBadge);
+        duplicateBadge.setVisibility(duplicate ? View.VISIBLE : View.GONE);
 
         CheckboxView checkbox = row.findViewById(R.id.checklistItemCheckbox);
         checkbox.setState(item.isCompleted() ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
@@ -112,7 +122,7 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
             menu.inflate(R.menu.checklist_item_actions);
             menu.setOnMenuItemClickListener(menuItem -> {
                 if (menuItem.getItemId() == R.id.actionDeleteChecklistItem) {
-                    host.deleteChecklistItemWithUndo(item);
+                    removeFromMine(item);
                     return true;
                 }
                 return false;
@@ -161,7 +171,7 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
                         view.getParent().requestDisallowInterceptTouchEvent(false);
                         if (event.getActionMasked() == MotionEvent.ACTION_UP
                                 && Math.abs(distance) >= view.getWidth() * 0.35f) {
-                            host.deleteChecklistItemWithUndo(item);
+                            removeFromMine(item);
                         } else {
                             view.animate().translationX(0f).setDuration(160L).start();
                         }
@@ -174,6 +184,19 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
     }
 
     private void showEditSheet(PackingItem item) {
+        if (ChecklistItemVisibility.isAssignedCommon(item, host.getCurrentUserId())) {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.checklist_unassign_title)
+                    .setMessage(getString(R.string.checklist_unassign_message, item.getItemName()))
+                    .setNegativeButton(R.string.action_cancel, null)
+                    .setPositiveButton(R.string.checklist_unassign_action,
+                            (dialog, which) -> removeFromMine(item))
+                    .show();
+            return;
+        }
+        if (!ChecklistItemVisibility.isOwnedPersonal(item, host.getCurrentUserId())) {
+            return;
+        }
         EditItemSheet sheet = EditItemSheet.newInstance(
                 item.getItemName(), priorityLevel(item.getPriority()));
         sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
@@ -184,10 +207,21 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
 
             @Override
             public void onItemDeleted() {
-                host.deleteChecklistItemWithUndo(item);
+                removeFromMine(item);
             }
         });
         sheet.show(getParentFragmentManager(), "edit_personal_item");
+    }
+
+    private void removeFromMine(PackingItem item) {
+        long currentUserId = host.getCurrentUserId();
+        if (ChecklistItemVisibility.isAssignedCommon(item, currentUserId)) {
+            host.assignChecklistItem(item, null);
+        } else if (ChecklistItemVisibility.isOwnedPersonal(item, currentUserId)) {
+            // packing_items의 여행 체크리스트 항목만 삭제한다.
+            // 프로필의 user_default_items 원본은 별도 저장소이므로 변경되지 않는다.
+            host.deleteChecklistItemWithUndo(item);
+        }
     }
 
     private void bindEmptyState() {

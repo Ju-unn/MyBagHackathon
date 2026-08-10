@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -130,13 +129,6 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         avatar.setInitial(initial(member.getNickname()));
         avatar.setAvatarColor(ContextCompat.getColor(requireContext(), avatarColor(member.getUserId())));
         row.findViewById(R.id.assignmentRowConfirm).setVisibility(View.GONE);
-        row.setOnClickListener(v -> {
-            if (member.getUserId() == host.getCurrentUserId()) {
-                host.assignChecklistItem(item, null);
-            } else {
-                Toast.makeText(requireContext(), "본인이 맡은 항목만 해제할 수 있습니다.", Toast.LENGTH_SHORT).show();
-            }
-        });
         addWithSpacing(list, row);
     }
 
@@ -144,11 +136,6 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         View row = inflateRow(list, item.getItemName());
         row.findViewById(R.id.assignmentRowAvatar).setVisibility(View.GONE);
         row.findViewById(R.id.assignmentRowConfirm).setVisibility(View.GONE);
-        row.setOnClickListener(v -> {
-            if (host.getCurrentUserId() > 0) {
-                host.assignChecklistItem(item, host.getCurrentUserId());
-            }
-        });
         addWithSpacing(list, row);
     }
 
