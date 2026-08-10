@@ -27,10 +27,13 @@ import com.example.mybaghackathon.ui.checklist.ChecklistActivity;
 import com.example.mybaghackathon.ui.feedback.WeatherFeedbackActivity;
 import com.example.mybaghackathon.ui.overlay.InviteShareSheet;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +51,46 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
 
     private ActivityRoomDetailBinding binding;
     private RoomDetailContract.Presenter presenter;
+    private Trip lastTrip;
+    private List<Weather> lastWeather = Collections.emptyList();
+    private List<PackingItem> lastPackingItems = Collections.emptyList();
+    private String lastWeatherState;
+    private boolean lastIsHost;
+    private boolean screenReady;
+
+    @Override
+    public void showLoading(boolean loading) {
+        if (!canUpdateUi()) {
+            return;
+        }
+        setActionsEnabled(!loading);
+        if (!loading) {
+            screenReady = lastTrip != null;
+            binding.roomDetailState.getRoot().setVisibility(View.GONE);
+            return;
+        }
+        screenReady = false;
+        binding.roomDetailState.getRoot().setVisibility(View.VISIBLE);
+        binding.roomDetailState.screenStateProgress.setVisibility(View.VISIBLE);
+        binding.roomDetailState.screenStateTitle.setText(R.string.room_detail_loading_title);
+        binding.roomDetailState.screenStateMessage.setText(R.string.room_detail_loading_message);
+        binding.roomDetailState.screenStateRetry.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showLoadError(String message) {
+        if (!canUpdateUi()) {
+            return;
+        }
+        setActionsEnabled(false);
+        screenReady = false;
+        binding.roomDetailState.getRoot().setVisibility(View.VISIBLE);
+        binding.roomDetailState.screenStateProgress.setVisibility(View.GONE);
+        binding.roomDetailState.screenStateTitle.setText(R.string.room_detail_error_title);
+        binding.roomDetailState.screenStateMessage.setText(message);
+        binding.roomDetailState.screenStateRetry.setVisibility(View.VISIBLE);
+        binding.roomDetailState.screenStateRetry.setOnClickListener(v -> presenter.retry());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +109,12 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         );
 
         bindActions();
-        readArguments();
+        Object retained = getLastCustomNonConfigurationInstance();
+        if (retained instanceof RoomScreenSnapshot) {
+            restoreSnapshot((RoomScreenSnapshot) retained);
+        } else {
+            readArguments();
+        }
     }
 
     private void readArguments() {
@@ -99,6 +147,8 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         if (!canUpdateUi()) {
             return;
         }
+        lastTrip = trip;
+        lastIsHost = isHost;
         if (hasText(trip.getTripName())) {
             binding.roomDetailTopBar.topAppBarCompactTitle.setText(trip.getTripName());
         }
@@ -115,6 +165,9 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         if (!canUpdateUi()) {
             return;
         }
+        lastWeather = weatherList == null
+                ? Collections.emptyList() : new ArrayList<>(weatherList);
+        lastWeatherState = null;
         View[] rows = {
                 binding.roomDetailWeatherRow1,
                 binding.roomDetailWeatherRow2,
@@ -137,6 +190,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         };
 
         int count = Math.min(weatherList == null ? 0 : weatherList.size(), rows.length);
+        binding.roomDetailWeatherState.setVisibility(View.GONE);
         for (int index = 0; index < rows.length; index++) {
             boolean visible = index < count;
             rows[index].setVisibility(visible ? View.VISIBLE : View.GONE);
@@ -153,10 +207,22 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
     }
 
     @Override
+    public void showWeatherPending(String message) {
+        showWeatherState(message);
+    }
+
+    @Override
+    public void showWeatherEmpty() {
+        showWeatherState(getString(R.string.room_detail_weather_empty));
+    }
+
+    @Override
     public void showPackingRestrictions(List<PackingItem> items) {
         if (!canUpdateUi()) {
             return;
         }
+        lastPackingItems = items == null
+                ? Collections.emptyList() : new ArrayList<>(items);
         PackingItem restrictedItem = null;
         if (items != null) {
             for (PackingItem item : items) {
@@ -181,6 +247,15 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
     public void showError(String message) {
         if (canUpdateUi()) {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void showRetryableError(String message) {
+        if (canUpdateUi()) {
+            Snackbar.make(binding.roomDetailContent, message, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.action_retry, v -> presenter.retry())
+                    .show();
         }
     }
 
@@ -230,6 +305,80 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
 
     private void updateHostUi(boolean isHost) {
         binding.roomDetailHostInviteArea.setVisibility(isHost ? View.VISIBLE : View.GONE);
+    }
+
+    private void showWeatherState(String message) {
+        if (!canUpdateUi()) {
+            return;
+        }
+        lastWeather = Collections.emptyList();
+        lastWeatherState = message;
+        binding.roomDetailWeatherState.setText(message);
+        binding.roomDetailWeatherState.setVisibility(View.VISIBLE);
+        binding.roomDetailWeatherRow1.setVisibility(View.GONE);
+        binding.roomDetailWeatherRow2.setVisibility(View.GONE);
+        binding.roomDetailWeatherRow3.setVisibility(View.GONE);
+    }
+
+    private void setActionsEnabled(boolean enabled) {
+        binding.roomDetailInviteButton.setEnabled(enabled);
+        binding.roomDetailBottomCta.bottomCtaSecondary.setEnabled(enabled);
+        binding.roomDetailBottomCta.bottomCtaPrimary.setEnabled(enabled);
+    }
+
+    private void restoreSnapshot(RoomScreenSnapshot snapshot) {
+        String inviteCode = getIntent().getStringExtra(EXTRA_INVITE_CODE);
+        int memberCount = snapshot.trip.getMembers() == null
+                ? 1 : Math.max(1, snapshot.trip.getMembers().size());
+        presenter.restoreRoomContext(
+                snapshot.trip.getTripId(), snapshot.isHost, memberCount, inviteCode);
+        showTrip(snapshot.trip, snapshot.isHost);
+        if (hasText(snapshot.weatherState)) {
+            showWeatherState(snapshot.weatherState);
+        } else if (snapshot.weather.isEmpty()) {
+            showWeatherEmpty();
+        } else {
+            showWeather(snapshot.weather);
+        }
+        showPackingRestrictions(snapshot.packingItems);
+        binding.roomDetailState.getRoot().setVisibility(View.GONE);
+        setActionsEnabled(true);
+        screenReady = true;
+    }
+
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        if (!screenReady || lastTrip == null) {
+            return null;
+        }
+        return new RoomScreenSnapshot(
+                lastTrip,
+                new ArrayList<>(lastWeather),
+                new ArrayList<>(lastPackingItems),
+                lastWeatherState,
+                lastIsHost);
+    }
+
+    private static final class RoomScreenSnapshot {
+        private final Trip trip;
+        private final List<Weather> weather;
+        private final List<PackingItem> packingItems;
+        private final String weatherState;
+        private final boolean isHost;
+
+        private RoomScreenSnapshot(
+                Trip trip,
+                List<Weather> weather,
+                List<PackingItem> packingItems,
+                String weatherState,
+                boolean isHost
+        ) {
+            this.trip = trip;
+            this.weather = weather;
+            this.packingItems = packingItems;
+            this.weatherState = weatherState;
+            this.isHost = isHost;
+        }
     }
 
     private void addMember(LinearLayout list, String name, boolean host, int avatarColorRes) {
