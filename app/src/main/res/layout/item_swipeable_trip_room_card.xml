@@ -8,23 +8,23 @@
     <FrameLayout
         android:id="@+id/tripSwipeDeleteButton"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg_trip_delete_reveal">
+        android:layout_height="match_parent">
 
-        <!-- 실제로 드러나는 폭(trip_delete_reveal_width)만큼만 잡아서 그 안에서
-             가운데 정렬 — 배경 자체는 전체 폭이지만 스와이프로 보이는 건 이 폭뿐이라
-             아이콘/텍스트가 그 드러난 공간의 정중앙에 오게 된다. -->
+        <!-- 스와이프로 드러나는 영역(trip_delete_reveal_width) 안에서 동그란 버튼만
+             가운데 정렬 — 뒤 배경은 색을 채우지 않고, 이 원 안에만 색을 채운다. -->
         <LinearLayout
-            android:layout_width="@dimen/trip_delete_reveal_width"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/trip_delete_button_size"
+            android:layout_height="@dimen/trip_delete_button_size"
             android:layout_gravity="end|center_vertical"
-            android:gravity="center_horizontal"
+            android:layout_marginEnd="@dimen/space_lg"
+            android:background="@drawable/bg_circle_swipe_delete"
+            android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/tripSwipeActionIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:src="@drawable/ic_trash"
                 android:contentDescription="@string/action_delete" />
 
@@ -39,10 +39,25 @@
         </LinearLayout>
     </FrameLayout>
 
-    <include
+    <!-- 그림자와 카드를 한 덩어리로 묶어서 스와이프 시(translationX) 같이 움직이게 함
+         — 그림자를 카드 밖 형제뷰로 따로 두면 카드만 밀려나면서 그림자가 스와이프
+         액션 영역처럼 보이는 문제가 있었음.
+         그림자는 이 wrapper 자체의 배경으로 깔고, 카드를 오른쪽/아래로 card_shadow_offset만큼
+         안쪽으로 밀어 넣어서 그 여백으로 배경(그림자)이 살짝 드러나게 한다 — 별도 뷰를
+         match_parent 높이로 두면 wrap_content 부모 안에서 높이가 0으로 측정되는 경우가 있어
+         이 방식이 더 안정적이다. -->
+    <FrameLayout
         android:id="@+id/tripSwipeForeground"
-        layout="@layout/organism_trip_room_card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_card_offset_shadow">
+
+        <include
+            layout="@layout/organism_trip_room_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/card_shadow_offset"
+            android:layout_marginBottom="@dimen/card_shadow_offset" />
+    </FrameLayout>
 
 </FrameLayout>

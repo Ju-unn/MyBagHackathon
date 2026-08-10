@@ -101,8 +101,8 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             return;
         }
         List<TripRoomUiModel> uiModels = new ArrayList<>();
-        for (Trip trip : trips) {
-            uiModels.add(toUiModel(trip, progressByTripId));
+        for (int i = 0; i < trips.size(); i++) {
+            uiModels.add(toUiModel(trips.get(i), progressByTripId, i == 0));
         }
         bindTrips(uiModels);
     }
@@ -156,9 +156,9 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         if (binding == null) {
             return;
         }
-        adapter.removeItem(tripId);
-        updateEmptyState();
         Toast.makeText(getContext(), R.string.trip_deleted_toast, Toast.LENGTH_SHORT).show();
+        // 맨 앞 방이 지워졌을 수 있으니 목록을 다시 불러와 검정 강조 카드를 새로 계산한다.
+        presenter.loadTrips();
     }
 
     @Override
@@ -166,16 +166,15 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         if (binding == null) {
             return;
         }
-        adapter.removeItem(tripId);
-        updateEmptyState();
         Toast.makeText(getContext(), R.string.trip_left_toast, Toast.LENGTH_SHORT).show();
+        presenter.loadTrips();
     }
 
-    /** 오늘이 여행 기간 안이면(=진행중) Active, 아니면 Upcoming 카드로 그린다. */
-    private TripRoomUiModel toUiModel(Trip trip, Map<Long, Integer> progressByTripId) {
+    /** 정렬된 목록의 맨 앞(가장 임박한/진행중인 방) 하나만 Active 카드로, 나머지는 Upcoming 카드로 그린다. */
+    private TripRoomUiModel toUiModel(Trip trip, Map<Long, Integer> progressByTripId, boolean highlight) {
         String ddayText = DateUtils.formatDday(trip.getStartDate());
         boolean isOwner = trip.getOwnerUserId() == currentUserId;
-        if (DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate())) {
+        if (highlight) {
             int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
             return TripRoomUiModel.active(trip.getTripId(), trip.getTripName(), ddayText,
                     toAvatarEntries(trip.getMembers()), progress, isOwner);

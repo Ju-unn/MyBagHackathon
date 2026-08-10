@@ -39,11 +39,11 @@
     <string name="home_empty_desc">방을 만들고 여행을 준비해보아요</string>
     <string name="empty_state_create_room">방 만들기</string>
     <string name="trip_delete_dialog_title">여행방을 삭제할까요?</string>
-    <string name="trip_delete_dialog_message_format">\'%1$s\' 방을 삭제하시겠어요? 이 작업은 되돌릴 수 없어요.</string>
+    <string name="trip_delete_dialog_message_format">\'%1$s\' 방을 삭제하시겠어요?\n이 작업은 되돌릴 수 없어요.</string>
     <string name="trip_deleted_toast">여행방이 삭제됐어요</string>
     <string name="action_leave">나가기</string>
     <string name="trip_leave_dialog_title">여행방에서 나갈까요?</string>
-    <string name="trip_leave_dialog_message_format">\'%1$s\' 방에서 나가시겠어요? 다시 참여하려면 초대가 필요해요.</string>
+    <string name="trip_leave_dialog_message_format">\'%1$s\' 방에서 나가시겠어요?\n다시 참여하려면 초대가 필요해요.</string>
     <string name="trip_left_toast">여행방에서 나갔어요</string>
     <string name="checklist_progress_format">체크리스트 %1$d%% 완료</string>
     <string name="nav_home">홈</string>

@@ -71,6 +71,10 @@
          텍스트(TextAppearance.Bag.BodyL, 15sp)의 1.5배 크기 -->
     <dimen name="profile_section_header_text_size">22.5sp</dimen>
 
-    <!-- S03/S14 여행방 카드를 왼쪽으로 스와이프했을 때 드러나는 삭제 버튼 폭 -->
+    <!-- S03/S14 여행방 카드를 왼쪽으로 스와이프했을 때 드러나는 영역 폭 -->
     <dimen name="trip_delete_reveal_width">88dp</dimen>
+    <!-- 그 영역 안에서 색이 채워지는 동그란 삭제/나가기 버튼 지름 -->
+    <dimen name="trip_delete_button_size">64dp</dimen>
+    <!-- 여행방 카드 뒤 그림자가 오른쪽/아래로 삐져나오는 정도(왼쪽 위에서 빛이 오는 느낌) -->
+    <dimen name="card_shadow_offset">2dp</dimen>
 </resources>

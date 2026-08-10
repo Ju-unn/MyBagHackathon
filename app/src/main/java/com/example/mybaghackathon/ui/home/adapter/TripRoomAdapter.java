@@ -55,17 +55,6 @@ public class TripRoomAdapter extends RecyclerView.Adapter<TripRoomAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    /** 삭제 확인 후 로컬 목록에서만 제거한다(서버 삭제 API 연동 전까지의 임시 동작). */
-    public void removeItem(long tripId) {
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).tripId == tripId) {
-                items.remove(i);
-                notifyItemRemoved(i);
-                break;
-            }
-        }
-    }
-
     public boolean isEmpty() {
         return items.isEmpty();
     }

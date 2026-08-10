@@ -140,8 +140,8 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
             return;
         }
         List<ArchiveTripUiModel> uiModels = new ArrayList<>();
-        for (Trip trip : trips) {
-            uiModels.add(toOngoingUiModel(trip, progressByTripId));
+        for (int i = 0; i < trips.size(); i++) {
+            uiModels.add(toOngoingUiModel(trips.get(i), progressByTripId, i == 0));
         }
         bindTrips(uiModels);
     }
@@ -208,9 +208,8 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         if (binding == null) {
             return;
         }
-        adapter.removeItem(tripId);
-        updateEmptyState();
         Toast.makeText(getContext(), R.string.trip_deleted_toast, Toast.LENGTH_SHORT).show();
+        reloadCurrentSegment();
     }
 
     @Override
@@ -218,16 +217,24 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         if (binding == null) {
             return;
         }
-        adapter.removeItem(tripId);
-        updateEmptyState();
         Toast.makeText(getContext(), R.string.trip_left_toast, Toast.LENGTH_SHORT).show();
+        reloadCurrentSegment();
     }
 
-    /** 오늘이 여행 기간 안이면(=진행중) Ongoing 카드, 아니면 Planned 카드로 그린다. */
-    private ArchiveTripUiModel toOngoingUiModel(Trip trip, Map<Long, Integer> progressByTripId) {
+    // 맨 앞 방이 지워졌을 수 있으니 현재 보고 있는 세그먼트를 다시 불러와 검정 강조 카드를 새로 계산한다.
+    private void reloadCurrentSegment() {
+        if (showingOngoing) {
+            presenter.loadOngoingTrips();
+        } else {
+            presenter.loadPastTrips();
+        }
+    }
+
+    /** 정렬된 목록의 맨 앞(가장 임박한/진행중인 방) 하나만 Ongoing 카드로, 나머지는 Planned 카드로 그린다. */
+    private ArchiveTripUiModel toOngoingUiModel(Trip trip, Map<Long, Integer> progressByTripId, boolean highlight) {
         String ddayText = DateUtils.formatDday(trip.getStartDate());
         boolean isOwner = trip.getOwnerUserId() == currentUserId;
-        if (DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate())) {
+        if (highlight) {
             int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
             return ArchiveTripUiModel.ongoing(trip.getTripId(), trip.getTripName(), ddayText,
                     toAvatarEntries(trip.getMembers()), progress, isOwner);
