@@ -260,4 +260,16 @@
     <string name="bs_assign_item_title_format">%1$s 담당자 지정</string>
     <string name="bs_assign_item_subtitle">여러 명이 함께 챙길 수 있어요</string>
     <string name="action_complete">완료</string>
+
+    <!-- 초대 공유 및 참여 -->
+    <string name="invite_share_message">함께 여행 준비해요! 초대 링크를 눌러 여행방에 참여해 주세요.</string>
+    <string name="invite_share_button">여행방 참여하기</string>
+    <string name="invite_share_error">카카오톡 공유 화면을 열지 못했습니다.</string>
+    <string name="invite_join_loading_title">여행방에 참여하는 중이에요</string>
+    <string name="invite_join_loading_message">초대 정보를 확인하고 있어요.</string>
+    <string name="invite_join_error_title">여행방에 참여하지 못했어요</string>
+    <string name="invite_join_invalid">유효하지 않은 초대 링크입니다.</string>
+    <string name="invite_join_login_title">로그인이 필요해요</string>
+    <string name="invite_join_login_message">로그인한 뒤 초대 링크를 다시 눌러 주세요.</string>
+    <string name="invite_join_login_action">로그인하기</string>
 </resources>
