@@ -47,7 +47,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
     public static final String EXTRA_INVITE_CODE = "invite_code";
 
     private static final String DEFAULT_ROOM_NAME = "여행방";
-    private static final String INVITE_URL_BASE = "https://mybag.app/invite/";
+    private static final String INVITE_URL_BASE = "https://mybag.duckdns.org/invite/";
 
     private ActivityRoomDetailBinding binding;
     private RoomDetailContract.Presenter presenter;
@@ -279,7 +279,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
     @Override
     public void showInviteShare(String inviteCode) {
         String inviteUrl = INVITE_URL_BASE + Uri.encode(inviteCode);
-        InviteShareSheet.newInstance(inviteUrl)
+        InviteShareSheet.newInstance(inviteUrl, inviteCode)
                 .show(getSupportFragmentManager(), "invite_share");
     }
 
@@ -328,7 +328,10 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
     }
 
     private void restoreSnapshot(RoomScreenSnapshot snapshot) {
-        String inviteCode = getIntent().getStringExtra(EXTRA_INVITE_CODE);
+        String inviteCode = snapshot.trip.getInviteCode();
+        if (!hasText(inviteCode)) {
+            inviteCode = getIntent().getStringExtra(EXTRA_INVITE_CODE);
+        }
         int memberCount = snapshot.trip.getMembers() == null
                 ? 1 : Math.max(1, snapshot.trip.getMembers().size());
         presenter.restoreRoomContext(
