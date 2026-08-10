@@ -24,6 +24,7 @@ import com.example.mybaghackathon.ui.atoms.ChipView;
 import com.example.mybaghackathon.ui.atoms.PriorityDotView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
+import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +87,14 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         }
         LinearLayout sections = binding.checklistCommonSections;
         sections.removeAllViews();
+        boolean hasVisibleItems = false;
+        boolean hasAnyCommonItems = false;
+        for (PackingItem item : host.getChecklistItems()) {
+            if (ChecklistItemVisibility.isCommon(item)) {
+                hasAnyCommonItems = true;
+                break;
+            }
+        }
 
         for (int priority = 0; priority < 3; priority++) {
             if (selectedPriority >= 0 && selectedPriority != priority) {
@@ -93,13 +102,22 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
             }
             List<PackingItem> group = new ArrayList<>();
             for (PackingItem item : host.getChecklistItems()) {
-                if (isCommon(item) && priorityLevel(item.getPriority()) == priority) {
+                if (ChecklistItemVisibility.isCommon(item)
+                        && priorityLevel(item.getPriority()) == priority) {
                     group.add(item);
                 }
             }
             if (!group.isEmpty()) {
+                hasVisibleItems = true;
                 addSection(sections, priority, priorityLabel(priority), group);
             }
+        }
+
+        boolean empty = host.isChecklistLoaded() && !hasVisibleItems;
+        binding.checklistCommonEmptyState.getRoot().setVisibility(
+                empty ? View.VISIBLE : View.GONE);
+        if (empty) {
+            bindEmptyState(hasAnyCommonItems);
         }
     }
 
@@ -141,10 +159,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
 
         bindRestriction(row, item.getRestrictionType());
         bindItemActions(row, item);
-        row.setOnLongClickListener(v -> {
-            showEditSheet(item);
-            return true;
-        });
+        row.setOnClickListener(v -> showEditSheet(item));
         return row;
     }
 
@@ -181,10 +196,19 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
     }
 
     private void showEditSheet(PackingItem item) {
-        AddItemSheet sheet = AddItemSheet.newEditInstance(
+        EditItemSheet sheet = EditItemSheet.newInstance(
                 item.getItemName(), priorityLevel(item.getPriority()));
-        sheet.setOnItemAddedListener((name, priority) ->
-                host.updateChecklistItem(item, name, priority));
+        sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
+            @Override
+            public void onItemRenamed(String newLabel, int priorityLevel) {
+                host.updateChecklistItem(item, newLabel, priorityLevel);
+            }
+
+            @Override
+            public void onItemDeleted() {
+                host.deleteChecklistItemWithUndo(item);
+            }
+        });
         sheet.show(getParentFragmentManager(), "edit_common_item");
     }
 
@@ -210,8 +234,16 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         return null;
     }
 
-    private boolean isCommon(PackingItem item) {
-        return item.getScope() == null || "COMMON".equalsIgnoreCase(item.getScope());
+    private void bindEmptyState(boolean filteredOut) {
+        binding.checklistCommonEmptyState.emptyStateTitle
+                .setText(filteredOut
+                        ? R.string.checklist_filter_empty_title
+                        : R.string.checklist_common_empty_title);
+        binding.checklistCommonEmptyState.emptyStateDesc
+                .setText(filteredOut
+                        ? R.string.checklist_filter_empty_desc
+                        : R.string.checklist_common_empty_desc);
+        binding.checklistCommonEmptyState.emptyStateAction.setVisibility(View.GONE);
     }
 
     private int priorityLevel(String value) {

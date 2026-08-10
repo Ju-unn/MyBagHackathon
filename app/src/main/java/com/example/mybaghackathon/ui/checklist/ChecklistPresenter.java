@@ -23,8 +23,8 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
     private final TripRepository tripRepository;
     private final PackingRepository packingRepository;
     private final long currentUserId;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService executor;
+    private final UiDispatcher uiDispatcher;
     private final List<PackingItem> items = new ArrayList<>();
     private final List<TripMember> members = new ArrayList<>();
 
@@ -41,10 +41,24 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             PackingRepository packingRepository,
             long currentUserId
     ) {
+        this(view, tripRepository, packingRepository, currentUserId,
+                Executors.newSingleThreadExecutor(), new AndroidUiDispatcher());
+    }
+
+    ChecklistPresenter(
+            ChecklistContract.View view,
+            TripRepository tripRepository,
+            PackingRepository packingRepository,
+            long currentUserId,
+            ExecutorService executor,
+            UiDispatcher uiDispatcher
+    ) {
         this.view = view;
         this.tripRepository = tripRepository;
         this.packingRepository = packingRepository;
         this.currentUserId = currentUserId;
+        this.executor = executor;
+        this.uiDispatcher = uiDispatcher;
     }
 
     @Override
@@ -64,7 +78,7 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             return;
         }
 
-        loading = true;
+        startLoading();
         executor.execute(this::loadChecklistOnWorker);
     }
 
@@ -104,14 +118,13 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
 
     @Override
     public void requestDelete(PackingItem item) {
-        if (destroyed || item == null) {
+        if (destroyed || item == null || loading) {
             return;
         }
 
         if (pendingDelete != null) {
-            PendingDelete previous = pendingDelete;
-            pendingDelete = null;
-            deleteOnServer(previous.item);
+            view.showError("이전 삭제의 실행 취소 안내가 끝난 후 다시 시도해주세요.");
+            return;
         }
 
         int originalIndex = items.indexOf(item);
@@ -148,7 +161,7 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
     @Override
     public void onDestroy() {
         destroyed = true;
-        mainHandler.removeCallbacksAndMessages(null);
+        uiDispatcher.clear();
         executor.shutdownNow();
     }
 
@@ -182,7 +195,7 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             List<TripMember> loadedMembers,
             List<PackingItem> loadedItems
     ) {
-        loading = false;
+        finishLoading();
         if (hasText(trip.getTripName())) {
             tripName = trip.getTripName().trim();
         }
@@ -198,40 +211,44 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
     }
 
     private void runRepositoryAction(RepositoryAction action) {
-        if (destroyed) {
+        if (destroyed || loading) {
             return;
         }
         if (tripId <= 0L) {
             view.showError("여행방 정보가 없습니다.");
             return;
         }
+        startLoading();
         executor.execute(() -> {
             try {
                 AppResult<?> result = action.run();
                 if (!result.isSuccess()) {
-                    postError(messageOf(result, "요청을 처리하지 못했습니다."));
+                    postLoadFailure(messageOf(result, "요청을 처리하지 못했습니다."));
                     return;
                 }
                 loadChecklistOnWorker();
             } catch (RuntimeException error) {
-                postError("서버 응답을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.");
+                postLoadFailure("서버 응답을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.");
             }
         });
     }
 
     private void deleteOnServer(PackingItem item) {
-        if (destroyed) {
+        if (destroyed || loading) {
             return;
         }
+        startLoading();
         executor.execute(() -> {
             try {
                 AppResult<Void> result = packingRepository.deleteItem(item.getPackingItemId());
                 if (!result.isSuccess()) {
-                    postError(messageOf(result, "항목을 삭제하지 못했습니다."));
+                    post(() -> view.showRetryableError(
+                            messageOf(result, "항목을 삭제하지 못했습니다.")));
                 }
                 loadChecklistOnWorker();
             } catch (RuntimeException error) {
-                postError("서버 응답을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.");
+                post(() -> view.showRetryableError(
+                        "서버 응답을 처리하지 못했습니다. 잠시 후 다시 시도해주세요."));
                 loadChecklistOnWorker();
             }
         });
@@ -250,17 +267,23 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
 
     private void postLoadFailure(String message) {
         post(() -> {
-            loading = false;
-            view.showError(message);
+            finishLoading();
+            view.showRetryableError(message);
         });
     }
 
-    private void postError(String message) {
-        post(() -> view.showError(message));
+    private void startLoading() {
+        loading = true;
+        view.showLoading(true);
+    }
+
+    private void finishLoading() {
+        loading = false;
+        view.showLoading(false);
     }
 
     private void post(Runnable action) {
-        mainHandler.post(() -> {
+        uiDispatcher.post(() -> {
             if (!destroyed) {
                 action.run();
             }
@@ -310,6 +333,26 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
 
     private interface RepositoryAction {
         AppResult<?> run();
+    }
+
+    interface UiDispatcher {
+        void post(Runnable action);
+
+        void clear();
+    }
+
+    private static final class AndroidUiDispatcher implements UiDispatcher {
+        private final Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void post(Runnable action) {
+            handler.post(action);
+        }
+
+        @Override
+        public void clear() {
+            handler.removeCallbacksAndMessages(null);
+        }
     }
 
     private static final class PendingDelete {

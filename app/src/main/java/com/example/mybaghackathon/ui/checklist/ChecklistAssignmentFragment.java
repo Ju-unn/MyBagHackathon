@@ -62,7 +62,8 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         for (TripMember member : members) {
             boolean headerAdded = false;
             for (PackingItem item : host.getChecklistItems()) {
-                if (item.getAssigneeUserId() != null
+                if (ChecklistItemVisibility.isCommon(item)
+                        && item.getAssigneeUserId() != null
                         && item.getAssigneeUserId() == member.getUserId()) {
                     if (!headerAdded) {
                         addMemberHeader(assigned, member);
@@ -74,8 +75,9 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         }
 
         for (PackingItem item : host.getChecklistItems()) {
-            if (item.getAssigneeUserId() == null
-                    || !memberById.containsKey(item.getAssigneeUserId())) {
+            if (ChecklistItemVisibility.isCommon(item)
+                    && (item.getAssigneeUserId() == null
+                    || !memberById.containsKey(item.getAssigneeUserId()))) {
                 addUnassignedRow(unassigned, item);
             }
         }
