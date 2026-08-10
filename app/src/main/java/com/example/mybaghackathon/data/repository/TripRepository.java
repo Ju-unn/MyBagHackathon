@@ -33,4 +33,10 @@ public interface TripRepository {
 
     // 초대코드로 참여 — 성공 시 참여한 tripId를 반환
     AppResult<Long> joinByCode(String inviteCode);
+
+    // 방 삭제 — 방장 전용, 완전 삭제(되돌릴 수 없음)
+    AppResult<Void> deleteTrip(long tripId);
+
+    // 방 나가기 — 참여자 본인만
+    AppResult<Void> leaveTrip(long tripId);
 }
