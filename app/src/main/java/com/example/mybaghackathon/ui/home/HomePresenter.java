@@ -10,7 +10,6 @@ import com.example.mybaghackathon.data.repository.TripRepository;
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.model.Trip;
 import com.example.mybaghackathon.model.TripMember;
-import com.example.mybaghackathon.util.DateUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,18 +52,18 @@ public class HomePresenter implements HomeContract.Presenter {
             List<Trip> trips = new ArrayList<>(result.getData());
             Collections.sort(trips, (a, b) -> compareByStartDate(a.getStartDate(), b.getStartDate()));
 
+            // 목록 맨 앞(가장 임박한/진행중인 방) 하나만 검정 상세 카드로 보여주므로
+            // 멤버·체크리스트 진행률도 그 방만 추가로 불러온다.
             Map<Long, Integer> progressByTripId = new HashMap<>();
-            for (Trip trip : trips) {
-                if (!DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate())) {
-                    continue;
-                }
-                AppResult<List<TripMember>> membersResult = tripRepository.listMembers(trip.getTripId());
+            if (!trips.isEmpty()) {
+                Trip highlighted = trips.get(0);
+                AppResult<List<TripMember>> membersResult = tripRepository.listMembers(highlighted.getTripId());
                 if (membersResult.isSuccess() && membersResult.getData() != null) {
-                    trip.setMembers(membersResult.getData());
+                    highlighted.setMembers(membersResult.getData());
                 }
-                AppResult<List<PackingItem>> packingResult = packingRepository.listItems(trip.getTripId(), null);
+                AppResult<List<PackingItem>> packingResult = packingRepository.listItems(highlighted.getTripId(), null);
                 if (packingResult.isSuccess() && packingResult.getData() != null) {
-                    progressByTripId.put(trip.getTripId(), completionPercent(packingResult.getData()));
+                    progressByTripId.put(highlighted.getTripId(), completionPercent(packingResult.getData()));
                 }
             }
 
@@ -78,6 +77,18 @@ public class HomePresenter implements HomeContract.Presenter {
             AppResult<Void> result = tripRepository.deleteTrip(tripId);
             if (result.isSuccess()) {
                 postToView(() -> view.onTripDeleted(tripId));
+            } else {
+                postError(result);
+            }
+        });
+    }
+
+    @Override
+    public void leaveTrip(long tripId) {
+        executor.execute(() -> {
+            AppResult<Void> result = tripRepository.leaveTrip(tripId);
+            if (result.isSuccess()) {
+                postToView(() -> view.onTripLeft(tripId));
             } else {
                 postError(result);
             }

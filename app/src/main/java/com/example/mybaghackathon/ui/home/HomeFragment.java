@@ -46,6 +46,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     private FragmentHomeBinding binding;
     private TripRoomAdapter adapter;
     private HomeContract.Presenter presenter;
+    private long currentUserId;
 
     @Nullable
     @Override
@@ -56,6 +57,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
         AppContainer appContainer = ((MyBagApplication) requireActivity().getApplication()).getAppContainer();
         presenter = new HomePresenter(this, appContainer.tripRepository, appContainer.packingRepository);
+        currentUserId = appContainer.tokenStorage.getUserId();
 
         binding.homeTopAppBar.topAppBarTitle.setText(R.string.home_title);
         binding.homeTopAppBar.topAppBarAction.setVisibility(View.GONE);
@@ -67,7 +69,8 @@ public class HomeFragment extends Fragment implements HomeContract.View {
                     intent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, trip.title);
                     startActivity(intent);
                 },
-                trip -> confirmDeleteTrip(trip.tripId, trip.title));
+                trip -> confirmDeleteTrip(trip.tripId, trip.title),
+                trip -> confirmLeaveTrip(trip.tripId, trip.title));
         binding.homeTripRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.homeTripRecycler.setAdapter(adapter);
 
@@ -98,8 +101,8 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             return;
         }
         List<TripRoomUiModel> uiModels = new ArrayList<>();
-        for (Trip trip : trips) {
-            uiModels.add(toUiModel(trip, progressByTripId));
+        for (int i = 0; i < trips.size(); i++) {
+            uiModels.add(toUiModel(trips.get(i), progressByTripId, i == 0));
         }
         bindTrips(uiModels);
     }
@@ -119,6 +122,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
     private void updateEmptyState() {
         boolean empty = adapter.isEmpty();
+        binding.homeEmptyStateSpacer.setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.homeEmptyState.getRoot().setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.homeTripRecycler.setVisibility(empty ? View.GONE : View.VISIBLE);
         binding.homeAddRoomFab.setVisibility(empty ? View.GONE : View.VISIBLE);
@@ -128,11 +132,23 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         if (getContext() == null) {
             return;
         }
-        new MaterialAlertDialogBuilder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
                 .setTitle(R.string.trip_delete_dialog_title)
                 .setMessage(getString(R.string.trip_delete_dialog_message_format, title))
                 .setNegativeButton(R.string.action_cancel, null)
                 .setPositiveButton(R.string.action_delete, (dialog, which) -> presenter.deleteTrip(tripId))
+                .show();
+    }
+
+    private void confirmLeaveTrip(long tripId, String title) {
+        if (getContext() == null) {
+            return;
+        }
+        new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
+                .setTitle(R.string.trip_leave_dialog_title)
+                .setMessage(getString(R.string.trip_leave_dialog_message_format, title))
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.action_leave, (dialog, which) -> presenter.leaveTrip(tripId))
                 .show();
     }
 
@@ -141,20 +157,30 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         if (binding == null) {
             return;
         }
-        adapter.removeItem(tripId);
-        updateEmptyState();
         Toast.makeText(getContext(), R.string.trip_deleted_toast, Toast.LENGTH_SHORT).show();
+        // 맨 앞 방이 지워졌을 수 있으니 목록을 다시 불러와 검정 강조 카드를 새로 계산한다.
+        presenter.loadTrips();
     }
 
-    /** 오늘이 여행 기간 안이면(=진행중) Active, 아니면 Upcoming 카드로 그린다. */
-    private TripRoomUiModel toUiModel(Trip trip, Map<Long, Integer> progressByTripId) {
+    @Override
+    public void onTripLeft(long tripId) {
+        if (binding == null) {
+            return;
+        }
+        Toast.makeText(getContext(), R.string.trip_left_toast, Toast.LENGTH_SHORT).show();
+        presenter.loadTrips();
+    }
+
+    /** 정렬된 목록의 맨 앞(가장 임박한/진행중인 방) 하나만 Active 카드로, 나머지는 Upcoming 카드로 그린다. */
+    private TripRoomUiModel toUiModel(Trip trip, Map<Long, Integer> progressByTripId, boolean highlight) {
         String ddayText = DateUtils.formatDday(trip.getStartDate());
-        if (DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate())) {
+        boolean isOwner = trip.getOwnerUserId() == currentUserId;
+        if (highlight) {
             int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
             return TripRoomUiModel.active(trip.getTripId(), trip.getTripName(), ddayText,
-                    toAvatarEntries(trip.getMembers()), progress);
+                    toAvatarEntries(trip.getMembers()), progress, isOwner);
         }
-        return TripRoomUiModel.upcoming(trip.getTripId(), trip.getTripName(), ddayText);
+        return TripRoomUiModel.upcoming(trip.getTripId(), trip.getTripName(), ddayText, isOwner);
     }
 
     private List<AvatarStackHelper.Entry> toAvatarEntries(List<TripMember> members) {
@@ -166,7 +192,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             String nickname = members.get(i).getNickname();
             String initial = nickname == null || nickname.isEmpty() ? "" : nickname.substring(0, 1);
             int color = ContextCompat.getColor(requireContext(), AVATAR_COLORS[i % AVATAR_COLORS.length]);
-            entries.add(new AvatarStackHelper.Entry(initial, color));
+            entries.add(new AvatarStackHelper.Entry(initial, color, members.get(i).getProfileImageUrl()));
         }
         return entries;
     }

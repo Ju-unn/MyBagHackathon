@@ -24,12 +24,20 @@
                 android:id="@+id/homeTopAppBar"
                 layout="@layout/organism_top_app_bar_large" />
 
+            <!-- 공용 여행 탭의 세그먼트 컨트롤 높이만큼 빈 상태를 밀어내는 스페이서 —
+                 homeEmptyState와 함께 보이고 숨겨짐(HomeFragment#updateEmptyState). -->
+            <View
+                android:id="@+id/homeEmptyStateSpacer"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/home_empty_state_segment_offset"
+                android:visibility="gone" />
+
             <include
                 android:id="@+id/homeEmptyState"
                 layout="@layout/organism_empty_state"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xl"
+                android:layout_marginTop="@dimen/empty_state_top_margin"
                 android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -51,6 +59,7 @@
         android:layout_margin="@dimen/space_xl"
         android:contentDescription="@string/home_add_room"
         android:src="@drawable/ic_add"
+        android:visibility="gone"
         app:backgroundTint="@color/bag_brand_default"
         app:tint="@color/white_primitive" />
 

@@ -18,27 +18,31 @@ public class TripRoomUiModel {
     public final String ddayText;
     public final List<AvatarStackHelper.Entry> avatars;
     public final int progressPercent;
+    /** 현재 로그인한 사용자가 이 방의 방장인지 여부 — 스와이프 액션이 삭제/나가기 중 무엇인지 결정한다. */
+    public final boolean isOwner;
 
     private TripRoomUiModel(long tripId, State state, String title, String ddayText,
-                             List<AvatarStackHelper.Entry> avatars, int progressPercent) {
+                             List<AvatarStackHelper.Entry> avatars, int progressPercent, boolean isOwner) {
         this.tripId = tripId;
         this.state = state;
         this.title = title;
         this.ddayText = ddayText;
         this.avatars = avatars;
         this.progressPercent = progressPercent;
+        this.isOwner = isOwner;
     }
 
     public static TripRoomUiModel active(long tripId, String title, String ddayText,
-                                          List<AvatarStackHelper.Entry> avatars, int progressPercent) {
-        return new TripRoomUiModel(tripId, State.ACTIVE, title, ddayText, avatars, progressPercent);
+                                          List<AvatarStackHelper.Entry> avatars, int progressPercent,
+                                          boolean isOwner) {
+        return new TripRoomUiModel(tripId, State.ACTIVE, title, ddayText, avatars, progressPercent, isOwner);
     }
 
-    public static TripRoomUiModel upcoming(long tripId, String title, String ddayText) {
-        return new TripRoomUiModel(tripId, State.UPCOMING, title, ddayText, null, 0);
+    public static TripRoomUiModel upcoming(long tripId, String title, String ddayText, boolean isOwner) {
+        return new TripRoomUiModel(tripId, State.UPCOMING, title, ddayText, null, 0, isOwner);
     }
 
-    public static TripRoomUiModel past(long tripId, String title) {
-        return new TripRoomUiModel(tripId, State.PAST, title, null, null, 0);
+    public static TripRoomUiModel past(long tripId, String title, boolean isOwner) {
+        return new TripRoomUiModel(tripId, State.PAST, title, null, null, 0, isOwner);
     }
 }
