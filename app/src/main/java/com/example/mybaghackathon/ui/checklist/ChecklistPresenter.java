@@ -88,6 +88,10 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             view.showError("추가할 항목 이름을 입력해주세요.");
             return;
         }
+        if ("COMMON".equalsIgnoreCase(scope) && !isHost) {
+            view.showError("공용 물품은 방장만 추가할 수 있습니다.");
+            return;
+        }
         runRepositoryAction(() -> packingRepository.addItem(
                 tripId, name.trim(), null, priorityCode(priorityLevel), scope));
     }
@@ -98,27 +102,50 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             view.showError("수정할 항목 이름을 확인해주세요.");
             return;
         }
+        if (!canEdit(item)) {
+            view.showError(permissionMessage(item));
+            return;
+        }
         runRepositoryAction(() -> packingRepository.updateItem(
                 item.getPackingItemId(), name.trim(), null, priorityCode(priorityLevel), null));
     }
 
     @Override
     public void toggleItem(PackingItem item) {
-        if (item != null) {
-            runRepositoryAction(() -> packingRepository.toggleCheck(item.getPackingItemId()));
+        if (item == null) {
+            return;
         }
+        boolean canToggle = ChecklistItemVisibility.isCommon(item)
+                ? isHost || ChecklistItemVisibility.isAssignedCommon(item, currentUserId)
+                : ChecklistItemVisibility.isOwnedPersonal(item, currentUserId);
+        if (!canToggle) {
+            view.showError(permissionMessage(item));
+            return;
+        }
+        runRepositoryAction(() -> packingRepository.toggleCheck(item.getPackingItemId()));
     }
 
     @Override
     public void assignItem(PackingItem item, Long userId) {
-        if (item != null) {
-            runRepositoryAction(() -> packingRepository.assign(item.getPackingItemId(), userId));
+        if (item == null || !ChecklistItemVisibility.isCommon(item)) {
+            return;
         }
+        boolean assigning = userId != null;
+        boolean assignedToCurrentUser = ChecklistItemVisibility.isAssignedCommon(item, currentUserId);
+        if ((assigning && !isHost) || (!assigning && !isHost && !assignedToCurrentUser)) {
+            view.showError("공용 물품의 담당자는 방장 또는 현재 담당자만 변경할 수 있습니다.");
+            return;
+        }
+        runRepositoryAction(() -> packingRepository.assign(item.getPackingItemId(), userId));
     }
 
     @Override
     public void requestDelete(PackingItem item) {
         if (destroyed || item == null || loading) {
+            return;
+        }
+        if (!canDelete(item)) {
+            view.showError(permissionMessage(item));
             return;
         }
 
@@ -329,6 +356,22 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
 
     private boolean hasText(String value) {
         return value != null && !value.trim().isEmpty();
+    }
+
+    private boolean canEdit(PackingItem item) {
+        return ChecklistItemVisibility.isCommon(item)
+                ? isHost
+                : ChecklistItemVisibility.isOwnedPersonal(item, currentUserId);
+    }
+
+    private boolean canDelete(PackingItem item) {
+        return canEdit(item);
+    }
+
+    private String permissionMessage(PackingItem item) {
+        return ChecklistItemVisibility.isCommon(item)
+                ? "공용 물품은 방장만 변경할 수 있습니다."
+                : "내 개인 물품만 변경할 수 있습니다.";
     }
 
     private interface RepositoryAction {

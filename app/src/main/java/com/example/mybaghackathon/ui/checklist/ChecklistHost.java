@@ -14,6 +14,8 @@ public interface ChecklistHost {
 
     long getCurrentUserId();
 
+    boolean isCurrentUserHost();
+
     int getTripMemberCount();
 
     boolean isChecklistLoaded();

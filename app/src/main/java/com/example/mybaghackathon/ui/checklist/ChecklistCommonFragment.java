@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +24,7 @@ import com.example.mybaghackathon.ui.atoms.PriorityDotView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
 import com.example.mybaghackathon.ui.overlay.EditItemSheet;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,12 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
     private void bindAddButton() {
         TextView label = binding.checklistCommonAddWrapper.findViewById(R.id.dashedAddCardLabel);
         label.setText(R.string.checklist_add_manual);
+        binding.checklistCommonAddWrapper.setVisibility(
+                host.isCurrentUserHost() ? View.VISIBLE : View.GONE);
         binding.checklistCommonAddWrapper.setOnClickListener(v -> {
+            if (!host.isCurrentUserHost()) {
+                return;
+            }
             AddItemSheet sheet = new AddItemSheet();
             sheet.setOnItemAddedListener((name, priority) ->
                     host.addChecklistItem(name, priority, "COMMON"));
@@ -85,6 +90,8 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         if (binding == null || host == null) {
             return;
         }
+        binding.checklistCommonAddWrapper.setVisibility(
+                host.isCurrentUserHost() ? View.VISIBLE : View.GONE);
         LinearLayout sections = binding.checklistCommonSections;
         sections.removeAllViews();
         boolean hasVisibleItems = false;
@@ -147,7 +154,10 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
 
         CheckboxView checkbox = row.findViewById(R.id.checklistItemCheckbox);
         checkbox.setState(item.isCompleted() ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
-        checkbox.setOnCheckChangeListener(state -> handleCommonCheck(item, checkbox));
+        checkbox.setEnabled(host.isCurrentUserHost());
+        if (host.isCurrentUserHost()) {
+            checkbox.setOnCheckChangeListener(state -> host.toggleChecklistItem(item));
+        }
 
         TripMember assignee = findMember(item.getAssigneeUserId());
         if (assignee != null) {
@@ -159,17 +169,27 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
 
         bindRestriction(row, item.getRestrictionType());
         bindItemActions(row, item);
-        row.setOnClickListener(v -> showEditSheet(item));
+        if (host.isCurrentUserHost()) {
+            row.setOnClickListener(v -> showAssigneePicker(item));
+        }
         return row;
     }
 
     private void bindItemActions(View row, PackingItem item) {
         View moreButton = row.findViewById(R.id.checklistItemMoreButton);
+        if (!host.isCurrentUserHost()) {
+            moreButton.setVisibility(View.GONE);
+            return;
+        }
         moreButton.setVisibility(View.VISIBLE);
         moreButton.setOnClickListener(v -> {
             PopupMenu menu = new PopupMenu(requireContext(), moreButton);
-            menu.inflate(R.menu.checklist_item_actions);
+            menu.inflate(R.menu.checklist_common_host_actions);
             menu.setOnMenuItemClickListener(menuItem -> {
+                if (menuItem.getItemId() == R.id.actionEditChecklistItem) {
+                    showEditSheet(item);
+                    return true;
+                }
                 if (menuItem.getItemId() == R.id.actionDeleteChecklistItem) {
                     host.deleteChecklistItemWithUndo(item);
                     return true;
@@ -180,19 +200,35 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         });
     }
 
-    private void handleCommonCheck(PackingItem item, CheckboxView checkbox) {
-        Long assignee = item.getAssigneeUserId();
-        long currentUserId = host.getCurrentUserId();
-        checkbox.setState(item.isCompleted() ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
-        if (currentUserId <= 0) {
-            Toast.makeText(requireContext(), "로그인 정보를 확인할 수 없습니다.", Toast.LENGTH_SHORT).show();
-        } else if (assignee == null) {
-            host.assignChecklistItem(item, currentUserId);
-        } else if (assignee == currentUserId) {
-            host.toggleChecklistItem(item);
-        } else {
-            Toast.makeText(requireContext(), "다른 참여자가 담당 중인 항목입니다.", Toast.LENGTH_SHORT).show();
+    private void showAssigneePicker(PackingItem item) {
+        if (!host.isCurrentUserHost()) {
+            return;
         }
+
+        List<TripMember> members = host.getTripMembers();
+        String[] labels = new String[members.size() + 1];
+        labels[0] = getString(R.string.checklist_assignee_none);
+        int checkedIndex = 0;
+        for (int index = 0; index < members.size(); index++) {
+            TripMember member = members.get(index);
+            labels[index + 1] = hasText(member.getNickname())
+                    ? member.getNickname().trim()
+                    : getString(R.string.checklist_member_fallback);
+            if (item.getAssigneeUserId() != null
+                    && item.getAssigneeUserId() == member.getUserId()) {
+                checkedIndex = index + 1;
+            }
+        }
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.checklist_assign_title, item.getItemName()))
+                .setSingleChoiceItems(labels, checkedIndex, (dialog, which) -> {
+                    Long assigneeUserId = which == 0 ? null : members.get(which - 1).getUserId();
+                    host.assignChecklistItem(item, assigneeUserId);
+                    dialog.dismiss();
+                })
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
     }
 
     private void showEditSheet(PackingItem item) {
@@ -274,6 +310,10 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
 
     private String initial(String name) {
         return name == null || name.trim().isEmpty() ? "여" : name.trim().substring(0, 1);
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 
     private int dp(int value) {
