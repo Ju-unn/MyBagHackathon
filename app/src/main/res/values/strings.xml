@@ -140,7 +140,7 @@
     <string name="review_restriction_warning_multiple">%1$s 등 %2$d개 항목에 반입 규정이 있어요</string>
     <string name="review_restriction_dialog_title">반입 규정 안내</string>
     <string name="review_items_heading">추천 준비물</string>
-    <string name="review_items_desc">체크한 항목은 공용 체크리스트에 담겨요</string>
+    <string name="review_items_desc">체크한 항목만 공용 체크리스트에 담겨요\n체크하지 않은 항목은 방 생성 시 포함되지 않아요</string>
     <string name="review_priority_high">필수</string>
     <string name="review_priority_mid">중간</string>
     <string name="review_priority_low">선택</string>
