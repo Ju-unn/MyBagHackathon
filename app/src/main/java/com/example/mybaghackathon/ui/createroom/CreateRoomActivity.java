@@ -32,7 +32,7 @@ public class CreateRoomActivity extends AppCompatActivity {
     private static final int MEMBER_COUNT_MIN = 1;
     private static final int MEMBER_COUNT_MAX = 10;
     private static final int MEMBER_COUNT_DEFAULT = 1;
-    private static final int ROOM_NAME_MAX_LENGTH = 20;
+    private static final int ROOM_NAME_MAX_LENGTH = 10;
 
     private ActivityCreateRoomBinding binding;
     private int memberCount = MEMBER_COUNT_DEFAULT;
