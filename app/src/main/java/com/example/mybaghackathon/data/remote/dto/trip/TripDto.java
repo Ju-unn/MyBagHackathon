@@ -38,6 +38,10 @@ public class TripDto {
     @SerializedName("created_at")
     private String createdAt;
 
+    // 상세 API 버전에 따라 invite_code가 data 최상위가 아닌 trip 안에 포함될 수 있다.
+    @SerializedName("invite_code")
+    private String inviteCode;
+
     public long getTripId() {
         return tripId;
     }
@@ -80,5 +84,9 @@ public class TripDto {
 
     public String getCreatedAt() {
         return createdAt;
+    }
+
+    public String getInviteCode() {
+        return inviteCode;
     }
 }

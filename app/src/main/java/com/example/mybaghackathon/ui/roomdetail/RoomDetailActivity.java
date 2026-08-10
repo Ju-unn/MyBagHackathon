@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.app.AppContainer;
@@ -48,6 +49,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
 
     private static final String DEFAULT_ROOM_NAME = "여행방";
     private static final String INVITE_URL_BASE = "https://mybag.duckdns.org/invite/";
+    private static final String INVITE_PREFS = "room_invite_codes";
 
     private ActivityRoomDetailBinding binding;
     private RoomDetailContract.Presenter presenter;
@@ -57,6 +59,8 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
     private String lastWeatherState;
     private boolean lastIsHost;
     private boolean screenReady;
+    private long currentUserId = -1L;
+    private boolean resumedOnce;
 
     @Override
     public void showLoading(boolean loading) {
@@ -100,12 +104,13 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
 
         AppContainer container = ((MyBagApplication) getApplication()).getAppContainer();
+        currentUserId = container.tokenStorage.getUserId();
         presenter = new RoomDetailPresenter(
                 this,
                 container.tripRepository,
                 container.weatherRepository,
                 container.packingRepository,
-                container.tokenStorage.getUserId()
+                currentUserId
         );
 
         bindActions();
@@ -122,6 +127,8 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         boolean initialHost = getIntent().getBooleanExtra(EXTRA_IS_HOST, false);
         String inviteCode = getIntent().getStringExtra(EXTRA_INVITE_CODE);
         String roomName = getIntent().getStringExtra(EXTRA_ROOM_NAME);
+
+        inviteCode = resolveInviteCode(tripId, inviteCode);
 
         binding.roomDetailTopBar.topAppBarCompactTitle.setText(
                 hasText(roomName) ? roomName.trim() : DEFAULT_ROOM_NAME);
@@ -143,12 +150,23 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (resumedOnce && presenter != null) {
+            // 다른 화면에서 돌아오면 참여자와 방 상태를 최신 정보로 다시 그린다.
+            presenter.retry();
+        }
+        resumedOnce = true;
+    }
+
+    @Override
     public void showTrip(Trip trip, boolean isHost) {
         if (!canUpdateUi()) {
             return;
         }
         lastTrip = trip;
         lastIsHost = isHost;
+        rememberInviteCode(trip.getTripId(), trip.getInviteCode());
         if (hasText(trip.getTripName())) {
             binding.roomDetailTopBar.topAppBarCompactTitle.setText(trip.getTripName());
         }
@@ -278,6 +296,13 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
 
     @Override
     public void showInviteShare(String inviteCode) {
+        Fragment existing = getSupportFragmentManager().findFragmentByTag("invite_share");
+        if (existing != null || getSupportFragmentManager().isStateSaved()) {
+            return;
+        }
+        if (lastTrip != null) {
+            rememberInviteCode(lastTrip.getTripId(), inviteCode);
+        }
         String inviteUrl = INVITE_URL_BASE + Uri.encode(inviteCode);
         InviteShareSheet.newInstance(inviteUrl, inviteCode)
                 .show(getSupportFragmentManager(), "invite_share");
@@ -332,6 +357,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         if (!hasText(inviteCode)) {
             inviteCode = getIntent().getStringExtra(EXTRA_INVITE_CODE);
         }
+        inviteCode = resolveInviteCode(snapshot.trip.getTripId(), inviteCode);
         int memberCount = snapshot.trip.getMembers() == null
                 ? 1 : Math.max(1, snapshot.trip.getMembers().size());
         presenter.restoreRoomContext(
@@ -453,6 +479,33 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
 
     private boolean hasText(String value) {
         return value != null && !value.trim().isEmpty();
+    }
+
+    private String resolveInviteCode(long tripId, String candidate) {
+        if (hasText(candidate)) {
+            String normalized = candidate.trim();
+            rememberInviteCode(tripId, normalized);
+            return normalized;
+        }
+        if (tripId <= 0L || currentUserId <= 0L) {
+            return null;
+        }
+        return getSharedPreferences(INVITE_PREFS, MODE_PRIVATE)
+                .getString(invitePreferenceKey(tripId), null);
+    }
+
+    private void rememberInviteCode(long tripId, String inviteCode) {
+        if (tripId <= 0L || currentUserId <= 0L || !hasText(inviteCode)) {
+            return;
+        }
+        getSharedPreferences(INVITE_PREFS, MODE_PRIVATE)
+                .edit()
+                .putString(invitePreferenceKey(tripId), inviteCode.trim())
+                .apply();
+    }
+
+    private String invitePreferenceKey(long tripId) {
+        return currentUserId + ":" + tripId;
     }
 
     private boolean canUpdateUi() {
