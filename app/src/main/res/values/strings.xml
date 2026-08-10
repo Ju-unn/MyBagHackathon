@@ -74,6 +74,7 @@
     <string name="room_detail_weather_status1">맑음 12°</string>
     <string name="room_detail_weather_status2">맑음 14°</string>
     <string name="room_detail_weather_status3">흐림 11°</string>
+    <string name="room_detail_weather_status_format">%1$s %2$d°</string>
     <string name="room_detail_restriction_warning">보조배터리 등 3개 항목에 반입 규정이 있어요</string>
     <string name="room_detail_members">참여자</string>
     <string name="room_detail_host_badge">방장</string>
@@ -85,6 +86,10 @@
     <string name="room_detail_invite_symbol">+</string>
     <string name="room_detail_invite_note">+ 버튼은 방장에게만 보여요</string>
     <string name="room_detail_view_tips">팁 보기</string>
+    <string name="room_detail_loading_title">여행 정보를 불러오는 중</string>
+    <string name="room_detail_loading_message">일정과 날씨, 준비물을 확인하고 있어요.</string>
+    <string name="room_detail_error_title">방 정보를 불러오지 못했어요</string>
+    <string name="room_detail_weather_empty">표시할 날씨 예보가 아직 없어요.</string>
 
     <!-- S05 일정 사진 업로드 -->
     <string name="upload_title">일정 사진 업로드</string>
@@ -155,6 +160,12 @@
     <string name="feedback_stay_title">숙소 유의사항</string>
     <string name="feedback_stay_desc">체크인 시간이 오후 3시부터예요. 늦게 도착한다면 미리 연락해두세요.</string>
     <string name="feedback_view_checklist">체크리스트 보기</string>
+    <string name="feedback_loading_title">여행 팁을 준비하는 중</string>
+    <string name="feedback_loading_message">날씨와 여행 정보를 확인하고 있어요.</string>
+    <string name="feedback_error_title">여행 팁을 불러오지 못했어요</string>
+    <string name="feedback_pending_title">여행 팁을 준비하고 있어요</string>
+    <string name="feedback_empty_title">표시할 여행 팁이 없어요</string>
+    <string name="feedback_empty_message">잠시 후 다시 확인해주세요.</string>
 
     <!-- S10-12 체크리스트 -->
     <string name="checklist_title">짐 체크리스트</string>
@@ -188,6 +199,15 @@
     <string name="checklist_assignment_summary">2명이 함께 준비 중</string>
     <string name="checklist_mine_name">민지</string>
     <string name="checklist_mine_count">5개 담당 중</string>
+    <string name="checklist_assign_title">%1$s 담당자 지정</string>
+    <string name="checklist_assignee_none">담당자 없음</string>
+    <string name="checklist_member_fallback">참여자</string>
+    <string name="checklist_duplicate_badge">중복 물품</string>
+    <string name="checklist_unassign_title">내 목록에서 삭제</string>
+    <string name="checklist_unassign_message">%1$s의 담당자를 해제할까요? 공용 목록의 물품은 유지됩니다.</string>
+    <string name="checklist_unassign_action">담당 해제</string>
+    <string name="checklist_host_only">공용 물품은 방장만 변경할 수 있습니다.</string>
+    <string name="checklist_owner_only">내 개인 물품만 변경할 수 있습니다.</string>
 
     <!-- S13 공용 여행 -->
     <string name="archive_title">공용 여행</string>
@@ -237,4 +257,7 @@
     <string name="bs_edit_item_title">물품 수정</string>
     <string name="item_name_required">물품 이름을 입력해주세요.</string>
     <string name="item_name_too_long">물품 이름은 %1$d자 이하로 입력해주세요.</string>
+    <string name="bs_assign_item_title_format">%1$s 담당자 지정</string>
+    <string name="bs_assign_item_subtitle">여러 명이 함께 챙길 수 있어요</string>
+    <string name="action_complete">완료</string>
 </resources>

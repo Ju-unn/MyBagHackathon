@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -143,12 +144,14 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         if (getContext() == null) {
             return;
         }
-        new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
                 .setTitle(R.string.trip_delete_dialog_title)
                 .setMessage(getString(R.string.trip_delete_dialog_message_format, title))
                 .setNegativeButton(R.string.action_cancel, null)
-                .setPositiveButton(R.string.action_delete, (dialog, which) -> presenter.deleteTrip(tripId))
+                .setPositiveButton(R.string.action_delete, (d, which) -> presenter.deleteTrip(tripId))
                 .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.clay_600));
     }
 
     private void confirmLeaveTrip(long tripId, String title) {

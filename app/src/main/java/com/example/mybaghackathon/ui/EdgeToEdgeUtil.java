@@ -40,4 +40,17 @@ public final class EdgeToEdgeUtil {
             return insets;
         });
     }
+
+    /**
+     * 화면 맨 위가 풀블리드 이미지/일러스트라 상단 인셋 패딩을 주면 안 되는 화면(예: 로그인)에 사용.
+     * root는 left/right/하단만 인셋 패딩을 받고, 상단은 패딩 없이 콘텐츠가 상태바 뒤까지 그대로 이어진다.
+     */
+    public static void applySystemBarPaddingNoTop(ComponentActivity activity, View root) {
+        EdgeToEdge.enable(activity);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+    }
 }

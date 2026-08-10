@@ -20,78 +20,110 @@ public class WeatherFeedbackPresenter implements WeatherFeedbackContract.Present
     private final WeatherFeedbackContract.View view;
     private final TripRepository tripRepository;
     private final WeatherRepository weatherRepository;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService executor;
+    private final UiDispatcher uiDispatcher;
 
     private volatile boolean destroyed;
+    private boolean loading;
+    private long tripId = -1L;
 
     public WeatherFeedbackPresenter(
             WeatherFeedbackContract.View view,
             TripRepository tripRepository,
             WeatherRepository weatherRepository
     ) {
+        this(view, tripRepository, weatherRepository,
+                Executors.newSingleThreadExecutor(), new AndroidUiDispatcher());
+    }
+
+    WeatherFeedbackPresenter(
+            WeatherFeedbackContract.View view,
+            TripRepository tripRepository,
+            WeatherRepository weatherRepository,
+            ExecutorService executor,
+            UiDispatcher uiDispatcher
+    ) {
         this.view = view;
         this.tripRepository = tripRepository;
         this.weatherRepository = weatherRepository;
+        this.executor = executor;
+        this.uiDispatcher = uiDispatcher;
     }
 
     @Override
     public void loadFeedback(long tripId) {
-        if (tripId <= 0L) {
-            view.showError("여행방 정보가 없어 팁을 불러올 수 없습니다.");
+        this.tripId = tripId;
+        retry();
+    }
+
+    @Override
+    public void restoreFeedbackContext(long tripId) {
+        this.tripId = tripId;
+    }
+
+    @Override
+    public void retry() {
+        if (destroyed || loading) {
             return;
         }
+        if (tripId <= 0L) {
+            view.showLoadError("여행방 정보가 없어 팁을 불러올 수 없습니다.");
+            return;
+        }
+        loading = true;
+        view.showLoading(true);
+        executor.execute(this::loadFeedbackOnWorker);
+    }
 
-        executor.execute(() -> {
-            try {
-                AppResult<Trip> tripResult = tripRepository.getTripDetail(tripId);
-                if (!tripResult.isSuccess() || tripResult.getData() == null) {
-                    postError(messageOf(tripResult, "여행 정보를 불러오지 못했습니다."));
-                    return;
-                }
-
-                Trip trip = tripResult.getData();
-                post(() -> view.showTrip(trip));
-
-                AppResult<WeatherForecast> forecastResult = weatherRepository.getForecastByTrip(tripId);
-                if (forecastResult.isSuccess() && forecastResult.getData() != null) {
-                    WeatherForecast forecast = forecastResult.getData();
-                    if (forecast.isReady()) {
-                        post(() -> view.showForecast(
-                                forecast.getDays() == null ? Collections.emptyList() : forecast.getDays()));
-                    } else {
-                        post(() -> view.showPending(pendingMessage(forecast.getNextRefreshAt())));
-                    }
-                } else {
-                    postError(messageOf(forecastResult, "날씨 예보를 불러오지 못했습니다."));
-                }
-
-                AppResult<WeatherFeedback> feedbackResult = weatherRepository.getFeedback(tripId);
-                if (feedbackResult.isSuccess() && feedbackResult.getData() != null) {
-                    WeatherFeedback feedback = feedbackResult.getData();
-                    if (feedback.isReady()) {
-                        post(() -> view.showFeedback(feedback));
-                    } else {
-                        post(() -> view.showPending(pendingMessage(feedback.getNextRefreshAt())));
-                    }
-                } else {
-                    postError(messageOf(feedbackResult, "날씨 팁을 불러오지 못했습니다."));
-                }
-            } catch (RuntimeException error) {
-                postError("서버 응답을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.");
+    private void loadFeedbackOnWorker() {
+        try {
+            AppResult<Trip> tripResult = tripRepository.getTripDetail(tripId);
+            if (!tripResult.isSuccess() || tripResult.getData() == null) {
+                postLoadError(messageOf(tripResult, "여행 정보를 불러오지 못했습니다."));
+                return;
             }
-        });
+
+            Trip trip = tripResult.getData();
+            post(() -> view.showTrip(trip));
+
+            AppResult<WeatherForecast> forecastResult = weatherRepository.getForecastByTrip(tripId);
+            if (forecastResult.isSuccess() && forecastResult.getData() != null) {
+                WeatherForecast forecast = forecastResult.getData();
+                post(() -> view.showForecast(forecast.isReady() && forecast.getDays() != null
+                        ? forecast.getDays() : Collections.emptyList()));
+            } else {
+                post(() -> view.showForecast(Collections.emptyList()));
+                postRetryableError(messageOf(forecastResult, "날씨 예보를 불러오지 못했습니다."));
+            }
+
+            AppResult<WeatherFeedback> feedbackResult = weatherRepository.getFeedback(tripId);
+            if (!feedbackResult.isSuccess() || feedbackResult.getData() == null) {
+                postLoadError(messageOf(feedbackResult, "날씨 팁을 불러오지 못했습니다."));
+                return;
+            }
+
+            WeatherFeedback feedback = feedbackResult.getData();
+            if (!feedback.isReady()) {
+                postComplete(() -> view.showPending(pendingMessage(feedback.getNextRefreshAt())));
+            } else if (isEmpty(feedback)) {
+                postComplete(view::showEmpty);
+            } else {
+                postComplete(() -> view.showFeedback(feedback));
+            }
+        } catch (RuntimeException error) {
+            postLoadError("서버 응답을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.");
+        }
     }
 
     @Override
     public void onDestroy() {
         destroyed = true;
-        mainHandler.removeCallbacksAndMessages(null);
+        uiDispatcher.clear();
         executor.shutdownNow();
     }
 
     private void post(Runnable action) {
-        mainHandler.post(() -> {
+        uiDispatcher.post(() -> {
             if (!destroyed) {
                 action.run();
             }
@@ -100,6 +132,26 @@ public class WeatherFeedbackPresenter implements WeatherFeedbackContract.Present
 
     private void postError(String message) {
         post(() -> view.showError(message));
+    }
+
+    private void postRetryableError(String message) {
+        post(() -> view.showRetryableError(message));
+    }
+
+    private void postLoadError(String message) {
+        post(() -> {
+            loading = false;
+            view.showLoading(false);
+            view.showLoadError(message);
+        });
+    }
+
+    private void postComplete(Runnable render) {
+        post(() -> {
+            loading = false;
+            view.showLoading(false);
+            render.run();
+        });
     }
 
     private String messageOf(AppResult<?> result, String fallback) {
@@ -117,5 +169,31 @@ public class WeatherFeedbackPresenter implements WeatherFeedbackContract.Present
         return hasText(nextRefreshAt)
                 ? "현재 날씨 정보를 받아올 수 없어 " + nextRefreshAt + "에 갱신됩니다."
                 : "현재 날씨 정보를 받아올 수 없어 곧 갱신됩니다.";
+    }
+
+    private boolean isEmpty(WeatherFeedback feedback) {
+        return !hasText(feedback.getClothing())
+                && !hasText(feedback.getFood())
+                && !hasText(feedback.getAccommodationNotes());
+    }
+
+    interface UiDispatcher {
+        void post(Runnable action);
+
+        void clear();
+    }
+
+    private static final class AndroidUiDispatcher implements UiDispatcher {
+        private final Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void post(Runnable action) {
+            handler.post(action);
+        }
+
+        @Override
+        public void clear() {
+            handler.removeCallbacksAndMessages(null);
+        }
     }
 }

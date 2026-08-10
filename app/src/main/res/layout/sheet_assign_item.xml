@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BS07 공용 물품 담당자 지정 — 여러 명 중복 지정 가능 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_surface"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/screen_margin"
+    android:paddingTop="@dimen/space_2xl"
+    android:paddingEnd="@dimen/screen_margin"
+    android:paddingBottom="@dimen/space_2xl">
+
+    <TextView
+        android:id="@+id/assignItemTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Bag.TitleM"
+        tools:text="드라이기 담당자 지정" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_2xs"
+        android:text="@string/bs_assign_item_subtitle"
+        android:textAppearance="@style/TextAppearance.Bag.Caption"
+        android:textColor="@color/bag_text_secondary" />
+
+    <LinearLayout
+        android:id="@+id/assignItemMemberList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:orientation="vertical" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/assignItemCompleteButton"
+        style="@style/Widget.Bag.Button.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_2xl"
+        android:text="@string/action_complete" />
+
+</LinearLayout>

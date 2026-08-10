@@ -10,13 +10,23 @@ import java.util.List;
 public interface RoomDetailContract {
 
     interface View {
+        void showLoading(boolean loading);
+
+        void showLoadError(String message);
+
         void showTrip(Trip trip, boolean isHost);
 
         void showWeather(List<Weather> weather);
 
+        void showWeatherPending(String message);
+
+        void showWeatherEmpty();
+
         void showPackingRestrictions(List<PackingItem> items);
 
         void showError(String message);
+
+        void showRetryableError(String message);
 
         void openWeatherFeedback(long tripId);
 
@@ -27,6 +37,10 @@ public interface RoomDetailContract {
 
     interface Presenter {
         void loadRoom(long tripId, boolean initialHost, String inviteCode);
+
+        void restoreRoomContext(long tripId, boolean isHost, int memberCount, String inviteCode);
+
+        void retry();
 
         void onTipsClicked();
 

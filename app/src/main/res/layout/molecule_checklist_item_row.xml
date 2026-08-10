@@ -63,4 +63,16 @@
         android:layout_marginTop="4dp"
         android:layout_marginStart="30dp"
         android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/checklistItemDuplicateBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/checklist_duplicate_badge"
+        android:textAppearance="@style/TextAppearance.Bag.Caption"
+        android:textColor="@color/bag_status_danger"
+        android:textStyle="bold"
+        android:visibility="gone" />
 </LinearLayout>
