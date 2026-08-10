@@ -20,7 +20,7 @@ public final class TripMapper {
     }
 
     public static Trip from(TripDto dto, List<TripMemberDto> memberDtos) {
-        return new Trip(
+        Trip trip = new Trip(
                 dto.getTripId(),
                 dto.getOwnerUserId(),
                 dto.getTripName(),
@@ -34,6 +34,8 @@ public final class TripMapper {
                 dto.getCreatedAt(),
                 fromMembers(memberDtos)
         );
+        trip.setInviteCode(dto.getInviteCode());
+        return trip;
     }
 
     public static List<Trip> fromList(List<TripDto> dtos) {
