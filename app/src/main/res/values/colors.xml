@@ -40,6 +40,8 @@
     <color name="clay_100">#FFF7E7E3</color>
     <color name="clay_900">#FF3A2320</color>
 
+    <color name="oxblood_700">#FF6B2A2A</color>
+
     <color name="white_primitive">#FFFFFFFF</color>
 
     <!-- ============================================================
@@ -87,6 +89,9 @@
     <!-- 상태 -->
     <color name="bag_status_danger">@color/clay_500</color>
     <color name="bag_status_danger_bg">@color/clay_100</color>
+    <!-- S03/S14 카드 스와이프 삭제 배경 전용. bag_status_danger(경고 배지/텍스트)와는
+         용도가 달라 분리 — 스와이프 영역은 더 어둡고 차분한 톤을 쓰기로 함. -->
+    <color name="bag_swipe_delete_bg">@color/oxblood_700</color>
     <!-- status_warning(#E8A33D)을 흰 배경 위 텍스트로 쓰면 명암비 2.3:1 — 미달.
          아이콘/배경 용도로만 쓰고, 읽어야 하는 레이블 텍스트는
          bag_text_tertiary_safe나 bag_status_danger와 짝지어 사용할 것. -->

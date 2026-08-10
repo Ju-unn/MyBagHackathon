@@ -14,10 +14,14 @@ public interface HomeContract {
         void showTrips(List<Trip> trips, Map<Long, Integer> progressByTripId);
 
         void showError(String message);
+
+        void onTripDeleted(long tripId);
     }
 
     interface Presenter {
         void loadTrips();
+
+        void deleteTrip(long tripId);
 
         // Fragment의 뷰가 파괴될 때 호출 — 이후 View 콜백을 막는다
         void onDestroy();
