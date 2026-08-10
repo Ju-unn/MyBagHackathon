@@ -154,36 +154,6 @@ public class TripRepositoryImpl implements TripRepository {
             }
             return AppResult.success(null);
         } catch (IOException e) {
-            Log.e(TAG, "네트워크 요청 실패", e);
-            return AppResult.failure(networkError());
-        }
-    }
-
-    @Override
-    public AppResult<Void> leaveTrip(long tripId) {
-        try {
-            Response<ApiResponseDto<Object>> response = tripApi.leave(new TripIdRequestDto(tripId)).execute();
-            ApiResponseDto<Object> body = response.body();
-            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
-                return AppResult.failure(toError(response, body));
-            }
-            return AppResult.success(null);
-        } catch (IOException e) {
-            Log.e(TAG, "네트워크 요청 실패", e);
-            return AppResult.failure(networkError());
-        }
-    }
-
-    @Override
-    public AppResult<Void> deleteTrip(long tripId) {
-        try {
-            Response<ApiResponseDto<Object>> response = tripApi.delete(new TripIdRequestDto(tripId)).execute();
-            ApiResponseDto<Object> body = response.body();
-            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
-                return AppResult.failure(toError(response, body));
-            }
-            return AppResult.success(null);
-        } catch (IOException e) {
             return AppResult.failure(networkError());
         }
     }
