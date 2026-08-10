@@ -106,7 +106,9 @@ public class TripRepositoryImpl implements TripRepository {
                 return AppResult.failure(toError(response, body));
             }
             TripDetailResponseDto data = body.getData();
-            return AppResult.success(TripMapper.from(data.getTrip(), data.getMembers()));
+            Trip trip = TripMapper.from(data.getTrip(), data.getMembers());
+            trip.setInviteCode(data.getInviteCode());
+            return AppResult.success(trip);
         } catch (IOException e) {
             Log.e(TAG, "네트워크 요청 실패", e);
             return AppResult.failure(networkError());
