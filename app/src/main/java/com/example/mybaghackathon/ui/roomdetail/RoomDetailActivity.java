@@ -200,9 +200,10 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
             Weather weather = weatherList.get(index);
             dates[index].setText(formatWeatherDate(weather.getDate()));
             icons[index].setType(WeatherMapper.toIconType(weather.getCondition()));
-            statuses[index].setText(
-                    conditionLabel(weather.getCondition())
-                            + " " + Math.round(weather.getTempMax()) + "°");
+            statuses[index].setText(getString(
+                    R.string.room_detail_weather_status_format,
+                    conditionLabel(weather.getCondition()),
+                    Math.round(weather.getTempMax())));
         }
     }
 
