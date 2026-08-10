@@ -25,6 +25,9 @@ public class Trip {
     private String status;
     private String createdAt;
     private List<TripMember> members = new ArrayList<>();
+    // 방 상세 조회(GET detail.php) 응답에만 실려오는 값 — trips 테이블 컬럼이 아니라 trip_invites에서 옴.
+    // list.php로 만든 Trip에는 항상 null(방 목록 화면은 초대 기능이 없어 필요 없음).
+    private String inviteCode;
 
     public Trip() {
     }
@@ -151,5 +154,13 @@ public class Trip {
 
     public void setMembers(List<TripMember> members) {
         this.members = members == null ? new ArrayList<>() : new ArrayList<>(members);
+    }
+
+    public String getInviteCode() {
+        return inviteCode;
+    }
+
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
     }
 }
