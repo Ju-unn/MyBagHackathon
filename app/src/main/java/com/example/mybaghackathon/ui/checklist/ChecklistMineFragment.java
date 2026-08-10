@@ -21,6 +21,7 @@ import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
+import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,10 +65,7 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         List<PackingItem> myItems = new ArrayList<>();
         long currentUserId = host.getCurrentUserId();
         for (PackingItem item : host.getChecklistItems()) {
-            boolean personal = "PERSONAL".equalsIgnoreCase(item.getScope());
-            boolean assignedToMe = item.getAssigneeUserId() != null
-                    && item.getAssigneeUserId() == currentUserId;
-            if (personal || assignedToMe) {
+            if (ChecklistItemVisibility.isMine(item, currentUserId)) {
                 myItems.add(item);
             }
         }
@@ -86,8 +84,10 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
     }
 
     private View createItemRow(LinearLayout parent, PackingItem item) {
-        View row = LayoutInflater.from(requireContext())
-                .inflate(R.layout.molecule_checklist_item_row, parent, false);
+        View swipeContainer = LayoutInflater.from(requireContext())
+                .inflate(R.layout.molecule_checklist_swipe_delete_row, parent, false);
+        View row = swipeContainer.findViewById(R.id.checklistSwipeContent);
+        row.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bag_bg_base));
         TextView label = row.findViewById(R.id.checklistItemLabel);
         label.setText(item.getItemName());
         updateCompletedStyle(label, item.isCompleted());
@@ -99,12 +99,9 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         bindRestriction(row, item.getRestrictionType());
         bindItemActions(row, item);
 
-        row.setOnLongClickListener(v -> {
-            showEditSheet(item);
-            return true;
-        });
+        row.setOnClickListener(v -> showEditSheet(item));
         attachSwipeDelete(row, item);
-        return row;
+        return swipeContainer;
     }
 
     private void bindItemActions(View row, PackingItem item) {
@@ -149,9 +146,9 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
                             view.getParent().requestDisallowInterceptTouchEvent(true);
                         }
                         if (swiping) {
-                            view.setTranslationX(deltaX);
-                            view.setAlpha(Math.max(0.35f,
-                                    1f - Math.abs(deltaX) / Math.max(1f, view.getWidth())));
+                            float maxDistance = Math.max(1f, view.getWidth());
+                            view.setTranslationX(Math.max(-maxDistance,
+                                    Math.min(maxDistance, deltaX)));
                             return true;
                         }
                         return false;
@@ -166,7 +163,7 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
                                 && Math.abs(distance) >= view.getWidth() * 0.35f) {
                             host.deleteChecklistItemWithUndo(item);
                         } else {
-                            view.animate().translationX(0f).alpha(1f).setDuration(160L).start();
+                            view.animate().translationX(0f).setDuration(160L).start();
                         }
                         return true;
                     default:
@@ -177,10 +174,19 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
     }
 
     private void showEditSheet(PackingItem item) {
-        AddItemSheet sheet = AddItemSheet.newEditInstance(
+        EditItemSheet sheet = EditItemSheet.newInstance(
                 item.getItemName(), priorityLevel(item.getPriority()));
-        sheet.setOnItemAddedListener((name, priority) ->
-                host.updateChecklistItem(item, name, priority));
+        sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
+            @Override
+            public void onItemRenamed(String newLabel, int priorityLevel) {
+                host.updateChecklistItem(item, newLabel, priorityLevel);
+            }
+
+            @Override
+            public void onItemDeleted() {
+                host.deleteChecklistItemWithUndo(item);
+            }
+        });
         sheet.show(getParentFragmentManager(), "edit_personal_item");
     }
 

@@ -34,6 +34,7 @@ public final class PackingItemMapper {
         return new PackingItem(
                 dto.getPackingItemId(),
                 dto.getTripId(),
+                dto.getCreatedByUserId(),
                 dto.getItemName(),
                 dto.getCategory(),
                 dto.getPriority(),

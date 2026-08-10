@@ -10,6 +10,7 @@ import com.example.mybaghackathon.data.repository.WeatherRepository;
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.model.Trip;
 import com.example.mybaghackathon.model.Weather;
+import com.example.mybaghackathon.model.WeatherForecast;
 
 import java.util.Collections;
 import java.util.List;
@@ -74,17 +75,17 @@ public class RoomDetailPresenter implements RoomDetailContract.Presenter {
                 }
                 post(() -> view.showTrip(trip, isHost));
 
-                if (hasText(trip.getDestinationCity())
-                        && hasText(trip.getStartDate())
-                        && hasText(trip.getEndDate())) {
-                    AppResult<List<Weather>> weatherResult = weatherRepository.getForecast(
-                            trip.getDestinationCity(), trip.getStartDate(), trip.getEndDate());
-                    if (weatherResult.isSuccess()) {
-                        List<Weather> weather = weatherResult.getData() == null
-                                ? Collections.emptyList()
-                                : weatherResult.getData();
-                        post(() -> view.showWeather(weather));
-                    }
+                AppResult<WeatherForecast> weatherResult =
+                        weatherRepository.getForecastByTrip(tripId);
+                if (weatherResult.isSuccess() && weatherResult.getData() != null) {
+                    WeatherForecast forecast = weatherResult.getData();
+                    List<Weather> weather = forecast.isReady() && forecast.getDays() != null
+                            ? forecast.getDays()
+                            : Collections.emptyList();
+                    post(() -> view.showWeather(weather));
+                } else {
+                    post(() -> view.showWeather(Collections.emptyList()));
+                    postError(messageOf(weatherResult, "날씨 예보를 불러오지 못했습니다."));
                 }
 
                 AppResult<List<PackingItem>> packingResult = packingRepository.listItems(tripId, null);
