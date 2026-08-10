@@ -89,6 +89,17 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         presenter.loadTrips();
     }
 
+    // MainActivity가 탭 전환을 replace() 대신 hide()/show()로 처리하기 때문에,
+    // 다른 탭에 있다 이 탭으로 돌아올 때는 onResume이 다시 불리지 않는다.
+    // 그동안 방이 생성/삭제됐을 수 있으니 다시 보일 때마다 목록을 새로 불러온다.
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden && binding != null) {
+            presenter.loadTrips();
+        }
+    }
+
     private void openCreateRoom() {
         startActivity(new Intent(getContext(), CreateRoomActivity.class));
     }
