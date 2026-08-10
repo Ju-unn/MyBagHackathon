@@ -213,6 +213,7 @@
     <string name="fcm_channel_desc">출발 예정(D-7·D-3·D-1) 알림을 보내드려요</string>
     <string name="fcm_departure_title_format">D-%1$d · %2$s</string>
     <string name="fcm_departure_body_format">%1$s 출발이 다가와요. 준비물을 확인해보세요!</string>
+    <string name="fcm_trip_deleted_body">방장이 일정을 삭제했습니다.</string>
 
     <!-- 오버레이 -->
     <string name="bs_invite_title">초대 링크 공유</string>
