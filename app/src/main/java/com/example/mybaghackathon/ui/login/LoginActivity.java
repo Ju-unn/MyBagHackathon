@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
+        EdgeToEdgeUtil.applySystemBarPaddingNoTop(this, binding.getRoot());
 
         AuthRepository authRepository = ((MyBagApplication) getApplication()).getAppContainer().authRepository;
         presenter = new LoginPresenter(this, authRepository);

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +15,6 @@ import androidx.core.content.ContextCompat;
 import com.example.mybaghackathon.MainActivity;
 import com.example.mybaghackathon.app.MyBagApplication;
 import com.example.mybaghackathon.databinding.ActivitySplashBinding;
-import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.login.LoginActivity;
 
 /**
@@ -35,7 +35,14 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
         super.onCreate(savedInstanceState);
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
+        // 풀블리드 이미지 한 장짜리 화면이라 시스템 바 패딩을 넣지 않음(다른 화면과 달리
+        // 여백이 생기면 이미지가 안으로 밀려 배경색이 하단에 노출됨).
+        EdgeToEdge.enable(this);
+        // API 29+에서는 3버튼 내비게이션 바 위에 시스템이 자동으로 옅은 스크림을 덧그려서
+        // navigationBarColor를 지정해도 흰 줄처럼 보임 — 스크림을 꺼서 이미지가 그대로 비치게 함.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
 
         presenter = new SplashPresenter(this,
                 ((MyBagApplication) getApplication()).getAppContainer().tokenStorage);

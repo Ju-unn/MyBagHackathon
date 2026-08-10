@@ -40,6 +40,9 @@
          (참고: https://woojun.app/posts/안드로이드-Splash-screen-제거/) -->
     <style name="Theme.MyBagHackathon.Splash" parent="Theme.MyBagHackathon">
         <item name="android:windowIsTranslucent">true</item>
+        <!-- 3버튼 내비게이션 바는 EdgeToEdge로도 투명해지지 않아 앱 기본 흰색
+             navigationBarColor가 그대로 남음 — 스플래시 이미지 하단 색으로 맞춤. -->
+        <item name="android:navigationBarColor">@color/bag_splash_nav_bar</item>
     </style>
 
     <!-- 사진 전체화면 미리보기용 — 타이틀바 없이 화면을 꽉 채우는 다이얼로그.
@@ -85,5 +88,8 @@
         <item name="colorSurfaceContainerHighest">@color/bag_bg_base</item>
         <item name="colorSurfaceContainerLow">@color/bag_bg_base</item>
         <item name="colorSurfaceContainerLowest">@color/bag_bg_base</item>
+        <!-- elevationOverlayColor 기본값이 colorPrimary(브랜드 블루)라 배경에 섞여서
+             회색이 아니라 푸르스름하게 뜨는 문제 방지: 틴트 색을 배경색과 동일하게 맞춤. -->
+        <item name="elevationOverlayColor">@color/bag_bg_base</item>
     </style>
 </resources>
