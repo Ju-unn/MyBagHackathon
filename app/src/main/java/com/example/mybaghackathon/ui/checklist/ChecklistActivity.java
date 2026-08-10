@@ -2,7 +2,6 @@ package com.example.mybaghackathon.ui.checklist;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -165,7 +164,30 @@ public class ChecklistActivity extends AppCompatActivity
     @Override
     public void showError(String message) {
         if (canUpdateUi()) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            Snackbar.make(contentRoot(), message, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void showRetryableError(String message) {
+        if (canUpdateUi()) {
+            Snackbar.make(contentRoot(), message, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.action_retry, v -> presenter.refreshChecklist())
+                    .show();
+        }
+    }
+
+    @Override
+    public void showLoading(boolean loading) {
+        if (!canUpdateUi()) {
+            return;
+        }
+        if (soloMode && soloBinding != null) {
+            soloBinding.checklistSoloLoadingOverlay.setVisibility(
+                    loading ? View.VISIBLE : View.GONE);
+        } else if (multiBinding != null) {
+            multiBinding.checklistLoadingOverlay.setVisibility(
+                    loading ? View.VISIBLE : View.GONE);
         }
     }
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_checklist_swipe_delete"
+    android:clipChildren="true">
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start|center_vertical"
+        android:importantForAccessibility="no"
+        android:padding="12dp"
+        android:src="@drawable/ic_delete"
+        app:tint="@android:color/white" />
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end|center_vertical"
+        android:importantForAccessibility="no"
+        android:padding="12dp"
+        android:src="@drawable/ic_delete"
+        app:tint="@android:color/white" />
+
+    <include
+        android:id="@+id/checklistSwipeContent"
+        layout="@layout/molecule_checklist_item_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</FrameLayout>

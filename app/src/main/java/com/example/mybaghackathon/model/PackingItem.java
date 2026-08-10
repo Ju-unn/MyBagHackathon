@@ -9,6 +9,7 @@ public class PackingItem implements Serializable {
 
     private long packingItemId;
     private long tripId;
+    private long createdByUserId;
     private String itemName;
     private String category;
     private String priority;
@@ -16,7 +17,7 @@ public class PackingItem implements Serializable {
     private String source;
     private String restrictionType;
     private String restrictionReason;
-    // 담당자 user_id만 들고 있음(서버가 이 값만 줌) — 화면에서 이미 들고 있는 멤버 목록과 대조해 TripMember를 구한다
+    // 담당자 user_id는 화면에서 이미 들고 있는 멤버 목록과 대조해 TripMember를 구한다.
     private Long assigneeUserId;
     private boolean completed;
     private String completedAt;
@@ -30,6 +31,7 @@ public class PackingItem implements Serializable {
     public PackingItem(
             long packingItemId,
             long tripId,
+            long createdByUserId,
             String itemName,
             String category,
             String priority,
@@ -45,6 +47,7 @@ public class PackingItem implements Serializable {
     ) {
         this.packingItemId = packingItemId;
         this.tripId = tripId;
+        this.createdByUserId = createdByUserId;
         this.itemName = itemName;
         this.category = category;
         this.priority = priority;
@@ -73,6 +76,14 @@ public class PackingItem implements Serializable {
 
     public void setTripId(long tripId) {
         this.tripId = tripId;
+    }
+
+    public long getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(long createdByUserId) {
+        this.createdByUserId = createdByUserId;
     }
 
     public String getItemName() {
