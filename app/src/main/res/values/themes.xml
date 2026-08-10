@@ -85,5 +85,8 @@
         <item name="colorSurfaceContainerHighest">@color/bag_bg_base</item>
         <item name="colorSurfaceContainerLow">@color/bag_bg_base</item>
         <item name="colorSurfaceContainerLowest">@color/bag_bg_base</item>
+        <!-- elevationOverlayColor 기본값이 colorPrimary(브랜드 블루)라 배경에 섞여서
+             회색이 아니라 푸르스름하게 뜨는 문제 방지: 틴트 색을 배경색과 동일하게 맞춤. -->
+        <item name="elevationOverlayColor">@color/bag_bg_base</item>
     </style>
 </resources>
