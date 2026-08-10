@@ -40,11 +40,11 @@
     <string name="home_empty_desc">방을 만들고 여행을 준비해보아요</string>
     <string name="empty_state_create_room">방 만들기</string>
     <string name="trip_delete_dialog_title">여행방을 삭제할까요?</string>
-    <string name="trip_delete_dialog_message_format">\'%1$s\' 방을 삭제하시겠어요?\n이 작업은 되돌릴 수 없어요.</string>
+    <string name="trip_delete_dialog_message_format">\'%1$s\' 방을 삭제하시겠어요?\n이 작업은 되돌릴 수 없어요</string>
     <string name="trip_deleted_toast">여행방이 삭제됐어요</string>
     <string name="action_leave">나가기</string>
     <string name="trip_leave_dialog_title">여행방에서 나갈까요?</string>
-    <string name="trip_leave_dialog_message_format">\'%1$s\' 방에서 나가시겠어요?\n다시 참여하려면 초대가 필요해요.</string>
+    <string name="trip_leave_dialog_message_format">\'%1$s\' 방에서 나가시겠어요?\n다시 참여하려면 초대가 필요해요</string>
     <string name="trip_left_toast">여행방에서 나갔어요</string>
     <string name="checklist_progress_format">체크리스트 %1$d%% 완료</string>
     <string name="nav_home">홈</string>
@@ -87,19 +87,19 @@
     <string name="room_detail_invite_note">+ 버튼은 방장에게만 보여요</string>
     <string name="room_detail_view_tips">팁 보기</string>
     <string name="room_detail_loading_title">여행 정보를 불러오는 중</string>
-    <string name="room_detail_loading_message">일정과 날씨, 준비물을 확인하고 있어요.</string>
+    <string name="room_detail_loading_message">일정과 날씨, 준비물을 확인하고 있어요</string>
     <string name="room_detail_error_title">방 정보를 불러오지 못했어요</string>
-    <string name="room_detail_weather_empty">표시할 날씨 예보가 아직 없어요.</string>
+    <string name="room_detail_weather_empty">표시할 날씨 예보가 아직 없어요</string>
 
     <!-- S05 일정 사진 업로드 -->
     <string name="upload_title">일정 사진 업로드</string>
-    <string name="upload_desc">일정표와 예약 확인 사진을 한 번에 올려주세요.\nAI가 숙소 일정과 지역, 날씨를 찾아 준비물까지 만들어드려요.</string>
+    <string name="upload_desc">일정표와 예약 확인 사진을 한 번에 올려주세요\nAI가 숙소 일정과 지역, 날씨를 찾아 준비물까지 만들어드려요</string>
     <string name="upload_dropzone_title">탭해서 여러 장 한 번에 올리기</string>
     <string name="upload_dropzone_desc">일정표·예약 확인 사진을 한꺼번에 선택하세요</string>
     <string name="upload_start_analysis">AI 분석 시작하기</string>
     <string name="upload_error_no_photos">사진을 1장 이상 선택해주세요</string>
     <string name="upload_error_max_photos">사진은 최대 5장까지 선택할 수 있어요</string>
-    <string name="upload_error_compress_failed">사진을 처리하는 중 문제가 생겼어요. 다시 시도해주세요</string>
+    <string name="upload_error_compress_failed">사진을 처리하는 중 문제가 생겼어요. 다시 시도해주세요.</string>
 
     <!-- S07 1차 결과 확인 -->
     <string name="schedule_confirm_title">결과를 확인해주세요</string>
@@ -128,9 +128,9 @@
     <string name="review_destination_label">여행지</string>
     <string name="review_dates_label">숙소 일정</string>
     <string name="review_weather_heading">일정별 날씨</string>
-    <string name="review_weather_disclaimer">AI 데이터의 기반으로 정리한 날씨 정보라 실제와 다를 수 있어요.\n출발 전 최신 기상 예보를 다시 확인해주세요.</string>
+    <string name="review_weather_disclaimer">AI 데이터의 기반으로 정리한 날씨 정보라 실제와 다를 수 있어요\n출발 전 최신 기상 예보를 다시 확인해주세요</string>
     <string name="review_weather_limit_notice">최대 10일치 날씨만 제공돼요. 이후 일정 날씨는 출발이 가까워지면 기상청 등 최신 예보로 확인해주세요.</string>
-    <string name="review_restriction_disclaimer">AI 데이터의 기반으로 정리한 반입 규정이라 실제와 다를 수 있어요.\n출발 전 항공사 반입 규정을 다시 확인해주세요.</string>
+    <string name="review_restriction_disclaimer">AI 데이터의 기반으로 정리한 반입 규정이라 실제와 다를 수 있어요\n출발 전 항공사 반입 규정을 다시 확인해주세요</string>
     <string name="weather_condition_sun">맑음</string>
     <string name="weather_condition_rain">비</string>
     <string name="weather_condition_cloud">흐림</string>
@@ -140,7 +140,7 @@
     <string name="review_restriction_warning_multiple">%1$s 등 %2$d개 항목에 반입 규정이 있어요</string>
     <string name="review_restriction_dialog_title">반입 규정 안내</string>
     <string name="review_items_heading">추천 준비물</string>
-    <string name="review_items_desc">체크한 항목은 공용 체크리스트에 담겨요</string>
+    <string name="review_items_desc">체크한 항목만 공용 체크리스트에 담겨요\n체크하지 않은 항목은 방 생성 시 포함되지 않아요</string>
     <string name="review_priority_high">필수</string>
     <string name="review_priority_mid">중간</string>
     <string name="review_priority_low">선택</string>
@@ -161,11 +161,11 @@
     <string name="feedback_stay_desc">체크인 시간이 오후 3시부터예요. 늦게 도착한다면 미리 연락해두세요.</string>
     <string name="feedback_view_checklist">체크리스트 보기</string>
     <string name="feedback_loading_title">여행 팁을 준비하는 중</string>
-    <string name="feedback_loading_message">날씨와 여행 정보를 확인하고 있어요.</string>
+    <string name="feedback_loading_message">날씨와 여행 정보를 확인하고 있어요</string>
     <string name="feedback_error_title">여행 팁을 불러오지 못했어요</string>
     <string name="feedback_pending_title">여행 팁을 준비하고 있어요</string>
     <string name="feedback_empty_title">표시할 여행 팁이 없어요</string>
-    <string name="feedback_empty_message">잠시 후 다시 확인해주세요.</string>
+    <string name="feedback_empty_message">잠시 후 다시 확인해주세요</string>
 
     <!-- S10-12 체크리스트 -->
     <string name="checklist_title">짐 체크리스트</string>
@@ -192,9 +192,9 @@
     <string name="checklist_unassigned">미지정</string>
     <string name="checklist_unassigned_empty">아직 담당이 없어요</string>
     <string name="checklist_common_empty_title">공용 준비물이 아직 없어요</string>
-    <string name="checklist_common_empty_desc">아래 버튼을 눌러 공용 준비물을 추가해 보세요.</string>
+    <string name="checklist_common_empty_desc">아래 버튼을 눌러 공용 준비물을 추가해 보세요</string>
     <string name="checklist_filter_empty_title">선택한 중요도에 물품이 없어요</string>
-    <string name="checklist_filter_empty_desc">다른 중요도 필터를 선택해 보세요.</string>
+    <string name="checklist_filter_empty_desc">다른 중요도 필터를 선택해 보세요</string>
     <string name="checklist_assignment_hint">담당자별 준비 상태를 한눈에 확인할 수 있어요</string>
     <string name="checklist_assignment_summary">2명이 함께 준비 중</string>
     <string name="checklist_mine_name">민지</string>
@@ -206,8 +206,8 @@
     <string name="checklist_unassign_title">내 목록에서 삭제</string>
     <string name="checklist_unassign_message">%1$s의 담당자를 해제할까요? 공용 목록의 물품은 유지됩니다.</string>
     <string name="checklist_unassign_action">담당 해제</string>
-    <string name="checklist_host_only">공용 물품은 방장만 변경할 수 있습니다.</string>
-    <string name="checklist_owner_only">내 개인 물품만 변경할 수 있습니다.</string>
+    <string name="checklist_host_only">공용 물품은 방장만 변경할 수 있습니다</string>
+    <string name="checklist_owner_only">내 개인 물품만 변경할 수 있습니다</string>
 
     <!-- S13 공용 여행 -->
     <string name="archive_title">공용 여행</string>
@@ -246,8 +246,8 @@
     <string name="fcm_channel_name">여행 알림</string>
     <string name="fcm_channel_desc">출발 예정(D-7·D-3·D-1) 알림을 보내드려요</string>
     <string name="fcm_departure_title_format">D-%1$d · %2$s</string>
-    <string name="fcm_departure_body_format">%1$s 출발이 다가와요. 준비물을 확인해보세요!</string>
-    <string name="fcm_trip_deleted_body">방장이 일정을 삭제했습니다.</string>
+    <string name="fcm_departure_body_format">%1$s 출발이 다가와요. 준비물을 확인해보세요.</string>
+    <string name="fcm_trip_deleted_body">방장이 일정을 삭제했습니다</string>
 
     <!-- 오버레이 -->
     <string name="bs_invite_title">초대 링크 공유</string>
@@ -255,8 +255,8 @@
     <string name="bs_add_item_name_label">물품명</string>
     <string name="bs_add_item_priority_label">중요도</string>
     <string name="bs_edit_item_title">물품 수정</string>
-    <string name="item_name_required">물품 이름을 입력해주세요.</string>
-    <string name="item_name_too_long">물품 이름은 %1$d자 이하로 입력해주세요.</string>
+    <string name="item_name_required">물품 이름을 입력해주세요</string>
+    <string name="item_name_too_long">물품 이름은 %1$d자 이하로 입력해주세요</string>
     <string name="bs_assign_item_title_format">%1$s 담당자 지정</string>
     <string name="bs_assign_item_subtitle">여러 명이 함께 챙길 수 있어요</string>
     <string name="action_complete">완료</string>
