@@ -102,12 +102,16 @@ public class ChecklistPresenterTest {
     public void hostCanAssignCommonItemToMultipleMembers() {
         Fixture fixture = new Fixture(true);
         PackingItem common = fixture.replaceWithCommonItem(CURRENT_USER_ID);
+        common.setItemGroupId(500L);
         fixture.loadInitialData();
 
-        fixture.presenter.assignItems(common, java.util.Arrays.asList(CURRENT_USER_ID, 8L, 9L));
+        fixture.presenter.assignItems(
+                common,
+                java.util.Arrays.asList(CURRENT_USER_ID, 8L, 8L, null, -1L, 9L));
         fixture.executor.runNext();
 
         assertEquals(1, fixture.packingRepository.assignMultipleCalls);
+        assertEquals(500L, fixture.packingRepository.lastGroupId);
         assertEquals(java.util.Arrays.asList(CURRENT_USER_ID, 8L, 9L),
                 fixture.packingRepository.lastAssigneeUserIds);
     }
@@ -145,6 +149,9 @@ public class ChecklistPresenterTest {
         PackingItem staying = fixture.commonItem(101L, CURRENT_USER_ID);
         PackingItem leavingA = fixture.commonItem(102L, 8L);
         PackingItem leavingB = fixture.commonItem(103L, 9L);
+        staying.setItemGroupId(500L);
+        leavingA.setItemGroupId(500L);
+        leavingB.setItemGroupId(500L);
         List<PackingItem> group = java.util.Arrays.asList(staying, leavingA, leavingB);
 
         fixture.presenter.reassignGroup(group, java.util.Arrays.asList(CURRENT_USER_ID, 10L));
@@ -153,7 +160,7 @@ public class ChecklistPresenterTest {
         // 서버 assign.php가 그룹 전체를 트랜잭션으로 동기화하므로 최종 목록 한 번만 보낸다
         // (row 재사용/복제/삭제는 전부 서버 책임 — 클라이언트는 delete를 호출하지 않음)
         assertEquals(1, fixture.packingRepository.assignMultipleCalls);
-        assertEquals(101L, fixture.packingRepository.lastGroupId);
+        assertEquals(500L, fixture.packingRepository.lastGroupId);
         assertEquals(java.util.Arrays.asList(CURRENT_USER_ID, 10L), fixture.packingRepository.lastAssigneeUserIds);
         assertEquals(0, fixture.packingRepository.deleteCalls);
     }
@@ -165,6 +172,8 @@ public class ChecklistPresenterTest {
 
         PackingItem itemA = fixture.commonItem(101L, 8L);
         PackingItem itemB = fixture.commonItem(102L, 9L);
+        itemA.setItemGroupId(500L);
+        itemB.setItemGroupId(500L);
         List<PackingItem> group = java.util.Arrays.asList(itemA, itemB);
 
         fixture.presenter.reassignGroup(group, Collections.emptyList());
@@ -174,6 +183,24 @@ public class ChecklistPresenterTest {
         assertEquals(Collections.emptyList(), fixture.packingRepository.lastAssigneeUserIds);
         assertEquals(0, fixture.packingRepository.assignCalls);
         assertEquals(0, fixture.packingRepository.deleteCalls);
+    }
+
+    @Test
+    public void reassignGroup_rejectsRowsFromDifferentServerGroups() {
+        Fixture fixture = new Fixture(true);
+        fixture.loadInitialData();
+
+        PackingItem itemA = fixture.commonItem(101L, 8L);
+        PackingItem itemB = fixture.commonItem(102L, 9L);
+        itemA.setItemGroupId(500L);
+        itemB.setItemGroupId(600L);
+
+        fixture.presenter.reassignGroup(
+                java.util.Arrays.asList(itemA, itemB),
+                java.util.Arrays.asList(CURRENT_USER_ID, 10L));
+
+        assertEquals(0, fixture.packingRepository.assignMultipleCalls);
+        assertTrue(fixture.view.errorShown);
     }
 
     @Test
