@@ -105,9 +105,6 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
             }
             return Unit.INSTANCE;
         }
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "카카오 액세스 토큰 발급: " + token.getAccessToken());
-        }
         presenter.login(token.getAccessToken(), binding.agreePrivacy.isChecked(), binding.agreeTerms.isChecked());
         return Unit.INSTANCE;
     }
