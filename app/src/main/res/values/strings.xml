@@ -55,7 +55,7 @@
     <string name="nav_home">홈</string>
     <string name="nav_trips">공용 여행</string>
     <string name="nav_profile">프로필</string>
-    <string name="main_press_back_again_to_exit">뒤로 버튼을 한 번 더 누르면 종료됩니다</string>
+    <string name="main_press_back_again_to_exit">뒤로가기를 한 번 더 누르면 종료됩니다</string>
 
     <!-- S04 방 만들기 -->
     <string name="create_room_title">방 만들기</string>
