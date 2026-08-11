@@ -105,6 +105,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:minHeight="@dimen/button_height_secondary"
             android:text="@string/action_save" />
     </LinearLayout>
 
