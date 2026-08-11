@@ -2,7 +2,9 @@ package com.example.mybaghackathon;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -23,7 +25,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static final long EXIT_CONFIRM_WINDOW_MS = 2000L;
+
     private Fragment activeFragment;
+    private long lastBackPressedAt = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,21 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.mainBottomNav);
         bottomNav.setOnItemSelectedListener(this::onNavItemSelected);
+
+        // 앱의 루트 화면이라 뒤로가기 누르면 바로 종료됨 — 실수로 나가는 걸 막기 위해
+        // 2초 안에 한 번 더 눌러야 진짜 종료되게 처리
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                long now = System.currentTimeMillis();
+                if (now - lastBackPressedAt < EXIT_CONFIRM_WINDOW_MS) {
+                    finish();
+                } else {
+                    lastBackPressedAt = now;
+                    Toast.makeText(MainActivity.this, R.string.main_press_back_again_to_exit, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         if (savedInstanceState == null) {
             showFragment(R.id.nav_home, HomeFragment::new);
