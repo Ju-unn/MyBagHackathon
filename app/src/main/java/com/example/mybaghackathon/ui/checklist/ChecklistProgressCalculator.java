@@ -16,7 +16,7 @@ final class ChecklistProgressCalculator {
         Map<Long, GroupProgress> groups = new LinkedHashMap<>();
         if (items != null) {
             for (PackingItem item : items) {
-                if (!isSelectedAiItem(item)) {
+                if (!ChecklistItemSelection.isSelectedRecommendation(item)) {
                     continue;
                 }
                 long groupId = item.getItemGroupId();
@@ -37,13 +37,6 @@ final class ChecklistProgressCalculator {
             }
         }
         return new Progress(completed, groups.size());
-    }
-
-    private static boolean isSelectedAiItem(PackingItem item) {
-        return item != null
-                && "AI".equalsIgnoreCase(item.getSource())
-                && !"EXCLUDED".equalsIgnoreCase(item.getItemStatus())
-                && !"DELETED".equalsIgnoreCase(item.getItemStatus());
     }
 
     static final class Progress {
