@@ -38,7 +38,13 @@ public interface RoomDetailContract {
     interface Presenter {
         void loadRoom(long tripId, boolean initialHost, String inviteCode);
 
-        void restoreRoomContext(long tripId, boolean isHost, int memberCount, String inviteCode);
+        void restoreRoomContext(
+                long tripId,
+                boolean isHost,
+                int expectedMemberCount,
+                int joinedMemberCount,
+                String inviteCode
+        );
 
         void retry();
 

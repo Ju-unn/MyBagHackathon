@@ -64,6 +64,59 @@ public class RoomDetailPresenterTest {
         assertFalse(view.tripShown);
     }
 
+    @Test
+    public void checklistUsesExpectedMemberCountInsteadOfJoinedMemberCount() {
+        RecordingView view = new RecordingView();
+        QueuedExecutor executor = new QueuedExecutor();
+        Trip trip = trip();
+        trip.setExpectedMemberCount(4);
+        RoomDetailPresenter presenter = presenter(
+                view, executor, AppResult.success(trip),
+                AppResult.success(new WeatherForecast(true, null, Collections.emptyList())));
+
+        presenter.loadRoom(3L, true, "ABC");
+        executor.runNext();
+        presenter.onChecklistClicked();
+
+        assertEquals(4, view.openedChecklistMemberCount);
+    }
+
+    @Test
+    public void soloRoomAndFullRoomCannotShareInvite() {
+        RecordingView soloView = new RecordingView();
+        RoomDetailPresenter soloPresenter = presenter(
+                soloView, new QueuedExecutor(), AppResult.success(trip()),
+                AppResult.success(new WeatherForecast(true, null, Collections.emptyList())));
+        soloPresenter.restoreRoomContext(3L, true, 1, 1, "ABC");
+        soloPresenter.onInviteClicked();
+
+        RecordingView fullView = new RecordingView();
+        RoomDetailPresenter fullPresenter = presenter(
+                fullView, new QueuedExecutor(), AppResult.success(trip()),
+                AppResult.success(new WeatherForecast(true, null, Collections.emptyList())));
+        fullPresenter.restoreRoomContext(3L, true, 2, 2, "ABC");
+        fullPresenter.onInviteClicked();
+
+        assertFalse(soloView.inviteShared);
+        assertTrue(soloView.errorShown);
+        assertFalse(fullView.inviteShared);
+        assertTrue(fullView.errorShown);
+    }
+
+    @Test
+    public void hostCanShareInviteWhileExpectedRoomHasCapacity() {
+        RecordingView view = new RecordingView();
+        RoomDetailPresenter presenter = presenter(
+                view, new QueuedExecutor(), AppResult.success(trip()),
+                AppResult.success(new WeatherForecast(true, null, Collections.emptyList())));
+        presenter.restoreRoomContext(3L, true, 5, 3, "ABC");
+
+        presenter.onInviteClicked();
+
+        assertTrue(view.inviteShared);
+        assertFalse(view.errorShown);
+    }
+
     private RoomDetailPresenter presenter(
             RecordingView view, QueuedExecutor executor,
             AppResult<Trip> tripResult, AppResult<WeatherForecast> forecastResult) {
@@ -100,6 +153,9 @@ public class RoomDetailPresenterTest {
         private boolean loadError;
         private boolean tripShown;
         private boolean weatherEmpty;
+        private boolean errorShown;
+        private boolean inviteShared;
+        private int openedChecklistMemberCount;
         @Override public void showLoading(boolean loading) { this.loading = loading; }
         @Override public void showLoadError(String message) { loadError = true; }
         @Override public void showTrip(Trip trip, boolean isHost) { tripShown = true; }
@@ -107,11 +163,13 @@ public class RoomDetailPresenterTest {
         @Override public void showWeatherPending(String message) { }
         @Override public void showWeatherEmpty() { weatherEmpty = true; }
         @Override public void showPackingRestrictions(List<PackingItem> items) { }
-        @Override public void showError(String message) { }
+        @Override public void showError(String message) { errorShown = true; }
         @Override public void showRetryableError(String message) { }
         @Override public void openWeatherFeedback(long tripId) { }
-        @Override public void openChecklist(long tripId, int memberCount, boolean isHost) { }
-        @Override public void showInviteShare(String inviteCode) { }
+        @Override public void openChecklist(long tripId, int memberCount, boolean isHost) {
+            openedChecklistMemberCount = memberCount;
+        }
+        @Override public void showInviteShare(String inviteCode) { inviteShared = true; }
     }
 
     private static final class DirectDispatcher implements RoomDetailPresenter.UiDispatcher {

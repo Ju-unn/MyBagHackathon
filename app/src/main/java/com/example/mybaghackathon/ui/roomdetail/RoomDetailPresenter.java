@@ -32,7 +32,9 @@ public class RoomDetailPresenter implements RoomDetailContract.Presenter {
     private boolean loading;
     private long tripId = -1L;
     private boolean isHost;
+    // 방 생성 시 정한 여행 인원. 1인/다인 체크리스트 분기와 초대 정원 기준이다.
     private int memberCount = 1;
+    private int joinedMemberCount = 1;
     private String inviteCode;
 
     public RoomDetailPresenter(
@@ -75,10 +77,16 @@ public class RoomDetailPresenter implements RoomDetailContract.Presenter {
 
     @Override
     public void restoreRoomContext(
-            long tripId, boolean isHost, int memberCount, String inviteCode) {
+            long tripId,
+            boolean isHost,
+            int expectedMemberCount,
+            int joinedMemberCount,
+            String inviteCode
+    ) {
         this.tripId = tripId;
         this.isHost = isHost;
-        this.memberCount = Math.max(1, memberCount);
+        this.memberCount = Math.max(1, expectedMemberCount);
+        this.joinedMemberCount = Math.max(1, joinedMemberCount);
         this.inviteCode = inviteCode;
     }
 
@@ -106,7 +114,8 @@ public class RoomDetailPresenter implements RoomDetailContract.Presenter {
 
             Trip trip = tripResult.getData();
             List<?> tripMembers = trip.getMembers();
-            memberCount = Math.max(1, tripMembers == null ? 0 : tripMembers.size());
+            joinedMemberCount = Math.max(1, tripMembers == null ? 0 : tripMembers.size());
+            memberCount = expectedMemberCountOf(trip, joinedMemberCount);
             if (currentUserId > 0L) {
                 isHost = trip.getOwnerUserId() == currentUserId;
             }
@@ -171,6 +180,10 @@ public class RoomDetailPresenter implements RoomDetailContract.Presenter {
     public void onInviteClicked() {
         if (!isHost) {
             view.showError("방장만 초대 링크를 공유할 수 있습니다.");
+        } else if (memberCount <= 1) {
+            view.showError("1인 여행방에서는 참여자를 초대할 수 없습니다.");
+        } else if (joinedMemberCount >= memberCount) {
+            view.showError("설정한 여행 인원이 모두 참여했습니다.");
         } else if (!hasText(inviteCode)) {
             view.showError("초대 코드를 불러오지 못했습니다.");
         } else {
@@ -224,6 +237,11 @@ public class RoomDetailPresenter implements RoomDetailContract.Presenter {
 
     private boolean hasText(String value) {
         return value != null && !value.trim().isEmpty();
+    }
+
+    private int expectedMemberCountOf(Trip trip, int fallback) {
+        Integer expected = trip == null ? null : trip.getExpectedMemberCount();
+        return expected == null || expected <= 0 ? Math.max(1, fallback) : expected;
     }
 
     private String pendingMessage(String nextRefreshAt) {

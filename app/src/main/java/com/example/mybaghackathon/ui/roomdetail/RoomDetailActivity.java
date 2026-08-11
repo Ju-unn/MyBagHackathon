@@ -140,7 +140,8 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
 
         binding.roomDetailTopBar.topAppBarCompactTitle.setText(
                 hasText(roomName) ? roomName.trim() : DEFAULT_ROOM_NAME);
-        updateHostUi(initialHost);
+        // 설정 인원을 불러오기 전에는 1인 방 여부를 알 수 없으므로 초대 UI를 숨긴다.
+        binding.roomDetailHostInviteArea.setVisibility(View.GONE);
         presenter.loadRoom(tripId, initialHost, inviteCode);
     }
 
@@ -191,7 +192,12 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
                 joinNonEmpty(" ", trip.getDestinationCountry(), trip.getDestinationCity()));
         binding.roomDetailDatesValue.setText(
                 formatTripDateRange(trip.getStartDate(), trip.getEndDate()));
-        updateHostUi(isHost);
+        int joinedMemberCount = trip.getMembers() == null
+                ? 1 : Math.max(1, trip.getMembers().size());
+        int expectedMemberCount = trip.getExpectedMemberCount() == null
+                || trip.getExpectedMemberCount() <= 0
+                ? joinedMemberCount : trip.getExpectedMemberCount();
+        updateInviteUi(isHost, expectedMemberCount, joinedMemberCount);
         showMembers(trip.getMembers());
     }
 
@@ -331,8 +337,16 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         }
     }
 
-    private void updateHostUi(boolean isHost) {
-        binding.roomDetailHostInviteArea.setVisibility(isHost ? View.VISIBLE : View.GONE);
+    private void updateInviteUi(
+            boolean isHost,
+            int expectedMemberCount,
+            int joinedMemberCount
+    ) {
+        boolean canInvite = isHost
+                && expectedMemberCount > 1
+                && joinedMemberCount < expectedMemberCount;
+        binding.roomDetailHostInviteArea.setVisibility(
+                canInvite ? View.VISIBLE : View.GONE);
     }
 
     private void showWeatherState(String message) {
@@ -359,10 +373,14 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
             inviteCode = getIntent().getStringExtra(EXTRA_INVITE_CODE);
         }
         inviteCode = resolveInviteCode(snapshot.trip.getTripId(), inviteCode);
-        int memberCount = snapshot.trip.getMembers() == null
+        int joinedMemberCount = snapshot.trip.getMembers() == null
                 ? 1 : Math.max(1, snapshot.trip.getMembers().size());
+        int expectedMemberCount = snapshot.trip.getExpectedMemberCount() == null
+                || snapshot.trip.getExpectedMemberCount() <= 0
+                ? joinedMemberCount : snapshot.trip.getExpectedMemberCount();
         presenter.restoreRoomContext(
-                snapshot.trip.getTripId(), snapshot.isHost, memberCount, inviteCode);
+                snapshot.trip.getTripId(), snapshot.isHost,
+                expectedMemberCount, joinedMemberCount, inviteCode);
         showTrip(snapshot.trip, snapshot.isHost);
         if (hasText(snapshot.weatherState)) {
             showWeatherState(snapshot.weatherState);

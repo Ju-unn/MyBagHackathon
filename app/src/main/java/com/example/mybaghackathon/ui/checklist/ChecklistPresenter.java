@@ -33,6 +33,7 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
     private boolean loading;
     private long tripId = -1L;
     private boolean isHost;
+    private int expectedMemberCount = 1;
     private String tripName = "여행 체크리스트";
     private PendingDelete pendingDelete;
 
@@ -305,6 +306,10 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
         }
         members.clear();
         members.addAll(loadedMembers);
+        Integer expected = trip.getExpectedMemberCount();
+        expectedMemberCount = expected == null || expected <= 0
+                ? Math.max(1, loadedMembers.size())
+                : expected;
         items.clear();
         items.addAll(loadedItems);
         pendingDelete = null;
@@ -359,12 +364,11 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
     }
 
     private void publishChecklist() {
-        int memberCount = Math.max(1, members.size());
         view.showChecklist(
                 tripName,
                 new ArrayList<>(items),
                 new ArrayList<>(members),
-                memberCount,
+                expectedMemberCount,
                 isHost
         );
     }

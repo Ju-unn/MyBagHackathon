@@ -44,6 +44,17 @@ public class ChecklistPresenterTest {
     }
 
     @Test
+    public void loadChecklist_publishesExpectedMemberCountForRoomMode() {
+        Fixture fixture = new Fixture();
+        fixture.tripRepository.trip.setExpectedMemberCount(5);
+
+        fixture.loadInitialData();
+
+        assertEquals(5, fixture.view.memberCount);
+        assertEquals(1, fixture.view.members.size());
+    }
+
+    @Test
     public void duplicateAddWhileLoading_isIgnored() {
         Fixture fixture = new Fixture();
         fixture.loadInitialData();
@@ -297,6 +308,7 @@ public class ChecklistPresenterTest {
         private boolean loading;
         private boolean deleteUndoShown;
         private boolean errorShown;
+        private int memberCount;
 
         @Override
         public void showChecklist(String tripName, List<PackingItem> items,
@@ -304,6 +316,7 @@ public class ChecklistPresenterTest {
             this.tripName = tripName;
             this.items = items;
             this.members = members;
+            this.memberCount = memberCount;
             this.host = isHost;
         }
 
