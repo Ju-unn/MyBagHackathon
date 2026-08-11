@@ -42,6 +42,11 @@ public class NotificationSettingsPresenter implements NotificationSettingsContra
     }
 
     @Override
+    public void updateMaster(boolean enabled) {
+        update(enabled, enabled, enabled);
+    }
+
+    @Override
     public void updateD7(boolean enabled) {
         update(enabled, null, null);
     }
