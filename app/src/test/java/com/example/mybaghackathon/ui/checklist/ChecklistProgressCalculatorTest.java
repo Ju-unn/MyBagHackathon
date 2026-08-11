@@ -17,12 +17,9 @@ public class ChecklistProgressCalculatorTest {
         PackingItem userItem = item(3L, 3L, "USER", "ACTIVE", true);
         PackingItem defaultItem = item(4L, 4L, "DEFAULT", "ACTIVE", true);
         PackingItem excludedAi = item(5L, 5L, "AI", "EXCLUDED", true);
-        PackingItem uncheckedAi = item(6L, 6L, "AI", "ACTIVE", true);
-        uncheckedAi.setScope("PERSONAL");
 
         ChecklistProgressCalculator.Progress progress = ChecklistProgressCalculator.calculate(
-                Arrays.asList(completedAi, incompleteAi, userItem, defaultItem,
-                        excludedAi, uncheckedAi));
+                Arrays.asList(completedAi, incompleteAi, userItem, defaultItem, excludedAi));
 
         assertEquals(1, progress.completed);
         assertEquals(2, progress.total);
@@ -53,9 +50,14 @@ public class ChecklistProgressCalculatorTest {
             recommendations[index].setScope("PERSONAL");
         }
 
+        java.util.List<PackingItem> filtered = ChecklistSelectionFilter.apply(
+                Arrays.asList(recommendations),
+                java.util.Collections.singleton(
+                        ChecklistSelectionFilter.normalize(recommendations[0].getItemName())));
         ChecklistProgressCalculator.Progress progress =
-                ChecklistProgressCalculator.calculate(Arrays.asList(recommendations));
+                ChecklistProgressCalculator.calculate(filtered);
 
+        assertEquals(1, filtered.size());
         assertEquals(0, progress.completed);
         assertEquals(1, progress.total);
         assertEquals(0, progress.percent());
@@ -65,6 +67,7 @@ public class ChecklistProgressCalculatorTest {
         PackingItem item = new PackingItem();
         item.setPackingItemId(id);
         item.setItemGroupId(groupId);
+        item.setItemName("item-" + id);
         item.setSource(source);
         item.setItemStatus(status);
         item.setCompleted(completed);

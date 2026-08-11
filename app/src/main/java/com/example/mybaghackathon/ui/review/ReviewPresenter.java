@@ -19,7 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class ReviewPresenter implements ReviewContract.Presenter {
     private final TripRepository tripRepository;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final Map<String, String> itemScopeByName = new HashMap<>();
+    private final Map<String, String> itemScopeByName = new LinkedHashMap<>();
 
     private volatile boolean destroyed = false;
 
@@ -96,7 +96,11 @@ public class ReviewPresenter implements ReviewContract.Presenter {
                 if (destroyed) return;
                 if (result.isSuccess()) {
                     TripInvite invite = result.getData();
-                    view.navigateToRoomDetail(invite.getTripId(), roomName, invite.getInviteCode());
+                    view.navigateToRoomDetail(
+                            invite.getTripId(),
+                            roomName,
+                            invite.getInviteCode(),
+                            new ArrayList<>(itemScopeByName.keySet()));
                 } else {
                     view.setGenerating(false);
                     view.showGenerateError(result.getError().getMessage());

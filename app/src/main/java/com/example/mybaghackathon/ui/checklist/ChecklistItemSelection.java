@@ -11,14 +11,7 @@ final class ChecklistItemSelection {
     static boolean isSelectedRecommendation(PackingItem item) {
         return item != null
                 && "AI".equalsIgnoreCase(item.getSource())
-                && ChecklistItemVisibility.isCommon(item)
                 && isActive(item);
-    }
-
-    static boolean isUnselectedRecommendation(PackingItem item) {
-        return item != null
-                && "AI".equalsIgnoreCase(item.getSource())
-                && !ChecklistItemVisibility.isCommon(item);
     }
 
     private static boolean isActive(PackingItem item) {
