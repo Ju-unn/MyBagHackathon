@@ -42,15 +42,16 @@
             android:id="@+id/inviteCopyLinkButton"
             style="@style/Widget.Bag.Button.Secondary.Outline"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height_secondary"
             android:layout_marginEnd="@dimen/space_sm"
             android:layout_weight="1"
             android:text="@string/action_copy_link" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/inviteKakaoButton"
+            style="@style/Widget.Bag.Button.Secondary.Outline"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height_secondary"
             android:layout_weight="1"
             android:backgroundTint="@color/kakao_yellow"
             android:text="@string/action_share_kakao"
@@ -61,7 +62,8 @@
             app:iconGravity="textStart"
             app:iconPadding="6dp"
             app:iconSize="18dp"
-            app:iconTint="@color/kakao_text" />
+            app:iconTint="@color/kakao_text"
+            app:strokeWidth="0dp" />
     </LinearLayout>
 
 </LinearLayout>

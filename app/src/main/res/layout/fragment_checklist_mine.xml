@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- S12 · 체크리스트 내 목록 탭 -->
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
-    android:clipToPadding="false"
-    android:fillViewport="true"
-    android:paddingStart="@dimen/screen_margin"
-    android:paddingTop="@dimen/space_lg"
-    android:paddingEnd="@dimen/screen_margin"
-    android:paddingBottom="@dimen/space_4xl">
+    android:orientation="vertical">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingEnd="@dimen/screen_margin"
+        android:paddingBottom="@dimen/space_lg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -96,13 +102,18 @@
             <include layout="@layout/organism_empty_state" />
         </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/checklistMineAddWrapper"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg">
-
-            <include layout="@layout/molecule_checklist_add_card" />
-        </FrameLayout>
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:id="@+id/checklistMineAddWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/screen_margin"
+        android:layout_marginTop="@dimen/space_sm"
+        android:layout_marginEnd="@dimen/screen_margin"
+        android:layout_marginBottom="@dimen/space_lg">
+
+        <include layout="@layout/molecule_checklist_add_card" />
+    </FrameLayout>
+</LinearLayout>

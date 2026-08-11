@@ -18,6 +18,14 @@ final class ChecklistDuplicateDetector {
     }
 
     static List<ItemGroup> groupForMine(List<PackingItem> items, long currentUserId) {
+        return groupForMine(items, currentUserId, false);
+    }
+
+    static List<ItemGroup> groupForMine(
+            List<PackingItem> items,
+            long currentUserId,
+            boolean includeUnassignedCommon
+    ) {
         List<MutableGroup> groups = new ArrayList<>();
         if (items == null || currentUserId <= 0L) {
             return new ArrayList<>();
@@ -25,7 +33,8 @@ final class ChecklistDuplicateDetector {
 
         for (PackingItem item : items) {
             boolean personal = ChecklistItemVisibility.isOwnedPersonal(item, currentUserId);
-            boolean common = ChecklistItemVisibility.isAssignedCommon(item, currentUserId);
+            boolean common = ChecklistItemVisibility.isAssignedCommon(item, currentUserId)
+                    || (includeUnassignedCommon && ChecklistItemVisibility.isCommon(item));
             if (!personal && !common) {
                 continue;
             }

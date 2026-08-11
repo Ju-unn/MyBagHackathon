@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import com.example.mybaghackathon.databinding.FragmentChecklistMineBinding;
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.ChipView;
+import com.example.mybaghackathon.ui.atoms.PriorityDotView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
 import com.example.mybaghackathon.ui.organisms.SwipeRevealHelper;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
@@ -34,6 +36,7 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
     private FragmentChecklistMineBinding binding;
     private ChecklistHost host;
     private int selectedPriority = -1;
+    private final boolean[] expandedPriorities = {true, true, true};
     private final SwipeRevealHelper.Tracker swipeTracker = new SwipeRevealHelper.Tracker();
 
     @Nullable
@@ -90,8 +93,10 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
     private boolean containsMineItemName(String name) {
         String target = ChecklistDuplicateDetector.normalizedName(name);
         long currentUserId = host.getCurrentUserId();
+        boolean solo = host.getTripMemberCount() <= 1;
         for (PackingItem item : host.getChecklistItems()) {
-            if (ChecklistItemVisibility.isMine(item, currentUserId)
+            if ((ChecklistItemVisibility.isMine(item, currentUserId)
+                    || (solo && ChecklistItemVisibility.isCommon(item)))
                     && target.equals(ChecklistDuplicateDetector.normalizedName(item.getItemName()))) {
                 return true;
             }
@@ -111,7 +116,8 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         long currentUserId = host.getCurrentUserId();
         List<ChecklistDuplicateDetector.ItemGroup> allMyItems =
                 ChecklistDuplicateDetector.groupForMine(
-                        host.getChecklistItems(), currentUserId);
+                        host.getChecklistItems(), currentUserId,
+                        host.getTripMemberCount() <= 1);
         List<ChecklistDuplicateDetector.ItemGroup> myItems = new ArrayList<>();
         for (ChecklistDuplicateDetector.ItemGroup itemGroup : allMyItems) {
             if (selectedPriority < 0 || priorityLevel(
@@ -128,9 +134,74 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
             return;
         }
 
-        for (ChecklistDuplicateDetector.ItemGroup itemGroup : myItems) {
-            list.addView(createItemRow(list, itemGroup));
+        for (int priority = 0; priority < 3; priority++) {
+            if (selectedPriority >= 0 && selectedPriority != priority) {
+                continue;
+            }
+            List<ChecklistDuplicateDetector.ItemGroup> sectionItems = new ArrayList<>();
+            for (ChecklistDuplicateDetector.ItemGroup itemGroup : myItems) {
+                if (priorityLevel(itemGroup.getPriorityItem().getPriority()) == priority) {
+                    sectionItems.add(itemGroup);
+                }
+            }
+            if (!sectionItems.isEmpty()) {
+                addSection(list, priority, priorityLabel(priority), sectionItems);
+            }
         }
+    }
+
+    private void addSection(
+            LinearLayout list,
+            int priority,
+            String label,
+            List<ChecklistDuplicateDetector.ItemGroup> items
+    ) {
+        View header = LayoutInflater.from(requireContext())
+                .inflate(R.layout.molecule_section_header, list, false);
+        ((PriorityDotView) header.findViewById(R.id.sectionHeaderDot)).setLevel(priority);
+        ((TextView) header.findViewById(R.id.sectionHeaderLabel)).setText(
+                getString(R.string.review_priority_count_format, label, items.size()));
+
+        LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        if (list.getChildCount() > 0) {
+            headerParams.topMargin = dp(16);
+        }
+        list.addView(header, headerParams);
+
+        LinearLayout sectionContent = new LinearLayout(requireContext());
+        sectionContent.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        sectionContent.setOrientation(LinearLayout.VERTICAL);
+        for (ChecklistDuplicateDetector.ItemGroup itemGroup : items) {
+            sectionContent.addView(createItemRow(sectionContent, itemGroup));
+        }
+        list.addView(sectionContent);
+        bindSectionToggle(header, sectionContent, priority, label);
+    }
+
+    private void bindSectionToggle(
+            View header,
+            View sectionContent,
+            int priority,
+            String label
+    ) {
+        ImageView toggle = header.findViewById(R.id.sectionHeaderToggle);
+        Runnable applyState = () -> {
+            boolean expanded = expandedPriorities[priority];
+            sectionContent.setVisibility(expanded ? View.VISIBLE : View.GONE);
+            toggle.setRotation(expanded ? 90f : 0f);
+            header.setContentDescription(getString(expanded
+                    ? R.string.checklist_section_collapse
+                    : R.string.checklist_section_expand, label));
+        };
+        header.setOnClickListener(v -> {
+            expandedPriorities[priority] = !expandedPriorities[priority];
+            applyState.run();
+        });
+        applyState.run();
     }
 
     private View createItemRow(
@@ -297,6 +368,12 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         return 0;
     }
 
+    private String priorityLabel(int priority) {
+        if (priority == 1) return getString(R.string.review_priority_mid);
+        if (priority == 2) return getString(R.string.review_priority_low);
+        return getString(R.string.review_priority_high);
+    }
+
     private int restrictionTagType(String value) {
         if ("CARRY_ON_ONLY".equalsIgnoreCase(value) || "CABIN_ONLY".equalsIgnoreCase(value)) {
             return RestrictionTagView.CABIN_ONLY;
@@ -304,6 +381,10 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         if ("CHECKED_ONLY".equalsIgnoreCase(value)) return RestrictionTagView.CHECKED_ONLY;
         if ("PROHIBITED".equalsIgnoreCase(value)) return RestrictionTagView.PROHIBITED;
         return -1;
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
     }
 
     @Override
