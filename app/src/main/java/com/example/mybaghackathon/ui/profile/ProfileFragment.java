@@ -23,6 +23,7 @@ import com.example.mybaghackathon.model.User;
 import com.example.mybaghackathon.model.UserDefaultItem;
 import com.example.mybaghackathon.ui.login.LoginActivity;
 import com.example.mybaghackathon.ui.settings.NotificationSettingsActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
 
@@ -66,9 +67,21 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         binding.profileNotifRow.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), NotificationSettingsActivity.class)));
 
-        binding.profileLogoutRow.setOnClickListener(v -> presenter.logout());
+        binding.profileLogoutRow.setOnClickListener(v -> confirmLogout());
 
         return binding.getRoot();
+    }
+
+    private void confirmLogout() {
+        if (getContext() == null) {
+            return;
+        }
+        new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
+                .setTitle(R.string.profile_logout_dialog_title)
+                .setMessage(R.string.profile_logout_dialog_message)
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.profile_logout, (dialog, which) -> presenter.logout())
+                .show();
     }
 
     @Override

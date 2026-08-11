@@ -228,6 +228,8 @@
     <string name="profile_settings">설정</string>
     <string name="profile_notification_settings">알림 설정</string>
     <string name="profile_logout">로그아웃</string>
+    <string name="profile_logout_dialog_title">로그아웃 하시겠어요?</string>
+    <string name="profile_logout_dialog_message">다시 이용하려면 카카오 로그인이 필요해요</string>
     <string name="profile_version">버전</string>
 
     <!-- S15 내 기본 물품 전체보기 -->
