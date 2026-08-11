@@ -2,6 +2,7 @@ package com.example.mybaghackathon.ui.review;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.TextViewCompat;
 
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.app.MyBagApplication;
@@ -57,11 +59,15 @@ public class ScheduleReviewActivity extends AppCompatActivity implements ReviewC
 
         setLabel(binding.reviewDestinationCard, R.string.review_destination_label);
         setLabel(binding.reviewDatesCard, R.string.review_dates_label);
-        // 두 카드 높이를 맞추기 위해 둘 다 같은 크기로, 한 줄에 들어가도록 통일
+        // 두 카드 높이를 맞추기 위해 둘 다 한 줄에 들어가도록 통일. 여행 기간이 길어지면
+        // "N박M일" 자릿수가 늘어나 14sp로는 안 들어갈 수 있어 10~14sp 범위에서 자동으로
+        // 줄어들게 하고(오토사이즈), 그래도 못 들어가는 극단적인 경우엔 말줄임표로 처리.
         for (View card : new View[]{binding.reviewDestinationCard, binding.reviewDatesCard}) {
             TextView value = card.findViewById(R.id.reviewFieldValue);
-            value.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
             value.setMaxLines(1);
+            value.setEllipsize(TextUtils.TruncateAt.END);
+            TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                    value, 10, 14, 1, TypedValue.COMPLEX_UNIT_SP);
         }
 
         binding.reviewRestrictionWarning.setOnClickListener(v ->
