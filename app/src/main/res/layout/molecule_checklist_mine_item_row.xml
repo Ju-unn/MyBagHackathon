@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 내 목록 전용 행: 공용 리스트의 왼쪽 체크박스 배치를 유지하기 위해 별도 구성한다. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -40,17 +39,6 @@
             android:layout_height="26dp"
             android:orientation="horizontal"
             android:visibility="gone" />
-
-        <ImageButton
-            android:id="@+id/checklistItemMoreButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/checklist_item_options"
-            android:padding="8dp"
-            android:src="@drawable/ic_more_vertical"
-            android:visibility="gone"
-            app:tint="@color/bag_text_secondary" />
 
         <com.example.mybaghackathon.ui.atoms.CheckboxView
             android:id="@+id/checklistItemCheckbox"

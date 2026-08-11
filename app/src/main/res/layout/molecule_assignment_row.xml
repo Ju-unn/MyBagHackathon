@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- M13 · AssignmentRow — 담당자 = 미지정/나/다른사람, 확정상태 = 없음/체크됨/제외됨 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="50dp"
@@ -18,13 +17,6 @@
         android:layout_weight="1"
         android:textAppearance="@style/TextAppearance.Bag.BodyL"
         tools:text="우산" />
-
-    <com.example.mybaghackathon.ui.atoms.AvatarView
-        android:id="@+id/assignmentRowAvatar"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
-        android:layout_marginEnd="8dp"
-        app:avatarInitial="김" />
 
     <com.example.mybaghackathon.ui.atoms.CheckboxView
         android:id="@+id/assignmentRowConfirm"

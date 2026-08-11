@@ -69,7 +69,7 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
                         addMemberHeader(assigned, member);
                         headerAdded = true;
                     }
-                    addAssignedRow(assigned, item, member);
+                    addAssignedRow(assigned, item);
                 }
             }
         }
@@ -124,18 +124,14 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         }
     }
 
-    private void addAssignedRow(LinearLayout list, PackingItem item, TripMember member) {
+    private void addAssignedRow(LinearLayout list, PackingItem item) {
         View row = inflateRow(list, item.getItemName());
-        AvatarView avatar = row.findViewById(R.id.assignmentRowAvatar);
-        avatar.setInitial(initial(member.getNickname()));
-        avatar.setAvatarColor(ContextCompat.getColor(requireContext(), avatarColor(member.getUserId())));
         bindCompletionState(row, item);
         addWithSpacing(list, row);
     }
 
     private void addUnassignedRow(LinearLayout list, PackingItem item) {
         View row = inflateRow(list, item.getItemName());
-        row.findViewById(R.id.assignmentRowAvatar).setVisibility(View.GONE);
         row.findViewById(R.id.assignmentRowConfirm).setVisibility(View.GONE);
         addWithSpacing(list, row);
     }

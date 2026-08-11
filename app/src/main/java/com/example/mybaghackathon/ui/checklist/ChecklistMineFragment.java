@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -100,7 +99,6 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         checkbox.setState(item.isCompleted() ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
         checkbox.setOnCheckChangeListener(state -> host.toggleChecklistItem(item));
         bindRestriction(row, item.getRestrictionType());
-        bindItemActions(row, item);
 
         float revealWidth = getResources().getDimension(R.dimen.checklist_delete_reveal_width);
         SwipeRevealHelper.reset(row);
@@ -117,23 +115,6 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
             confirmRemoveFromMine(item);
         });
         return swipeContainer;
-    }
-
-    private void bindItemActions(View row, PackingItem item) {
-        View moreButton = row.findViewById(R.id.checklistItemMoreButton);
-        moreButton.setVisibility(View.VISIBLE);
-        moreButton.setOnClickListener(v -> {
-            PopupMenu menu = new PopupMenu(requireContext(), moreButton);
-            menu.inflate(R.menu.checklist_item_actions);
-            menu.setOnMenuItemClickListener(menuItem -> {
-                if (menuItem.getItemId() == R.id.actionDeleteChecklistItem) {
-                    confirmRemoveFromMine(item);
-                    return true;
-                }
-                return false;
-            });
-            menu.show();
-        });
     }
 
     private void confirmRemoveFromMine(PackingItem item) {
