@@ -2,12 +2,10 @@ package com.example.mybaghackathon.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mybaghackathon.BuildConfig;
 import com.example.mybaghackathon.MainActivity;
 import com.example.mybaghackathon.app.MyBagApplication;
 import com.example.mybaghackathon.data.repository.AuthRepository;
@@ -24,7 +22,6 @@ import kotlin.Unit;
 public class LoginActivity extends AppCompatActivity implements LoginContract.View {
 
     public static final String EXTRA_POST_LOGIN_INVITE_CODE = "post_login_invite_code";
-    private static final String TAG = "KakaoLogin";
 
     private ActivityLoginBinding binding;
     private LoginContract.Presenter presenter;
@@ -72,15 +69,11 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     private Unit onKakaoTokenResult(OAuthToken token, Throwable error) {
         if (error != null) {
-            Log.e(TAG, "카카오 SDK 로그인 실패", error);
             setLoading(false);
             if (!isCancelled(error)) {
                 showError("카카오 로그인에 실패했습니다.");
             }
             return Unit.INSTANCE;
-        }
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "카카오 액세스 토큰 발급: " + token.getAccessToken());
         }
         presenter.login(token.getAccessToken());
         return Unit.INSTANCE;
@@ -100,7 +93,6 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     @Override
     public void showError(String message) {
-        Log.e(TAG, "서버 로그인 실패: " + message);
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
@@ -108,7 +100,6 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     public void navigateToMain() {
         String inviteCode = getIntent().getStringExtra(EXTRA_POST_LOGIN_INVITE_CODE);
         if (inviteCode != null && !inviteCode.trim().isEmpty()) {
-            Log.d(TAG, "서버 로그인 성공, 초대 참여 화면으로 이동");
             Intent inviteIntent = new Intent(this, InviteJoinActivity.class);
             inviteIntent.putExtra(InviteJoinActivity.EXTRA_INVITE_CODE, inviteCode.trim());
             startActivity(inviteIntent);
@@ -116,7 +107,6 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
             return;
         }
 
-        Log.d(TAG, "서버 로그인 성공, MainActivity로 이동");
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

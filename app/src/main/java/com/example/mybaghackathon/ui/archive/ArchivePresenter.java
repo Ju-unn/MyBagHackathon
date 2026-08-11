@@ -2,7 +2,6 @@ package com.example.mybaghackathon.ui.archive;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.example.mybaghackathon.common.AppResult;
 import com.example.mybaghackathon.data.repository.PackingRepository;
