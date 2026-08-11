@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- android:windowLightNavigationBar is available from API 27. -->
+    <style name="Theme.MyBagHackathon" parent="Base.Theme.MyBagHackathon">
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>
