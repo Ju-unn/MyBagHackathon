@@ -3,9 +3,9 @@ package com.example.mybaghackathon.ui.overlay;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.SheetInviteBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.kakao.sdk.common.util.KakaoCustomTabsClient;
 import com.kakao.sdk.share.ShareClient;
 import com.kakao.sdk.share.WebSharerClient;
 import com.kakao.sdk.template.model.Button;
@@ -38,6 +39,7 @@ import kotlin.Unit;
  */
 public class InviteShareSheet extends BottomSheetDialogFragment {
 
+    private static final String TAG = "InviteShareSheet";
     private static final String ARG_LINK = "link";
     private static final String ARG_INVITE_CODE = "invite_code";
     // 카카오 공유 카드·초대 랜딩 페이지(html/invite/index.php)가 같이 쓰는 앱 아이콘. 서버 정적 파일이라
@@ -122,6 +124,7 @@ public class InviteShareSheet extends BottomSheetDialogFragment {
             }
             setShareEnabled(true);
             if (error != null || result == null) {
+                Log.e(TAG, "카카오톡 공유 실패", error);
                 showShareError();
                 return Unit.INSTANCE;
             }
@@ -131,14 +134,29 @@ public class InviteShareSheet extends BottomSheetDialogFragment {
         });
     }
 
+    // 카카오톡 미설치 기기: 공식 가이드대로 CustomTabs로 웹 공유 페이지를 연다.
+    // CustomTabs 지원 브라우저가 없으면 기본 브라우저로 한 번 더 시도한다.
     private void openWebSharer(FeedTemplate template) {
+        Uri sharerUrl;
         try {
-            Uri sharerUrl = WebSharerClient.getInstance().makeDefaultUrl(template);
-            startActivity(new Intent(Intent.ACTION_VIEW, sharerUrl));
-            dismissAllowingStateLoss();
+            sharerUrl = WebSharerClient.getInstance().makeDefaultUrl(template);
         } catch (RuntimeException error) {
+            Log.e(TAG, "웹 공유 URL 생성 실패", error);
             showShareError();
+            return;
         }
+        try {
+            KakaoCustomTabsClient.INSTANCE.openWithDefault(requireContext(), sharerUrl);
+        } catch (RuntimeException noCustomTabs) {
+            try {
+                KakaoCustomTabsClient.INSTANCE.open(requireContext(), sharerUrl);
+            } catch (RuntimeException noBrowser) {
+                Log.e(TAG, "웹 공유 브라우저 열기 실패", noBrowser);
+                showShareError();
+                return;
+            }
+        }
+        dismissAllowingStateLoss();
     }
 
     private void setShareEnabled(boolean enabled) {
