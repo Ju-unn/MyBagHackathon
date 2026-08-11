@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- S15 정보 배너 배경 (브랜드 연한색) -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="@color/bag_bg_brand_subtle" />
-    <corners android:radius="@dimen/radius_xs" />
-</shape>

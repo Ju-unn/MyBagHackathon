@@ -42,8 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/notif_switch_margin_end"
-                android:alpha="0.4"
-                android:enabled="false"
+                android:visibility="gone"
                 android:scaleX="1.3"
                 android:scaleY="1.3" />
         </LinearLayout>
@@ -67,8 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/notif_switch_margin_end"
-                android:alpha="0.4"
-                android:enabled="false"
+                android:visibility="gone"
                 android:scaleX="1.3"
                 android:scaleY="1.3" />
         </LinearLayout>
@@ -92,35 +90,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/notif_switch_margin_end"
-                android:alpha="0.4"
-                android:enabled="false"
+                android:visibility="gone"
                 android:scaleX="1.3"
                 android:scaleY="1.3" />
-        </LinearLayout>
-
-        <!-- 정보 배너 (M8 WarningBanner를 info 색상으로 사용) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="88dp"
-            android:layout_marginTop="@dimen/space_xl"
-            android:background="@drawable/bg_restriction_info"
-            android:orientation="horizontal">
-
-            <View
-                android:layout_width="4dp"
-                android:layout_height="match_parent"
-                android:background="@color/bag_brand_default" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:padding="@dimen/space_lg"
-                android:text="@string/notif_warning"
-                android:textAppearance="@style/TextAppearance.Bag.BodyM"
-                android:textColor="@color/bag_text_primary" />
-
         </LinearLayout>
 
     </LinearLayout>
