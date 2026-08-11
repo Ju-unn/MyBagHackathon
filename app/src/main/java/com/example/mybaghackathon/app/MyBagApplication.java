@@ -20,6 +20,9 @@ public class MyBagApplication extends Application {
         // BottomSheetDialog 등 M3 컴포넌트가 colorSurfaceContainer* 다크 팔레트를
         // 새어 쓰는 걸 근본적으로 막음 (values-night/ 오버라이드 누락에 의존하지 않음)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        // 디자인이 세로 모드 전용이라, 액티비티마다 매니페스트를 챙기지 않아도
+        // 항상 세로로 고정되도록 여기서 한 번에 강제한다.
+        registerActivityLifecycleCallbacks(new PortraitLockCallbacks());
         KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY);
         appContainer = new AppContainer(this);
     }
