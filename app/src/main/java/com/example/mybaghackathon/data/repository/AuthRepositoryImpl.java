@@ -52,26 +52,26 @@ public class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
-    // 로그아웃 API 호출 → 성공 시 저장된 토큰 삭제
-    // TODO(보안/배포전): 서버 호출이 실패(네트워크 오류 등)하면 로컬 토큰/유저정보가
-    // 안 지워짐 — 오프라인 상태에서 로그아웃해도 기기엔 세션이 그대로 남는 문제.
-    // clearToken()/clearUser()는 성공 실패와 무관하게 항상 실행하고, 서버 호출 실패
-    // 여부만 별도로 반환하도록 바꿀 것.
+    // 로그아웃 API 호출 → 서버 호출 성공/실패와 무관하게 로컬 토큰은 항상 삭제
     @Override
     public AppResult<Void> logout() {
+        AppResult<Void> serverResult;
         try {
             Response<ApiResponseDto<Object>> response = authApi.logout().execute();
             ApiResponseDto<Object> body = response.body();
             if (!response.isSuccessful() || body == null || !body.isSuccess()) {
-                return AppResult.failure(toError(response, body));
+                serverResult = AppResult.failure(toError(response, body));
+            } else {
+                serverResult = AppResult.success(null);
             }
-
-            tokenStorage.clearToken();
-            userStorage.clearUser();
-            return AppResult.success(null);
         } catch (IOException e) {
-            return AppResult.failure(networkError());
+            serverResult = AppResult.failure(networkError());
         }
+
+        // 오프라인 등으로 서버 호출이 실패해도 기기엔 세션이 남으면 안 되므로 항상 지움
+        tokenStorage.clearToken();
+        userStorage.clearUser();
+        return serverResult;
     }
 
     // FCM 토큰 등록 API 호출
