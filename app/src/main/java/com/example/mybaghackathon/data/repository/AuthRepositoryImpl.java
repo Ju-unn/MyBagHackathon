@@ -52,22 +52,26 @@ public class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
-    // 로그아웃 API 호출 → 성공 시 저장된 토큰 삭제
+    // 로그아웃 API 호출 → 서버 호출 성공/실패와 무관하게 로컬 토큰은 항상 삭제
     @Override
     public AppResult<Void> logout() {
+        AppResult<Void> serverResult;
         try {
             Response<ApiResponseDto<Object>> response = authApi.logout().execute();
             ApiResponseDto<Object> body = response.body();
             if (!response.isSuccessful() || body == null || !body.isSuccess()) {
-                return AppResult.failure(toError(response, body));
+                serverResult = AppResult.failure(toError(response, body));
+            } else {
+                serverResult = AppResult.success(null);
             }
-
-            tokenStorage.clearToken();
-            userStorage.clearUser();
-            return AppResult.success(null);
         } catch (IOException e) {
-            return AppResult.failure(networkError());
+            serverResult = AppResult.failure(networkError());
         }
+
+        // 오프라인 등으로 서버 호출이 실패해도 기기엔 세션이 남으면 안 되므로 항상 지움
+        tokenStorage.clearToken();
+        userStorage.clearUser();
+        return serverResult;
     }
 
     // FCM 토큰 등록 API 호출

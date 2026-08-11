@@ -27,6 +27,9 @@
                 android:id="@+id/checklistAssignmentAvatarStack"
                 layout="@layout/molecule_avatar_stack" />
 
+            <!-- TODO(배포전): checklist_assignment_summary가 목업 더미값("2명이 함께
+                 준비 중"). 코드가 덮어쓰지만 android:text 대신 tools:text로 바꾸는 게
+                 더 안전함. -->
             <TextView
                 android:id="@+id/checklistAssignmentSummary"
                 android:layout_width="wrap_content"

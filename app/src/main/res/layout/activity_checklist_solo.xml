@@ -33,6 +33,9 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <!-- TODO(배포전): checklist_trip_name/checklist_solo_progress_summary가
+                 목업 더미값(도쿄 벚꽃 여행, 3/3 완료). 코드가 덮어쓰지만 android:text
+                 대신 tools:text로 바꾸는 게 더 안전함. -->
             <TextView
                 android:id="@+id/checklistSoloTripName"
                 android:layout_width="0dp"

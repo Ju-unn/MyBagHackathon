@@ -62,11 +62,12 @@ public class ProfilePresenter implements ProfileContract.Presenter {
         executor.execute(() -> {
             AppResult<Void> result = authRepository.logout();
             postToView(() -> {
-                if (result.isSuccess()) {
-                    view.navigateToLogin();
-                } else {
+                // 로컬 세션은 authRepository.logout()에서 항상 지워지므로 결과와 무관하게
+                // 로그인 화면으로 이동시키고, 서버 호출 실패는 에러 메시지로만 알려준다
+                if (!result.isSuccess()) {
                     view.showError(result.getError().getMessage());
                 }
+                view.navigateToLogin();
             });
         });
     }
