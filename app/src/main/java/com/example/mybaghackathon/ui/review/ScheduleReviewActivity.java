@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -169,10 +170,11 @@ public class ScheduleReviewActivity extends AppCompatActivity implements ReviewC
 
         View header = LayoutInflater.from(this).inflate(R.layout.molecule_section_header, sections, false);
         ((PriorityDotView) header.findViewById(R.id.sectionHeaderDot)).setLevel(level);
-        ((TextView) header.findViewById(R.id.sectionHeaderLabel))
-                .setText(getString(R.string.review_priority_count_format, label, items.size()));
+        TextView headerLabel = header.findViewById(R.id.sectionHeaderLabel);
+        int[] selectedCount = {0};
+        updateSelectionCount(headerLabel, label, selectedCount[0], items.size());
         LinearLayout.LayoutParams headerLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         if (sections.getChildCount() > 0) headerLp.topMargin = dp(16);
         sections.addView(header, headerLp);
 
@@ -203,13 +205,50 @@ public class ScheduleReviewActivity extends AppCompatActivity implements ReviewC
 
             CheckboxView checkbox = row.findViewById(R.id.checklistItemCheckbox);
             checkbox.setState(CheckboxView.UNCHECKED);
-            checkbox.setOnCheckChangeListener(newState ->
-                    presenter.onItemScopeToggled(item.itemName, newState == CheckboxView.CHECKED));
+            boolean[] selected = {false};
+            checkbox.setOnCheckChangeListener(newState -> {
+                boolean nextSelected = newState == CheckboxView.CHECKED;
+                if (selected[0] != nextSelected) {
+                    selected[0] = nextSelected;
+                    selectedCount[0] += nextSelected ? 1 : -1;
+                    updateSelectionCount(
+                            headerLabel, label, selectedCount[0], items.size());
+                }
+                presenter.onItemScopeToggled(item.itemName, nextSelected);
+            });
 
             card.addView(row);
         }
 
         sections.addView(card);
+        bindSectionToggle(header, card, label);
+    }
+
+    private void updateSelectionCount(
+            TextView headerLabel,
+            String label,
+            int selected,
+            int total
+    ) {
+        headerLabel.setText(getString(
+                R.string.review_priority_selected_count_format,
+                label,
+                selected,
+                total));
+    }
+
+    private void bindSectionToggle(View header, View content, String label) {
+        ImageView toggle = header.findViewById(R.id.sectionHeaderToggle);
+        boolean[] expanded = {true};
+        header.setOnClickListener(v -> {
+            expanded[0] = !expanded[0];
+            content.setVisibility(expanded[0] ? View.VISIBLE : View.GONE);
+            toggle.setRotation(expanded[0] ? 90f : 0f);
+            header.setContentDescription(getString(expanded[0]
+                    ? R.string.checklist_section_collapse
+                    : R.string.checklist_section_expand, label));
+        });
+        header.setContentDescription(getString(R.string.checklist_section_collapse, label));
     }
 
     @Override
