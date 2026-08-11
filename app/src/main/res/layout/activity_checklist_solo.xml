@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- S12 · 참여자 1명 체크리스트: 탭 없이 내 목록만 단독으로 표시한다. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base">
@@ -33,9 +34,6 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- TODO(배포전): checklist_trip_name/checklist_solo_progress_summary가
-                 목업 더미값(도쿄 벚꽃 여행, 3/3 완료). 코드가 덮어쓰지만 android:text
-                 대신 tools:text로 바꾸는 게 더 안전함. -->
             <TextView
                 android:id="@+id/checklistSoloTripName"
                 android:layout_width="0dp"
@@ -44,7 +42,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@string/checklist_trip_name"
+                tools:text="@string/checklist_trip_name"
                 android:textAppearance="@style/TextAppearance.Bag.BodyM" />
 
             <TextView
@@ -52,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="@string/checklist_solo_progress_summary"
+                tools:text="@string/checklist_solo_progress_summary"
                 android:textAppearance="@style/TextAppearance.Bag.BodyMMedium" />
         </LinearLayout>
 

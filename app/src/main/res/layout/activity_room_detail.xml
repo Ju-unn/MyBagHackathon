@@ -2,6 +2,7 @@
 <!-- S09 · 방 상세 & 팁 허브 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base">
@@ -57,16 +58,12 @@
                     android:textAppearance="@style/TextAppearance.Bag.LabelS"
                     android:textStyle="normal" />
 
-                <!-- TODO(배포전): 아래 android:text와 이 파일의 다른 *_value/day/status
-                     문자열들은 목업 시절 더미값(도쿄, 3.14 등)이 그대로 남아있는 것.
-                     RoomDetailActivity가 실제 데이터로 덮어쓰긴 하지만, android:text 대신
-                     tools:text로 바꾸면 실기기 빌드엔 아예 안 들어가서 더 안전함. -->
                 <TextView
                     android:id="@+id/roomDetailDestinationValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_sm"
-                    android:text="@string/room_detail_destination_value"
+                    tools:text="@string/room_detail_destination_value"
                     android:textAppearance="@style/TextAppearance.Bag.TitleM"
                     android:textStyle="bold" />
 
@@ -93,7 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_sm"
-                    android:text="@string/room_detail_dates_value"
+                    tools:text="@string/room_detail_dates_value"
                     android:textAppearance="@style/TextAppearance.Bag.TitleS"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -140,7 +137,7 @@
                         android:gravity="center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:text="@string/room_detail_weather_day1"
+                        tools:text="@string/room_detail_weather_day1"
                         android:textAppearance="@style/TextAppearance.Bag.BodyMMedium" />
 
                     <com.example.mybaghackathon.ui.atoms.WeatherIconView
@@ -156,7 +153,7 @@
                         android:gravity="center_vertical|end"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:text="@string/room_detail_weather_status1"
+                        tools:text="@string/room_detail_weather_status1"
                         android:textAppearance="@style/TextAppearance.Bag.BodyM" />
                 </LinearLayout>
 
@@ -177,7 +174,7 @@
                         android:gravity="center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:text="@string/room_detail_weather_day2"
+                        tools:text="@string/room_detail_weather_day2"
                         android:textAppearance="@style/TextAppearance.Bag.BodyMMedium" />
 
                     <com.example.mybaghackathon.ui.atoms.WeatherIconView
@@ -193,7 +190,7 @@
                         android:gravity="center_vertical|end"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:text="@string/room_detail_weather_status2"
+                        tools:text="@string/room_detail_weather_status2"
                         android:textAppearance="@style/TextAppearance.Bag.BodyM" />
                 </LinearLayout>
 
@@ -214,7 +211,7 @@
                         android:gravity="center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:text="@string/room_detail_weather_day3"
+                        tools:text="@string/room_detail_weather_day3"
                         android:textAppearance="@style/TextAppearance.Bag.BodyMMedium" />
 
                     <com.example.mybaghackathon.ui.atoms.WeatherIconView
@@ -230,7 +227,7 @@
                         android:gravity="center_vertical|end"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:text="@string/room_detail_weather_status3"
+                        tools:text="@string/room_detail_weather_status3"
                         android:textAppearance="@style/TextAppearance.Bag.BodyM" />
                 </LinearLayout>
             </LinearLayout>
