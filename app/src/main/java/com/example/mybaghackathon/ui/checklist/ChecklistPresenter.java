@@ -149,11 +149,13 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             view.showError("공용 물품을 여러 명에게 배정하는 건 방장만 할 수 있습니다.");
             return;
         }
-        if (userIds == null || userIds.isEmpty()) {
+        List<Long> desiredIds = normalizedUserIds(userIds);
+        if (desiredIds.isEmpty()) {
             view.showError("배정할 멤버를 선택해주세요.");
             return;
         }
-        runRepositoryAction(() -> packingRepository.assignMultiple(item.getItemGroupId(), userIds));
+        runRepositoryAction(() ->
+                packingRepository.assignMultiple(item.getItemGroupId(), desiredIds));
     }
 
     // 서버 assign.php가 그룹(원본+복제 row)을 최종 목록으로 트랜잭션 동기화하므로 호출 한 번이면 된다
@@ -166,10 +168,40 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             view.showError("공용 물품을 여러 명에게 배정하는 건 방장만 할 수 있습니다.");
             return;
         }
-        List<Long> desiredIds = new ArrayList<>(new LinkedHashSet<>(
-                userIds == null ? Collections.emptyList() : userIds));
+        if (!isConsistentCommonGroup(groupItems)) {
+            view.showError("물품 그룹 정보가 올바르지 않습니다. 목록을 새로고침해주세요.");
+            return;
+        }
+        List<Long> desiredIds = normalizedUserIds(userIds);
         long groupId = groupItems.get(0).getItemGroupId();
         runRepositoryAction(() -> packingRepository.assignMultiple(groupId, desiredIds));
+    }
+
+    private List<Long> normalizedUserIds(List<Long> userIds) {
+        LinkedHashSet<Long> uniqueIds = new LinkedHashSet<>();
+        if (userIds != null) {
+            for (Long userId : userIds) {
+                if (userId != null && userId > 0L) {
+                    uniqueIds.add(userId);
+                }
+            }
+        }
+        return new ArrayList<>(uniqueIds);
+    }
+
+    private boolean isConsistentCommonGroup(List<PackingItem> groupItems) {
+        long groupId = groupItems.get(0).getItemGroupId();
+        if (groupId <= 0L) {
+            return false;
+        }
+        for (PackingItem item : groupItems) {
+            if (item == null
+                    || !ChecklistItemVisibility.isCommon(item)
+                    || item.getItemGroupId() != groupId) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

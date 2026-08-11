@@ -2,9 +2,7 @@ package com.example.mybaghackathon.ui.checklist;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -12,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -20,6 +19,7 @@ import com.example.mybaghackathon.databinding.FragmentChecklistMineBinding;
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
+import com.example.mybaghackathon.ui.organisms.SwipeRevealHelper;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
 import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -33,6 +33,7 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
 
     private FragmentChecklistMineBinding binding;
     private ChecklistHost host;
+    private final SwipeRevealHelper.Tracker swipeTracker = new SwipeRevealHelper.Tracker();
 
     @Nullable
     @Override
@@ -62,6 +63,7 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
             return;
         }
         LinearLayout list = binding.checklistMineList;
+        SwipeRevealHelper.closeOpenRow(swipeTracker);
         list.removeAllViews();
 
         List<PackingItem> myItems = new ArrayList<>();
@@ -109,8 +111,20 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         bindRestriction(row, item.getRestrictionType());
         bindItemActions(row, item);
 
-        row.setOnClickListener(v -> showEditSheet(item));
-        attachSwipeDelete(row, item);
+        float revealWidth = getResources().getDimension(R.dimen.checklist_delete_reveal_width);
+        SwipeRevealHelper.reset(row);
+        SwipeRevealHelper.attach(row, revealWidth, swipeTracker);
+        row.setOnClickListener(v -> {
+            if (SwipeRevealHelper.isOpen(swipeTracker, row)) {
+                SwipeRevealHelper.closeOpenRow(swipeTracker);
+                return;
+            }
+            showEditSheet(item);
+        });
+        swipeContainer.findViewById(R.id.checklistSwipeDeleteButton).setOnClickListener(v -> {
+            SwipeRevealHelper.closeOpenRow(swipeTracker);
+            confirmRemoveFromMine(item);
+        });
         return swipeContainer;
     }
 
@@ -122,7 +136,7 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
             menu.inflate(R.menu.checklist_item_actions);
             menu.setOnMenuItemClickListener(menuItem -> {
                 if (menuItem.getItemId() == R.id.actionDeleteChecklistItem) {
-                    removeFromMine(item);
+                    confirmRemoveFromMine(item);
                     return true;
                 }
                 return false;
@@ -131,67 +145,40 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         });
     }
 
-    private void attachSwipeDelete(View row, PackingItem item) {
-        int touchSlop = ViewConfiguration.get(requireContext()).getScaledTouchSlop();
-        row.setClickable(true);
-        row.setOnTouchListener(new View.OnTouchListener() {
-            private float downX;
-            private float downY;
-            private boolean swiping;
+    private void confirmRemoveFromMine(PackingItem item) {
+        if (ChecklistItemVisibility.isAssignedCommon(item, host.getCurrentUserId())) {
+            showUnassignDialog(item);
+            return;
+        }
+        if (!ChecklistItemVisibility.isOwnedPersonal(item, host.getCurrentUserId())) {
+            return;
+        }
 
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                switch (event.getActionMasked()) {
-                    case MotionEvent.ACTION_DOWN:
-                        downX = event.getX();
-                        downY = event.getY();
-                        swiping = false;
-                        return false;
-                    case MotionEvent.ACTION_MOVE:
-                        float deltaX = event.getX() - downX;
-                        float deltaY = event.getY() - downY;
-                        if (!swiping && Math.abs(deltaX) > touchSlop
-                                && Math.abs(deltaX) > Math.abs(deltaY)) {
-                            swiping = true;
-                            view.getParent().requestDisallowInterceptTouchEvent(true);
-                        }
-                        if (swiping) {
-                            float maxDistance = Math.max(1f, view.getWidth());
-                            view.setTranslationX(Math.max(-maxDistance,
-                                    Math.min(maxDistance, deltaX)));
-                            return true;
-                        }
-                        return false;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        if (!swiping) {
-                            return false;
-                        }
-                        float distance = event.getX() - downX;
-                        view.getParent().requestDisallowInterceptTouchEvent(false);
-                        if (event.getActionMasked() == MotionEvent.ACTION_UP
-                                && Math.abs(distance) >= view.getWidth() * 0.35f) {
-                            removeFromMine(item);
-                        } else {
-                            view.animate().translationX(0f).setDuration(160L).start();
-                        }
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
+        AlertDialog dialog = new MaterialAlertDialogBuilder(
+                requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
+                .setTitle(R.string.checklist_delete_dialog_title)
+                .setMessage(getString(R.string.checklist_delete_dialog_message, item.getItemName()))
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.action_delete,
+                        (ignored, which) -> removeFromMine(item))
+                .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.clay_600));
+    }
+
+    private void showUnassignDialog(PackingItem item) {
+        new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
+                .setTitle(R.string.checklist_unassign_title)
+                .setMessage(getString(R.string.checklist_unassign_message, item.getItemName()))
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.checklist_unassign_action,
+                        (dialog, which) -> removeFromMine(item))
+                .show();
     }
 
     private void showEditSheet(PackingItem item) {
         if (ChecklistItemVisibility.isAssignedCommon(item, host.getCurrentUserId())) {
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.checklist_unassign_title)
-                    .setMessage(getString(R.string.checklist_unassign_message, item.getItemName()))
-                    .setNegativeButton(R.string.action_cancel, null)
-                    .setPositiveButton(R.string.checklist_unassign_action,
-                            (dialog, which) -> removeFromMine(item))
-                    .show();
+            showUnassignDialog(item);
             return;
         }
         if (!ChecklistItemVisibility.isOwnedPersonal(item, host.getCurrentUserId())) {
