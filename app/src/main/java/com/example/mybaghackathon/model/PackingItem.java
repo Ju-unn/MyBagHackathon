@@ -10,6 +10,8 @@ public class PackingItem implements Serializable {
     private long packingItemId;
     private long tripId;
     private long createdByUserId;
+    // 다중 배정 복제 row들이 공유하는 그룹 id(원본 row의 packing_item_id). 서버 응답에서만 채워짐 — 0이면 미설정
+    private long itemGroupId;
     private String itemName;
     private String category;
     private String priority;
@@ -84,6 +86,15 @@ public class PackingItem implements Serializable {
 
     public void setCreatedByUserId(long createdByUserId) {
         this.createdByUserId = createdByUserId;
+    }
+
+    /** 미설정(0)이면 자기 자신의 packing_item_id가 곧 그룹 id다. */
+    public long getItemGroupId() {
+        return itemGroupId == 0L ? packingItemId : itemGroupId;
+    }
+
+    public void setItemGroupId(long itemGroupId) {
+        this.itemGroupId = itemGroupId;
     }
 
     public String getItemName() {

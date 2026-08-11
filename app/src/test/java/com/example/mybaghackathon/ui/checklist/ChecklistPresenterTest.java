@@ -138,7 +138,7 @@ public class ChecklistPresenterTest {
     }
 
     @Test
-    public void reassignGroup_keepsStayingRow_reusesFreedRowForAdd_deletesTheRest() {
+    public void reassignGroup_sendsFinalListToServerInOneSyncCall() {
         Fixture fixture = new Fixture(true);
         fixture.loadInitialData();
 
@@ -150,15 +150,16 @@ public class ChecklistPresenterTest {
         fixture.presenter.reassignGroup(group, java.util.Arrays.asList(CURRENT_USER_ID, 10L));
         fixture.executor.runNext();
 
-        // staying(101, user=CURRENT_USER_ID)의 row는 건드리지 않고 그대로 anchor로 재사용해서
-        // 10을 추가로 클론(assignMultiple), 빠지는 8/9의 row 2개는 둘 다 삭제
+        // 서버 assign.php가 그룹 전체를 트랜잭션으로 동기화하므로 최종 목록 한 번만 보낸다
+        // (row 재사용/복제/삭제는 전부 서버 책임 — 클라이언트는 delete를 호출하지 않음)
         assertEquals(1, fixture.packingRepository.assignMultipleCalls);
+        assertEquals(101L, fixture.packingRepository.lastGroupId);
         assertEquals(java.util.Arrays.asList(CURRENT_USER_ID, 10L), fixture.packingRepository.lastAssigneeUserIds);
-        assertEquals(2, fixture.packingRepository.deleteCalls);
+        assertEquals(0, fixture.packingRepository.deleteCalls);
     }
 
     @Test
-    public void reassignGroup_emptySelection_unassignsAnchorAndDeletesRest() {
+    public void reassignGroup_emptySelection_syncsEmptyListToUnassignAll() {
         Fixture fixture = new Fixture(true);
         fixture.loadInitialData();
 
@@ -169,9 +170,10 @@ public class ChecklistPresenterTest {
         fixture.presenter.reassignGroup(group, Collections.emptyList());
         fixture.executor.runNext();
 
-        assertEquals(1, fixture.packingRepository.assignCalls);
-        assertEquals(null, fixture.packingRepository.lastAssigneeUserId);
-        assertEquals(1, fixture.packingRepository.deleteCalls);
+        assertEquals(1, fixture.packingRepository.assignMultipleCalls);
+        assertEquals(Collections.emptyList(), fixture.packingRepository.lastAssigneeUserIds);
+        assertEquals(0, fixture.packingRepository.assignCalls);
+        assertEquals(0, fixture.packingRepository.deleteCalls);
     }
 
     @Test
@@ -407,6 +409,7 @@ public class ChecklistPresenterTest {
         private int assignCalls;
         private Long lastAssigneeUserId;
         private int assignMultipleCalls;
+        private long lastGroupId;
         private List<Long> lastAssigneeUserIds;
 
         @Override
@@ -434,8 +437,9 @@ public class ChecklistPresenterTest {
         }
 
         @Override
-        public AppResult<Void> assignMultiple(long itemId, List<Long> assigneeUserIds) {
+        public AppResult<Void> assignMultiple(long itemGroupId, List<Long> assigneeUserIds) {
             assignMultipleCalls++;
+            lastGroupId = itemGroupId;
             lastAssigneeUserIds = assigneeUserIds;
             return AppResult.success(null);
         }

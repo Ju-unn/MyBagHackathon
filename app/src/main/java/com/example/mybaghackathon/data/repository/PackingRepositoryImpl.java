@@ -93,10 +93,10 @@ public class PackingRepositoryImpl implements PackingRepository {
     }
 
     @Override
-    public AppResult<Void> assignMultiple(long itemId, List<Long> assigneeUserIds) {
+    public AppResult<Void> assignMultiple(long itemGroupId, List<Long> assigneeUserIds) {
         try {
             Response<ApiResponseDto<Object>> response =
-                    packingApi.assign(new ChecklistAssignRequestDto(itemId, assigneeUserIds)).execute();
+                    packingApi.assign(new ChecklistAssignRequestDto(itemGroupId, assigneeUserIds)).execute();
             ApiResponseDto<Object> body = response.body();
             if (!response.isSuccessful() || body == null || !body.isSuccess()) {
                 return AppResult.failure(toError(response, body));

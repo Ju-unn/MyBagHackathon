@@ -31,7 +31,7 @@ public final class PackingItemMapper {
 
     // 체크리스트 API(list/create 등)가 돌려주는 packing_items 전체 필드 변환
     public static PackingItem fromChecklistItem(ChecklistItemDto dto) {
-        return new PackingItem(
+        PackingItem item = new PackingItem(
                 dto.getPackingItemId(),
                 dto.getTripId(),
                 dto.getCreatedByUserId(),
@@ -48,6 +48,8 @@ public final class PackingItemMapper {
                 dto.getItemStatus(),
                 dto.getSortOrder()
         );
+        item.setItemGroupId(dto.getItemGroupId());
+        return item;
     }
 
     public static List<PackingItem> fromChecklistItems(List<ChecklistItemDto> dtos) {

@@ -42,9 +42,8 @@ public interface ChecklistContract {
         void assignItems(PackingItem item, List<Long> userIds);
 
         /**
-         * 같은 이름으로 이미 여러 명에게 배정된 공용 물품 그룹(row가 인원 수만큼 나뉜 상태)의
-         * 배정을 새 선택 목록으로 재조정한다. 그대로 남는 사람의 row는 건드리지 않고, 빠진
-         * 사람의 row만 지우거나 재사용하고, 새로 추가된 사람만큼만 row를 늘린다.
+         * 다중 배정으로 row가 나뉜 공용 물품 그룹(같은 item_group_id)의 담당자를 새 선택
+         * 목록으로 재조정한다. 서버 assign.php가 그룹 전체를 하나의 트랜잭션으로 동기화한다.
          */
         void reassignGroup(List<PackingItem> groupItems, List<Long> userIds);
 

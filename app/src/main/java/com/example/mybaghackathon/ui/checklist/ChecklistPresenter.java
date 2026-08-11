@@ -153,9 +153,10 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             view.showError("배정할 멤버를 선택해주세요.");
             return;
         }
-        runRepositoryAction(() -> packingRepository.assignMultiple(item.getPackingItemId(), userIds));
+        runRepositoryAction(() -> packingRepository.assignMultiple(item.getItemGroupId(), userIds));
     }
 
+    // 서버 assign.php가 그룹(원본+복제 row)을 최종 목록으로 트랜잭션 동기화하므로 호출 한 번이면 된다
     @Override
     public void reassignGroup(List<PackingItem> groupItems, List<Long> userIds) {
         if (groupItems == null || groupItems.isEmpty()) {
@@ -167,87 +168,8 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
         }
         List<Long> desiredIds = new ArrayList<>(new LinkedHashSet<>(
                 userIds == null ? Collections.emptyList() : userIds));
-        runReassignmentAction(() -> reassignGroupOnWorker(groupItems, desiredIds));
-    }
-
-    // groupItems: 같은 이름의 COMMON row 전체. 그대로 남는 사람의 row는 손대지 않고,
-    // 빠지는 사람의 row만 지우거나(또는 새로 추가되는 사람 배정에 재사용해서 API 호출을 아끼고)
-    // 부족한 만큼만 assignMultiple로 새로 만든다.
-    private AppResult<?> reassignGroupOnWorker(List<PackingItem> groupItems, List<Long> desiredIds) {
-        if (desiredIds.isEmpty()) {
-            PackingItem anchor = groupItems.get(0);
-            AppResult<Void> unassigned = packingRepository.assign(anchor.getPackingItemId(), null);
-            if (!unassigned.isSuccess()) {
-                return unassigned;
-            }
-            for (PackingItem row : groupItems) {
-                if (row != anchor) {
-                    AppResult<Void> deleted = packingRepository.deleteItem(row.getPackingItemId());
-                    if (!deleted.isSuccess()) {
-                        return deleted;
-                    }
-                }
-            }
-            return AppResult.success(null);
-        }
-
-        List<PackingItem> staying = new ArrayList<>();
-        List<PackingItem> leaving = new ArrayList<>();
-        for (PackingItem row : groupItems) {
-            Long assignee = row.getAssigneeUserId();
-            if (assignee != null && desiredIds.contains(assignee)) {
-                staying.add(row);
-            } else {
-                leaving.add(row);
-            }
-        }
-        List<Long> toAdd = new ArrayList<>();
-        for (Long id : desiredIds) {
-            boolean alreadyStaying = false;
-            for (PackingItem row : staying) {
-                if (id.equals(row.getAssigneeUserId())) {
-                    alreadyStaying = true;
-                    break;
-                }
-            }
-            if (!alreadyStaying) {
-                toAdd.add(id);
-            }
-        }
-
-        PackingItem anchor;
-        List<Long> anchorCallIds;
-        List<PackingItem> toDelete;
-        if (!staying.isEmpty()) {
-            anchor = staying.get(0);
-            anchorCallIds = new ArrayList<>();
-            anchorCallIds.add(anchor.getAssigneeUserId());
-            anchorCallIds.addAll(toAdd);
-            toDelete = leaving;
-        } else {
-            anchor = leaving.get(0);
-            anchorCallIds = desiredIds;
-            toDelete = leaving.subList(1, leaving.size());
-        }
-
-        if (anchorCallIds.size() == 1) {
-            AppResult<Void> assigned = packingRepository.assign(anchor.getPackingItemId(), anchorCallIds.get(0));
-            if (!assigned.isSuccess()) {
-                return assigned;
-            }
-        } else if (anchorCallIds.size() > 1) {
-            AppResult<Void> assigned = packingRepository.assignMultiple(anchor.getPackingItemId(), anchorCallIds);
-            if (!assigned.isSuccess()) {
-                return assigned;
-            }
-        }
-        for (PackingItem row : toDelete) {
-            AppResult<Void> deleted = packingRepository.deleteItem(row.getPackingItemId());
-            if (!deleted.isSuccess()) {
-                return deleted;
-            }
-        }
-        return AppResult.success(null);
+        long groupId = groupItems.get(0).getItemGroupId();
+        runRepositoryAction(() -> packingRepository.assignMultiple(groupId, desiredIds));
     }
 
     @Override
@@ -380,38 +302,6 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             } catch (RuntimeException error) {
                 postLoadFailure("서버 응답을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.");
             }
-        });
-    }
-
-    private void runReassignmentAction(RepositoryAction action) {
-        if (destroyed || loading) {
-            return;
-        }
-        if (tripId <= 0L) {
-            view.showError("여행방 정보가 없습니다.");
-            return;
-        }
-        startLoading();
-        executor.execute(() -> {
-            String failureMessage = null;
-            try {
-                AppResult<?> result = action.run();
-                if (!result.isSuccess()) {
-                    failureMessage = messageOf(
-                            result,
-                            "담당자 변경이 일부만 반영됐을 수 있어 서버 상태를 다시 확인합니다."
-                    );
-                }
-            } catch (RuntimeException error) {
-                failureMessage = "담당자 변경 중 연결이 끊겼습니다. 서버 상태를 다시 확인합니다.";
-            }
-
-            if (failureMessage != null) {
-                String message = failureMessage;
-                post(() -> view.showRetryableError(message));
-            }
-            // 여러 API 호출 중 일부만 성공했더라도 현재 서버 상태를 다시 불러와 화면과 동기화한다.
-            loadChecklistOnWorker();
         });
     }
 

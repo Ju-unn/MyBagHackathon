@@ -3,6 +3,7 @@ package com.example.mybaghackathon.ui.login;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -78,6 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(this)) {
             UserApiClient.getInstance().loginWithKakaoTalk(this, (token, error) -> {
                 if (error != null) {
+                    Log.e(TAG, "loginWithKakaoTalk 실패", error);
                     if (isCancelled(error)) {
                         setLoading(false);
                         return Unit.INSTANCE;
@@ -96,6 +98,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     private Unit onKakaoTokenResult(OAuthToken token, Throwable error) {
         if (error != null) {
+            Log.e(TAG, "카카오 토큰 획득 실패(계정로그인 포함)", error);
             setLoading(false);
             if (!isCancelled(error)) {
                 showError("카카오 로그인에 실패했습니다.");

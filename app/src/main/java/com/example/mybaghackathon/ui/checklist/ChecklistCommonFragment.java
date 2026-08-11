@@ -29,7 +29,6 @@ import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /** S11 · 공용 체크리스트 탭. */
@@ -186,29 +185,14 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         }
     }
 
-    // 다중 배정으로 복제된 row만 한 줄로 묶는다. 이름만 같고 별도로 추가한 물품은 분리한다.
+    // 다중 배정으로 복제된 row만 한 줄로 묶는다 — 서버가 내려주는 item_group_id가 곧 그룹 키라
+    // 같은 이름의 별개 물품(다른 그룹 id)과 정확히 구분된다.
     private List<List<PackingItem>> groupAssignmentRows(List<PackingItem> items) {
-        Map<String, List<PackingItem>> byAssignment = new LinkedHashMap<>();
+        Map<Long, List<PackingItem>> byGroup = new LinkedHashMap<>();
         for (PackingItem item : items) {
-            String key = assignmentGroupKey(item);
-            byAssignment.computeIfAbsent(key, ignored -> new ArrayList<>()).add(item);
+            byGroup.computeIfAbsent(item.getItemGroupId(), ignored -> new ArrayList<>()).add(item);
         }
-        return new ArrayList<>(byAssignment.values());
-    }
-
-    private String assignmentGroupKey(PackingItem item) {
-        return ChecklistDuplicateDetector.normalizedName(item.getItemName())
-                + '|' + item.getCreatedByUserId()
-                + '|' + item.getSortOrder()
-                + '|' + normalizedField(item.getPriority())
-                + '|' + normalizedField(item.getCategory())
-                + '|' + normalizedField(item.getSource())
-                + '|' + normalizedField(item.getRestrictionType())
-                + '|' + normalizedField(item.getRestrictionReason());
-    }
-
-    private String normalizedField(String value) {
-        return value == null ? "" : value.trim().toUpperCase(Locale.ROOT);
+        return new ArrayList<>(byGroup.values());
     }
 
     private View createItemRow(LinearLayout parent, List<PackingItem> group) {
