@@ -26,7 +26,6 @@
         <item name="android:statusBarColor">@color/bag_bg_base</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">@color/bag_bg_surface</item>
-        <item name="android:windowLightNavigationBar">true</item>
 
         <item name="android:textViewStyle">@style/Widget.Bag.TextView</item>
 
