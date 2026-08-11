@@ -167,7 +167,7 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
         }
         List<Long> desiredIds = new ArrayList<>(new LinkedHashSet<>(
                 userIds == null ? Collections.emptyList() : userIds));
-        runRepositoryAction(() -> reassignGroupOnWorker(groupItems, desiredIds));
+        runReassignmentAction(() -> reassignGroupOnWorker(groupItems, desiredIds));
     }
 
     // groupItems: 같은 이름의 COMMON row 전체. 그대로 남는 사람의 row는 손대지 않고,
@@ -380,6 +380,38 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             } catch (RuntimeException error) {
                 postLoadFailure("서버 응답을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.");
             }
+        });
+    }
+
+    private void runReassignmentAction(RepositoryAction action) {
+        if (destroyed || loading) {
+            return;
+        }
+        if (tripId <= 0L) {
+            view.showError("여행방 정보가 없습니다.");
+            return;
+        }
+        startLoading();
+        executor.execute(() -> {
+            String failureMessage = null;
+            try {
+                AppResult<?> result = action.run();
+                if (!result.isSuccess()) {
+                    failureMessage = messageOf(
+                            result,
+                            "담당자 변경이 일부만 반영됐을 수 있어 서버 상태를 다시 확인합니다."
+                    );
+                }
+            } catch (RuntimeException error) {
+                failureMessage = "담당자 변경 중 연결이 끊겼습니다. 서버 상태를 다시 확인합니다.";
+            }
+
+            if (failureMessage != null) {
+                String message = failureMessage;
+                post(() -> view.showRetryableError(message));
+            }
+            // 여러 API 호출 중 일부만 성공했더라도 현재 서버 상태를 다시 불러와 화면과 동기화한다.
+            loadChecklistOnWorker();
         });
     }
 

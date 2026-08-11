@@ -42,6 +42,7 @@ public class ChecklistActivity extends AppCompatActivity
     private boolean isHost;
     private boolean soloMode;
     private boolean loaded;
+    private boolean resumedOnce;
     private String tripName = "여행 체크리스트";
 
     @Override
@@ -51,6 +52,15 @@ public class ChecklistActivity extends AppCompatActivity
         initializePresenter();
         inflateModeLayout(savedInstanceState);
         presenter.loadChecklist(tripId, isHost);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (resumedOnce && presenter != null) {
+            presenter.refreshChecklist();
+        }
+        resumedOnce = true;
     }
 
     private void readArguments() {

@@ -29,6 +29,7 @@ import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /** S11 · 공용 체크리스트 탭. */
@@ -166,7 +167,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
     }
 
     private void addSection(LinearLayout sections, int level, String label, List<PackingItem> items) {
-        List<List<PackingItem>> groups = groupByName(items);
+        List<List<PackingItem>> groups = groupAssignmentRows(items);
 
         View header = LayoutInflater.from(requireContext())
                 .inflate(R.layout.molecule_section_header, sections, false);
@@ -185,14 +186,29 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         }
     }
 
-    // 이름이 같은 row(다중 배정으로 인원 수만큼 나뉜 것)를 한 그룹으로 묶는다 — 순서는 등장 순서 유지
-    private List<List<PackingItem>> groupByName(List<PackingItem> items) {
-        Map<String, List<PackingItem>> byName = new LinkedHashMap<>();
+    // 다중 배정으로 복제된 row만 한 줄로 묶는다. 이름만 같고 별도로 추가한 물품은 분리한다.
+    private List<List<PackingItem>> groupAssignmentRows(List<PackingItem> items) {
+        Map<String, List<PackingItem>> byAssignment = new LinkedHashMap<>();
         for (PackingItem item : items) {
-            String key = ChecklistDuplicateDetector.normalizedName(item.getItemName());
-            byName.computeIfAbsent(key, ignored -> new ArrayList<>()).add(item);
+            String key = assignmentGroupKey(item);
+            byAssignment.computeIfAbsent(key, ignored -> new ArrayList<>()).add(item);
         }
-        return new ArrayList<>(byName.values());
+        return new ArrayList<>(byAssignment.values());
+    }
+
+    private String assignmentGroupKey(PackingItem item) {
+        return ChecklistDuplicateDetector.normalizedName(item.getItemName())
+                + '|' + item.getCreatedByUserId()
+                + '|' + item.getSortOrder()
+                + '|' + normalizedField(item.getPriority())
+                + '|' + normalizedField(item.getCategory())
+                + '|' + normalizedField(item.getSource())
+                + '|' + normalizedField(item.getRestrictionType())
+                + '|' + normalizedField(item.getRestrictionReason());
+    }
+
+    private String normalizedField(String value) {
+        return value == null ? "" : value.trim().toUpperCase(Locale.ROOT);
     }
 
     private View createItemRow(LinearLayout parent, List<PackingItem> group) {

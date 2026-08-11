@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -119,6 +120,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
 
         fromCreation = getIntent().getBooleanExtra(EXTRA_FROM_CREATION, false);
         bindActions();
+        bindSystemBackNavigation();
         Object retained = getLastCustomNonConfigurationInstance();
         if (retained instanceof RoomScreenSnapshot) {
             restoreSnapshot((RoomScreenSnapshot) retained);
@@ -152,6 +154,15 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         MaterialButton viewChecklist = binding.roomDetailBottomCta.bottomCtaPrimary;
         viewChecklist.setText(R.string.room_detail_view_checklist);
         viewChecklist.setOnClickListener(v -> presenter.onChecklistClicked());
+    }
+
+    private void bindSystemBackNavigation() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                exitRoomDetail();
+            }
+        });
     }
 
     @Override
@@ -528,11 +539,6 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
             startActivity(mainIntent);
         }
         finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-        exitRoomDetail();
     }
 
     @Override
