@@ -131,7 +131,7 @@
     <string name="review_step1_label">STEP 1 · 일정 확인</string>
     <string name="review_step2_label">STEP 2 · 준비물 체크</string>
     <string name="review_destination_label">여행지</string>
-    <string name="review_dates_label">숙소 일정</string>
+    <string name="review_dates_label">여행 일정</string>
     <string name="review_weather_heading">일정별 날씨</string>
     <string name="review_weather_disclaimer">AI 데이터의 기반으로 정리한 날씨 정보라 실제와 다를 수 있어요\n출발 전 최신 기상 예보를 다시 확인해주세요</string>
     <string name="review_weather_limit_notice">최대 10일치 날씨만 제공돼요. 이후 일정 날씨는 출발이 가까워지면 기상청 등 최신 예보로 확인해주세요.</string>
