@@ -241,6 +241,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
             avatar.setVisibility(View.VISIBLE);
             avatar.setInitial(initial(assignee.getNickname()));
             avatar.setAvatarColor(ContextCompat.getColor(requireContext(), avatarColor(assignee.getUserId())));
+            avatar.setImageUrl(assignee.getProfileImageUrl());
         }
 
         bindRestriction(row, first.getRestrictionType());
@@ -268,7 +269,8 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                     initial(member.getNickname()),
                     ContextCompat.getColor(requireContext(), avatarColor(member.getUserId())),
                     strokeColor,
-                    index > 0));
+                    index > 0,
+                    member.getProfileImageUrl()));
         }
         int remaining = assignees.size() - shown;
         if (remaining > 0) {
@@ -276,11 +278,18 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                     "+" + remaining,
                     ContextCompat.getColor(requireContext(), R.color.bag_text_secondary),
                     strokeColor,
-                    true));
+                    true,
+                    null));
         }
     }
 
-    private AvatarView buildStackedAvatar(String initial, int color, int strokeColor, boolean overlap) {
+    private AvatarView buildStackedAvatar(
+            String initial,
+            int color,
+            int strokeColor,
+            boolean overlap,
+            String profileImageUrl
+    ) {
         AvatarView avatar = new AvatarView(requireContext());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dp(26), dp(26));
         if (overlap) {
@@ -290,6 +299,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         avatar.setInitial(initial);
         avatar.setAvatarColor(color);
         avatar.setStrokeEnabled(true, strokeColor);
+        avatar.setImageUrl(profileImageUrl);
         return avatar;
     }
 

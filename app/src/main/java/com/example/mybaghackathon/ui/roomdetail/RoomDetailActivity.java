@@ -339,6 +339,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
             addMember(
                     binding.roomDetailMemberList,
                     displayName(member),
+                    member.getProfileImageUrl(),
                     "OWNER".equalsIgnoreCase(member.getRole()),
                     avatarColors.get(index % avatarColors.size())
             );
@@ -427,7 +428,13 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         }
     }
 
-    private void addMember(LinearLayout list, String name, boolean host, int avatarColorRes) {
+    private void addMember(
+            LinearLayout list,
+            String name,
+            String profileImageUrl,
+            boolean host,
+            int avatarColorRes
+    ) {
         String safeName = hasText(name) ? name.trim() : "여행자";
         View row = LayoutInflater.from(this)
                 .inflate(R.layout.molecule_member_list_item, list, false);
@@ -437,6 +444,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
                 row.findViewById(R.id.memberAvatar);
         avatar.setInitial(safeName.substring(0, 1));
         avatar.setAvatarColor(ContextCompat.getColor(this, avatarColorRes));
+        avatar.setImageUrl(profileImageUrl);
         row.findViewById(R.id.memberHostBadge)
                 .setVisibility(host ? View.VISIBLE : View.GONE);
         list.addView(row);
