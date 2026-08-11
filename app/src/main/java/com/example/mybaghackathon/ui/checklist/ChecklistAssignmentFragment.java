@@ -97,6 +97,7 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         AvatarView avatar = header.findViewById(R.id.memberAvatar);
         avatar.setInitial(initial(member.getNickname()));
         avatar.setAvatarColor(ContextCompat.getColor(requireContext(), avatarColor(member.getUserId())));
+        avatar.setImageUrl(member.getProfileImageUrl());
         header.findViewById(R.id.memberHostBadge).setVisibility(
                 "OWNER".equalsIgnoreCase(member.getRole()) ? View.VISIBLE : View.GONE);
 
@@ -120,6 +121,7 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
             avatar.setInitial(initial(member.getNickname()));
             avatar.setAvatarColor(ContextCompat.getColor(requireContext(), avatarColor(member.getUserId())));
             avatar.setStrokeEnabled(true, ContextCompat.getColor(requireContext(), R.color.bag_bg_base));
+            avatar.setImageUrl(member.getProfileImageUrl());
             stack.addView(avatar);
         }
     }
@@ -132,7 +134,8 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
 
     private void addUnassignedRow(LinearLayout list, PackingItem item) {
         View row = inflateRow(list, item.getItemName());
-        row.findViewById(R.id.assignmentRowConfirm).setVisibility(View.GONE);
+        // 지정 항목과 동일한 오른쪽 슬롯을 유지해 행 크기와 텍스트 폭을 맞춘다.
+        row.findViewById(R.id.assignmentRowConfirm).setVisibility(View.INVISIBLE);
         addWithSpacing(list, row);
     }
 
