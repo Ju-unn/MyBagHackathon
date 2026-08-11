@@ -8,8 +8,16 @@ public class KakaoLoginRequestDto {
     @SerializedName("access_token")
     private final String accessToken;
 
-    // 카카오에서 받은 access_token을 요청 바디로 감싼다
-    public KakaoLoginRequestDto(String accessToken) {
+    // 로그인 화면 필수 동의 체크박스 값 — 서버가 user_consents에 기록
+    @SerializedName("privacy_agreed")
+    private final boolean privacyAgreed;
+
+    @SerializedName("terms_agreed")
+    private final boolean termsAgreed;
+
+    public KakaoLoginRequestDto(String accessToken, boolean privacyAgreed, boolean termsAgreed) {
         this.accessToken = accessToken;
+        this.privacyAgreed = privacyAgreed;
+        this.termsAgreed = termsAgreed;
     }
 }
