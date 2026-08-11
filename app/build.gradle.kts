@@ -52,6 +52,8 @@ android {
 
     buildTypes {
         release {
+            // TODO(보안/배포전): 릴리즈에서 코드 난독화/축소가 꺼져 있어 APK 디컴파일 시
+            // 클래스/메서드명이 그대로 노출됨. true로 켜고 proguard-rules.pro 점검 필요.
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
