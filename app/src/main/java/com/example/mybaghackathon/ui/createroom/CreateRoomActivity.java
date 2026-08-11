@@ -27,15 +27,10 @@ import com.google.android.material.button.MaterialButton;
  * ScheduleUploadActivity로 인텐트를 통해 넘어가 임시 상태로 유지되다가,
  * 상세 검토 화면에서 "목록 아이템 생성"을 눌러야 비로소 방이 생성된다.
  */
-public class CreateRoomActivity extends AppCompatActivity {
-
-    private static final int MEMBER_COUNT_MIN = 1;
-    private static final int MEMBER_COUNT_MAX = 10;
-    private static final int MEMBER_COUNT_DEFAULT = 1;
-    private static final int ROOM_NAME_MAX_LENGTH = 10;
+public class CreateRoomActivity extends AppCompatActivity implements CreateRoomContract.View {
 
     private ActivityCreateRoomBinding binding;
-    private int memberCount = MEMBER_COUNT_DEFAULT;
+    private CreateRoomContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +38,8 @@ public class CreateRoomActivity extends AppCompatActivity {
         binding = ActivityCreateRoomBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         EdgeToEdgeUtil.applySystemBarPadding(this, binding.getRoot());
+
+        presenter = new CreateRoomPresenter(this);
 
         TextView title = binding.createRoomTopBar.topAppBarCompactTitle;
         title.setText(R.string.create_room_title);
@@ -56,7 +53,7 @@ public class CreateRoomActivity extends AppCompatActivity {
             return false;
         });
         binding.createRoomNameField.textFieldInput.setFilters(
-                new InputFilter[]{new InputFilter.LengthFilter(ROOM_NAME_MAX_LENGTH)});
+                new InputFilter[]{new InputFilter.LengthFilter(CreateRoomPresenter.ROOM_NAME_MAX_LENGTH)});
         binding.createRoomNameField.textFieldInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -64,8 +61,7 @@ public class CreateRoomActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                binding.createRoomNameLengthNotice.setVisibility(
-                        s.length() >= ROOM_NAME_MAX_LENGTH ? View.VISIBLE : View.GONE);
+                presenter.onNameChanged(s.toString());
             }
 
             @Override
@@ -73,40 +69,36 @@ public class CreateRoomActivity extends AppCompatActivity {
             }
         });
 
-        updateMemberCountLabel();
-        binding.createRoomMemberMinus.setOnClickListener(v -> {
-            if (memberCount <= MEMBER_COUNT_MIN) return;
-            memberCount--;
-            updateMemberCountLabel();
-        });
-        binding.createRoomMemberPlus.setOnClickListener(v -> {
-            if (memberCount >= MEMBER_COUNT_MAX) return;
-            memberCount++;
-            updateMemberCountLabel();
-        });
+        binding.createRoomMemberMinus.setOnClickListener(v -> presenter.onMemberMinusClicked());
+        binding.createRoomMemberPlus.setOnClickListener(v -> presenter.onMemberPlusClicked());
 
         MaterialButton submit = binding.createRoomBottomCta.bottomCtaPrimary;
         submit.setText(R.string.create_room_submit);
-        submit.setOnClickListener(v -> {
-            String roomName = binding.createRoomNameField.textFieldInput.getText() == null
-                    ? ""
-                    : binding.createRoomNameField.textFieldInput.getText().toString().trim();
-
-            if (roomName.isEmpty()) {
-                Toast.makeText(this, R.string.create_room_name_required, Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Intent intent = new Intent(this, ScheduleUploadActivity.class);
-            intent.putExtra("room_name", roomName);
-            intent.putExtra("member_count", memberCount);
-            startActivity(intent);
-            finish();
-        });
+        submit.setOnClickListener(v -> presenter.onSubmitClicked());
     }
 
-    private void updateMemberCountLabel() {
-        binding.createRoomMemberCount.setText(getString(R.string.create_room_member_count_format, memberCount));
+    @Override
+    public void showMemberCount(int count) {
+        binding.createRoomMemberCount.setText(getString(R.string.create_room_member_count_format, count));
+    }
+
+    @Override
+    public void showNameLengthNotice(boolean visible) {
+        binding.createRoomNameLengthNotice.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void showNameRequiredError() {
+        Toast.makeText(this, R.string.create_room_name_required, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void navigateToScheduleUpload(String roomName, int memberCount) {
+        Intent intent = new Intent(this, ScheduleUploadActivity.class);
+        intent.putExtra(ScheduleUploadActivity.EXTRA_ROOM_NAME, roomName);
+        intent.putExtra(ScheduleUploadActivity.EXTRA_MEMBER_COUNT, memberCount);
+        startActivity(intent);
+        finish();
     }
 
     private void hideKeyboard(TextView view) {
