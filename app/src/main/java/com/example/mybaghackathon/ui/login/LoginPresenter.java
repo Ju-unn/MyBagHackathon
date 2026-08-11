@@ -29,10 +29,10 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void login(String kakaoAccessToken) {
+    public void login(String kakaoAccessToken, boolean privacyAgreed, boolean termsAgreed) {
         view.setLoading(true);
         executor.execute(() -> {
-            AppResult<User> result = authRepository.loginWithKakao(kakaoAccessToken);
+            AppResult<User> result = authRepository.loginWithKakao(kakaoAccessToken, privacyAgreed, termsAgreed);
             mainHandler.post(() -> {
                 if (destroyed) return;
                 view.setLoading(false);

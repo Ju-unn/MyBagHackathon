@@ -28,7 +28,10 @@
     <!-- S02 로그인 -->
     <string name="login_copy">사진 한 장이면\n짐 챙기기 끝</string>
     <string name="login_subcopy">여행 일정 사진만 올리면 AI가 준비물을 챙겨드려요</string>
-    <string name="login_terms">계속 진행하면 이용약관 및 개인정보처리방침에 동의하는 것으로 간주됩니다</string>
+    <string name="login_agree_privacy">[필수] 개인정보 수집·이용 동의</string>
+    <string name="login_agree_terms">[필수] 이용약관 동의</string>
+    <string name="login_agree_view">보기</string>
+    <string name="login_agree_required">필수 약관에 동의해야 로그인할 수 있습니다.</string>
 
     <!-- S03 홈 -->
     <string name="home_title">내 여행</string>

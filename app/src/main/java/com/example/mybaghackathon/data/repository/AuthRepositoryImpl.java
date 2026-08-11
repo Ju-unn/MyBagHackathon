@@ -32,10 +32,10 @@ public class AuthRepositoryImpl implements AuthRepository {
 
     // 카카오 로그인 API 호출 → 성공 시 JWT 저장 후 User 반환, 실패 시 에러 반환
     @Override
-    public AppResult<User> loginWithKakao(String kakaoAccessToken) {
+    public AppResult<User> loginWithKakao(String kakaoAccessToken, boolean privacyAgreed, boolean termsAgreed) {
         try {
             Response<ApiResponseDto<AuthTokenDto>> response =
-                    authApi.kakaoLogin(new KakaoLoginRequestDto(kakaoAccessToken)).execute();
+                    authApi.kakaoLogin(new KakaoLoginRequestDto(kakaoAccessToken, privacyAgreed, termsAgreed)).execute();
 
             ApiResponseDto<AuthTokenDto> body = response.body();
             if (!response.isSuccessful() || body == null || !body.isSuccess()) {
