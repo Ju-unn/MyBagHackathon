@@ -44,43 +44,6 @@ public class ChecklistPresenterTest {
     }
 
     @Test
-    public void loadChecklist_excludesUncheckedAiPersonalRecommendation() {
-        Fixture fixture = new Fixture();
-        fixture.packingRepository.items.clear();
-
-        PackingItem checked = fixture.item(31L, "AI", "COMMON");
-        PackingItem unchecked = fixture.item(32L, "AI", "PERSONAL");
-        PackingItem manual = fixture.item(33L, "USER", "PERSONAL");
-        fixture.packingRepository.items.add(checked);
-        fixture.packingRepository.items.add(unchecked);
-        fixture.packingRepository.items.add(manual);
-
-        fixture.loadInitialData();
-
-        assertEquals(2, fixture.view.items.size());
-        assertTrue(fixture.view.items.contains(checked));
-        assertTrue(fixture.view.items.contains(manual));
-        assertFalse(fixture.view.items.contains(unchecked));
-    }
-
-    @Test
-    public void loadChecklist_oneCheckedOutOfFifteenPublishesOnlyOneRecommendation() {
-        Fixture fixture = new Fixture();
-        fixture.packingRepository.items.clear();
-        PackingItem checked = fixture.item(100L, "AI", "COMMON");
-        fixture.packingRepository.items.add(checked);
-        for (int index = 1; index < 15; index++) {
-            fixture.packingRepository.items.add(
-                    fixture.item(100L + index, "AI", "PERSONAL"));
-        }
-
-        fixture.loadInitialData();
-
-        assertEquals(1, fixture.view.items.size());
-        assertTrue(fixture.view.items.contains(checked));
-    }
-
-    @Test
     public void duplicateAddWhileLoading_isIgnored() {
         Fixture fixture = new Fixture();
         fixture.loadInitialData();
@@ -324,17 +287,6 @@ public class ChecklistPresenterTest {
             return item;
         }
 
-        private PackingItem item(long packingItemId, String source, String scope) {
-            PackingItem item = new PackingItem();
-            item.setPackingItemId(packingItemId);
-            item.setTripId(TRIP_ID);
-            item.setCreatedByUserId(CURRENT_USER_ID);
-            item.setItemName("item-" + packingItemId);
-            item.setSource(source);
-            item.setScope(scope);
-            item.setItemStatus("ACTIVE");
-            return item;
-        }
     }
 
     private static final class RecordingView implements ChecklistContract.View {

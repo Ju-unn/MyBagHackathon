@@ -32,7 +32,12 @@ public interface ReviewContract {
         void showOptionalItems(List<ItemView> items);
         void setGenerating(boolean generating);
         void showGenerateError(String message);
-        void navigateToRoomDetail(long tripId, String roomName, String inviteCode);
+        void navigateToRoomDetail(
+                long tripId,
+                String roomName,
+                String inviteCode,
+                ArrayList<String> selectedItemNames
+        );
     }
 
     interface Presenter {
