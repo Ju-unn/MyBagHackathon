@@ -70,7 +70,7 @@
     <string name="room_detail_schedule_title">일정 정보</string>
     <string name="room_detail_destination_label">여행지</string>
     <string name="room_detail_destination_value">도쿄, 일본</string>
-    <string name="room_detail_dates_label">숙소 일정</string>
+    <string name="room_detail_dates_label">여행 일정</string>
     <string name="room_detail_dates_value">3.14 — 3.18 · 4박5일</string>
     <string name="room_detail_weather_title">일정별 날씨</string>
     <string name="room_detail_weather_day1">3.14(토)</string>
@@ -192,7 +192,13 @@
     <string name="checklist_item_umbrella">우산</string>
     <string name="checklist_item_medicine">상비약</string>
     <string name="checklist_add_manual">+ 항목 추가</string>
-    <string name="checklist_claim_note">체크박스를 탭하면 내가 담당으로 지정돼요 · 밀어서 수정하거나 삭제할 수 있어요</string>
+    <string name="checklist_claim_note_member">공용 물품의 담당은 방장이 지정해요</string>
+    <string name="checklist_claim_note_host">체크박스를 탭하면 담당을 지정할 수 있어요. 담당은 방장만 지정할 수 있어요. 밀어서 수정·삭제도 할 수 있어요.</string>
+    <string name="checklist_assignment_host_only">방장이 담당을 지정해요</string>
+    <string name="checklist_duplicate_item_error">이미 내 목록에 있는 물품이에요</string>
+    <string name="checklist_common_delete_title">공용 물품 삭제</string>
+    <string name="checklist_common_delete_message">%1$s을(를) 공용 목록에서 삭제할까요?</string>
+    <string name="checklist_member_progress_format">%1$d/%2$d</string>
     <string name="checklist_swipe_hint">길게 눌러 수정 · 좌우로 밀어 삭제할 수 있어요</string>
     <string name="checklist_unassigned">미지정</string>
     <string name="checklist_unassigned_empty">아직 담당이 없어요</string>
@@ -200,6 +206,8 @@
     <string name="checklist_common_empty_desc">아래 버튼을 눌러 공용 준비물을 추가해 보세요</string>
     <string name="checklist_filter_empty_title">선택한 중요도에 물품이 없어요</string>
     <string name="checklist_filter_empty_desc">다른 중요도 필터를 선택해 보세요</string>
+    <string name="checklist_mine_empty_title">내 준비물이 아직 없어요</string>
+    <string name="checklist_mine_empty_desc">아래 버튼을 눌러 준비물을 추가해 보세요.</string>
     <string name="checklist_assignment_hint">담당자별 준비 상태를 한눈에 확인할 수 있어요</string>
     <string name="checklist_assignment_summary">2명이 함께 준비 중</string>
     <string name="checklist_assign_title">%1$s 담당자 지정</string>
@@ -210,6 +218,11 @@
     <string name="checklist_unassign_action">담당 해제</string>
     <string name="checklist_delete_dialog_title">물품 삭제</string>
     <string name="checklist_delete_dialog_message">%1$s을(를) 내 목록에서 삭제할까요?</string>
+    <string name="checklist_merged_remove_title">내 목록에서 제거</string>
+    <string-array name="checklist_merged_remove_options">
+        <item>내 개인 물품만 삭제</item>
+        <item>공용 물품 담당 해제</item>
+    </string-array>
     <string name="checklist_host_only">공용 물품은 방장만 변경할 수 있습니다</string>
     <string name="checklist_owner_only">내 개인 물품만 변경할 수 있습니다</string>
 

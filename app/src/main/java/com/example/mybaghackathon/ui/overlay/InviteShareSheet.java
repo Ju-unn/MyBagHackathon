@@ -3,6 +3,7 @@ package com.example.mybaghackathon.ui.overlay;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,6 +57,21 @@ public class InviteShareSheet extends BottomSheetDialogFragment {
         args.putString(ARG_INVITE_CODE, inviteCode);
         sheet.setArguments(args);
         return sheet;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getDialog() == null) {
+            return;
+        }
+        FrameLayout bottomSheet = getDialog().findViewById(
+                com.google.android.material.R.id.design_bottom_sheet);
+        if (bottomSheet != null) {
+            // 바깥 Material 기본 surface가 흰색으로 비치지 않게 하고,
+            // sheet_invite의 bag_bg_base 둥근 배경을 그대로 노출한다.
+            bottomSheet.setBackgroundColor(Color.TRANSPARENT);
+        }
     }
 
     @Nullable

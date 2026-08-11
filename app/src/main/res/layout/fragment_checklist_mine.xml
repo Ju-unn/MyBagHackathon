@@ -31,6 +31,7 @@
                 android:orientation="horizontal">
 
             <com.example.mybaghackathon.ui.atoms.ChipView
+                android:id="@+id/checklistMineFilterAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_sm"
@@ -38,6 +39,7 @@
                 app:chipLabel="@string/checklist_filter_all" />
 
             <com.example.mybaghackathon.ui.atoms.ChipView
+                android:id="@+id/checklistMineFilterEssential"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_sm"
@@ -45,6 +47,7 @@
                 app:chipLabel="@string/checklist_filter_essential" />
 
             <com.example.mybaghackathon.ui.atoms.ChipView
+                android:id="@+id/checklistMineFilterMid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_sm"
@@ -52,6 +55,7 @@
                 app:chipLabel="@string/checklist_filter_mid" />
 
             <com.example.mybaghackathon.ui.atoms.ChipView
+                android:id="@+id/checklistMineFilterOptional"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:chipActive="false"

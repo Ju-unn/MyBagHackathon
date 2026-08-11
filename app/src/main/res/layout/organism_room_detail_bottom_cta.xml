@@ -25,7 +25,7 @@
             android:id="@+id/bottomCtaSecondary"
             style="@style/Widget.Bag.Button.Secondary.Outline"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height"
             android:layout_weight="1"
             android:text="@string/room_detail_view_tips"
             android:textStyle="bold" />
@@ -34,7 +34,7 @@
             android:id="@+id/bottomCtaPrimary"
             style="@style/Widget.Bag.Button.Primary"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height"
             android:layout_marginStart="@dimen/space_md"
             android:layout_weight="1"
             android:text="@string/room_detail_view_checklist"
