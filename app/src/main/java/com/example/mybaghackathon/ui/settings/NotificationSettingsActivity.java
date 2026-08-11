@@ -77,6 +77,7 @@ public class NotificationSettingsActivity extends AppCompatActivity implements N
         binding.notifSwitchD3.setChecked(settings.isDDay3Enabled());
         binding.notifSwitchD1.setChecked(settings.isDDay1Enabled());
         applyingRemoteState = false;
+        setSwitchesLoading(false);
     }
 
     @Override
@@ -85,5 +86,20 @@ public class NotificationSettingsActivity extends AppCompatActivity implements N
             return;
         }
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        if (binding != null) {
+            setSwitchesLoading(false);
+        }
+    }
+
+    // 서버 값이 도착하기 전까지 스위치를 비활성/반투명 상태로 두어, XML 기본값에서
+    // 실제 서버 값으로 스위치가 눈에 띄게 움직이는 것을 방지한다.
+    private void setSwitchesLoading(boolean loading) {
+        float alpha = loading ? 0.4f : 1f;
+        binding.notifSwitchD7.setEnabled(!loading);
+        binding.notifSwitchD3.setEnabled(!loading);
+        binding.notifSwitchD1.setEnabled(!loading);
+        binding.notifSwitchD7.setAlpha(alpha);
+        binding.notifSwitchD3.setAlpha(alpha);
+        binding.notifSwitchD1.setAlpha(alpha);
     }
 }
