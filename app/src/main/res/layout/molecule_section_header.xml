@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- M4 · SectionHeader — 중요도 = 필수 / 중간 / 선택 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingBottom="8dp">
+    android:paddingBottom="8dp"
+    android:minHeight="40dp">
 
     <com.example.mybaghackathon.ui.atoms.PriorityDotView
         android:id="@+id/sectionHeaderDot"
@@ -16,9 +18,19 @@
 
     <TextView
         android:id="@+id/sectionHeaderLabel"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:textAppearance="@style/TextAppearance.Bag.LabelL"
         android:textStyle="bold"
         tools:text="필수 · 5" />
+
+    <ImageView
+        android:id="@+id/sectionHeaderToggle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:padding="8dp"
+        android:rotation="90"
+        android:src="@drawable/ic_chevron_right"
+        app:tint="@color/bag_text_secondary" />
 </LinearLayout>

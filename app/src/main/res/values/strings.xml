@@ -186,6 +186,8 @@
     <string name="checklist_filter_essential">필수</string>
     <string name="checklist_filter_mid">중간</string>
     <string name="checklist_filter_optional">선택</string>
+    <string name="checklist_section_expand">%1$s 목록 펼치기</string>
+    <string name="checklist_section_collapse">%1$s 목록 접기</string>
     <string name="checklist_item_passport">여권</string>
     <string name="checklist_item_flight_ticket">항공권</string>
     <string name="checklist_item_phone_charger">휴대폰 충전기</string>

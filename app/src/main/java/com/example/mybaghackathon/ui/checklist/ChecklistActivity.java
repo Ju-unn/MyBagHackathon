@@ -224,14 +224,10 @@ public class ChecklistActivity extends AppCompatActivity
     }
 
     private void updateHeader() {
-        int completed = 0;
-        for (PackingItem item : items) {
-            if (item.isCompleted()) {
-                completed++;
-            }
-        }
-        int progress = items.isEmpty() ? 0 : Math.round(completed * 100f / items.size());
-        String summary = completed + "/" + items.size() + " 완료";
+        ChecklistProgressCalculator.Progress result =
+                ChecklistProgressCalculator.calculate(items);
+        int progress = result.percent();
+        String summary = result.completed + "/" + result.total + " 완료";
 
         if (soloMode && soloBinding != null) {
             soloBinding.checklistSoloTripName.setText(tripName);

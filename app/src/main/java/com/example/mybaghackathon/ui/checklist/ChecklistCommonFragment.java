@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
     private FragmentChecklistCommonBinding binding;
     private ChecklistHost host;
     private int selectedPriority = -1;
+    private final boolean[] expandedPriorities = {true, true, true};
     private final SwipeRevealHelper.Tracker swipeTracker = new SwipeRevealHelper.Tracker();
     // 같은 이름으로 여러 명에게 배정된(row가 인원 수만큼 나뉜) 공용 물품을 화면에서 한 줄로 묶어
     // 보여주기 위한 맵 — 대표(첫 번째) packing_item_id -> 그룹 전체. renderChecklist()마다 새로 채워짐.
@@ -184,17 +186,46 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                 .inflate(R.layout.molecule_section_header, sections, false);
         ((PriorityDotView) header.findViewById(R.id.sectionHeaderDot)).setLevel(level);
         ((TextView) header.findViewById(R.id.sectionHeaderLabel))
-                .setText(label + " · " + groups.size());
+                .setText(getString(R.string.review_priority_count_format, label, groups.size()));
         LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         if (sections.getChildCount() > 0) {
             headerParams.topMargin = dp(16);
         }
         sections.addView(header, headerParams);
 
+        LinearLayout sectionContent = new LinearLayout(requireContext());
+        sectionContent.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        sectionContent.setOrientation(LinearLayout.VERTICAL);
         for (List<PackingItem> group : groups) {
-            sections.addView(createItemRow(sections, group));
+            sectionContent.addView(createItemRow(sectionContent, group));
         }
+        sections.addView(sectionContent);
+        bindSectionToggle(header, sectionContent, level, label);
+    }
+
+    private void bindSectionToggle(
+            View header,
+            View sectionContent,
+            int priority,
+            String label
+    ) {
+        ImageView toggle = header.findViewById(R.id.sectionHeaderToggle);
+        Runnable applyState = () -> {
+            boolean expanded = expandedPriorities[priority];
+            sectionContent.setVisibility(expanded ? View.VISIBLE : View.GONE);
+            toggle.setRotation(expanded ? 90f : 0f);
+            header.setContentDescription(getString(expanded
+                    ? R.string.checklist_section_collapse
+                    : R.string.checklist_section_expand, label));
+        };
+        header.setOnClickListener(v -> {
+            expandedPriorities[priority] = !expandedPriorities[priority];
+            applyState.run();
+        });
+        applyState.run();
     }
 
     // 다중 배정으로 복제된 row만 한 줄로 묶는다 — 서버가 내려주는 item_group_id가 곧 그룹 키라

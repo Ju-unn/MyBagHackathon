@@ -73,6 +73,18 @@ public class ChecklistDuplicateDetectorTest {
         assertEquals("OPTIONAL", group.getPriorityItem().getPriority());
     }
 
+    @Test
+    public void soloModeIncludesUnassignedCommonItem() {
+        PackingItem common = item(2L, "COMMON", 9L, null, "passport");
+
+        List<ChecklistDuplicateDetector.ItemGroup> groups =
+                ChecklistDuplicateDetector.groupForMine(
+                        Arrays.asList(common), CURRENT_USER_ID, true);
+
+        assertEquals(1, groups.size());
+        assertSame(common, groups.get(0).getCommonItem());
+    }
+
     private PackingItem item(long id, String scope, long creatorId, Long assigneeId, String name) {
         PackingItem item = new PackingItem();
         item.setPackingItemId(id);
