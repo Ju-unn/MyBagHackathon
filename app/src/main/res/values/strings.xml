@@ -243,7 +243,6 @@
     <string name="notif_d7">D-7 알림</string>
     <string name="notif_d3">D-3 알림</string>
     <string name="notif_d1">D-1 알림</string>
-    <string name="notif_warning">출발일이 정해지지 않은 방은 알림이 오지 않아요. 일정 검토에서 날짜를 입력해 주세요.</string>
 
     <!-- FCM 푸시 알림 -->
     <string name="fcm_channel_name">여행 알림</string>
