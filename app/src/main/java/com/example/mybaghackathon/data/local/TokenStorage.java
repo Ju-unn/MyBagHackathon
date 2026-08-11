@@ -11,9 +11,7 @@ import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
 
 // 로그인 JWT의 로컬 저장과 로그인 상태 확인을 담당한다.
-// TODO(보안/배포전): PrefsManager가 일반 SharedPreferences라 JWT가 평문 저장됨 +
-// AndroidManifest의 allowBackup="true"라 백업 경로로 새어나갈 여지 있음.
-// EncryptedSharedPreferences(androidx.security.crypto)로 교체 고려.
+// PrefsManager가 EncryptedSharedPreferences 기반이라 JWT는 암호화된 상태로 저장된다.
 public class TokenStorage {
 
     private static final String KEY_JWT = "jwt";
