@@ -1,5 +1,6 @@
 package com.example.mybaghackathon.data.remote.api;
 
+import com.example.mybaghackathon.BuildConfig;
 import com.example.mybaghackathon.common.Constants;
 import com.example.mybaghackathon.data.local.TokenStorage;
 
@@ -20,10 +21,11 @@ public class ApiClient {
     // 인증 헤더 인터셉터 + 로깅 인터셉터를 붙인 Retrofit 인스턴스를 만든다
     public ApiClient(TokenStorage tokenStorage) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        // TODO(보안/배포전): BuildConfig.DEBUG일 때만 BODY, 릴리즈는 NONE으로 바꿀 것.
-        // 지금은 릴리즈 빌드에서도 Authorization 헤더(JWT)와 응답 바디(개인정보)가
-        // 그대로 Logcat에 찍힘. logging.setLevel(BuildConfig.DEBUG ? Level.BODY : Level.NONE);
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        // 디버그 빌드에서만 요청/응답 바디를 로그로 찍음. 릴리즈 빌드는 NONE이라
+        // Authorization 헤더(JWT)나 응답 바디(개인정보)가 Logcat에 남지 않음.
+        logging.setLevel(BuildConfig.DEBUG
+                ? HttpLoggingInterceptor.Level.BODY
+                : HttpLoggingInterceptor.Level.NONE);
 
         // 저장된 JWT가 있으면 모든 요청에 Authorization 헤더를 자동으로 붙인다
         Interceptor authInterceptor = chain -> {
