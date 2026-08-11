@@ -14,6 +14,9 @@ public interface NotificationSettingsContract {
     interface Presenter {
         void loadSettings();
 
+        // D-7/D-3/D-1을 한 번에 켜거나 끈다(알림 받기 마스터 스위치용)
+        void updateMaster(boolean enabled);
+
         void updateD7(boolean enabled);
 
         void updateD3(boolean enabled);

@@ -75,6 +75,12 @@ public class FcmMessagingService extends FirebaseMessagingService {
     }
 
     private void showNotification(String title, String body, String tripId) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        if (!notificationManager.areNotificationsEnabled()) {
+            // 사용자가 알림 권한을 거절했거나 시스템 설정에서 알림을 껐으면 그리지 않는다
+            return;
+        }
+
         ensureChannel();
 
         PendingIntent contentIntent = buildContentIntent(tripId);
@@ -89,7 +95,7 @@ public class FcmMessagingService extends FirebaseMessagingService {
         }
 
         int notificationId = tripId != null ? tripId.hashCode() : (int) System.currentTimeMillis();
-        NotificationManagerCompat.from(this).notify(notificationId, builder.build());
+        notificationManager.notify(notificationId, builder.build());
     }
 
     // tripId가 없으면(예: 방이 이미 삭제된 TRIP_DELETED) RoomDetail로 딥링크할 곳이 없으니 홈으로 보낸다
