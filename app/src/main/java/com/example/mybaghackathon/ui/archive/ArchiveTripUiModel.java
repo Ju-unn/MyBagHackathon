@@ -45,9 +45,11 @@ public class ArchiveTripUiModel {
                 tripId, State.ONGOING, title, ddayText, avatars, progressPercent, isOwner, isOngoing);
     }
 
-    public static ArchiveTripUiModel planned(long tripId, String title, String ddayText, boolean isOwner,
-                                              boolean isOngoing) {
-        return new ArchiveTripUiModel(tripId, State.PLANNED, title, ddayText, null, 0, isOwner, isOngoing);
+    public static ArchiveTripUiModel planned(long tripId, String title, String ddayText,
+                                              List<AvatarStackHelper.Entry> avatars, int progressPercent,
+                                              boolean isOwner, boolean isOngoing) {
+        return new ArchiveTripUiModel(
+                tripId, State.PLANNED, title, ddayText, avatars, progressPercent, isOwner, isOngoing);
     }
 
     public static ArchiveTripUiModel past(long tripId, String title, String ddayText, boolean isOwner) {

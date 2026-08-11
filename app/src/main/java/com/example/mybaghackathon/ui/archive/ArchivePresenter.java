@@ -19,8 +19,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // ArchiveContract.Presenter 구현체 — "진행 중" 세그먼트는 진행중인 내 여행방 목록을,
-// "지난 여행" 세그먼트는 완료된 여행방 목록을 불러온다. 진행중 목록 중 오늘 여행
-// 기간에 들어간 방이 있으면 참여자·체크리스트 완료율을 추가로 불러온다.
+// "지난 여행" 세그먼트는 완료된 여행방 목록을 불러온다. 진행 중 목록은 각 방의
+// 참여자·체크리스트 완료율도 함께 불러온다.
 public class ArchivePresenter implements ArchiveContract.Presenter {
 
     private final ArchiveContract.View view;
@@ -50,18 +50,17 @@ public class ArchivePresenter implements ArchiveContract.Presenter {
             List<Trip> trips = new ArrayList<>(result.getData());
             Collections.sort(trips, (a, b) -> compareByStartDate(a.getStartDate(), b.getStartDate()));
 
-            // 목록 맨 앞(가장 임박한/진행중인 방) 하나만 검정 상세 카드로 보여주므로
-            // 멤버·체크리스트 진행률도 그 방만 추가로 불러온다.
+            // 목록 맨 앞(가장 임박한/진행중인 방)만 검정 강조 카드로 보여주지만,
+            // 아바타·체크리스트 진행률은 모든 방 카드에 자세히 표시하므로 전부 불러온다.
             Map<Long, Integer> progressByTripId = new HashMap<>();
-            if (!trips.isEmpty()) {
-                Trip highlighted = trips.get(0);
-                AppResult<List<TripMember>> membersResult = tripRepository.listMembers(highlighted.getTripId());
+            for (Trip trip : trips) {
+                AppResult<List<TripMember>> membersResult = tripRepository.listMembers(trip.getTripId());
                 if (membersResult.isSuccess() && membersResult.getData() != null) {
-                    highlighted.setMembers(membersResult.getData());
+                    trip.setMembers(membersResult.getData());
                 }
-                AppResult<List<PackingItem>> packingResult = packingRepository.listItems(highlighted.getTripId(), null);
+                AppResult<List<PackingItem>> packingResult = packingRepository.listItems(trip.getTripId(), null);
                 if (packingResult.isSuccess() && packingResult.getData() != null) {
-                    progressByTripId.put(highlighted.getTripId(), completionPercent(packingResult.getData()));
+                    progressByTripId.put(trip.getTripId(), completionPercent(packingResult.getData()));
                 }
             }
 

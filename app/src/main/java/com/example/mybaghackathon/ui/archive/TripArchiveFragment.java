@@ -255,18 +255,21 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         }
     }
 
-    /** 정렬된 목록의 맨 앞(가장 임박한/진행중인 방)은 항상 Ongoing 카드(검정 강조)로 그리되,
+    /** 정렬된 목록의 맨 앞(가장 임박한/진행중인 방)만 Ongoing 카드(검정 강조)로 그리고
+     *  나머지는 흰색 카드로 그리되, 아바타·체크리스트 진행률은 모든 카드가 똑같이 자세히 보여준다.
      *  상태 라벨은 오늘이 여행 기간 안인지(D-day 도래)에 따라 진행중/여행 전으로 갈린다. */
     private ArchiveTripUiModel toOngoingUiModel(Trip trip, Map<Long, Integer> progressByTripId, boolean highlight) {
         String ddayText = DateUtils.formatDday(trip.getStartDate());
         boolean isOwner = trip.getOwnerUserId() == currentUserId;
         boolean isOngoing = DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate());
+        int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
+        List<AvatarStackHelper.Entry> avatars = toAvatarEntries(trip.getMembers());
         if (highlight) {
-            int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
             return ArchiveTripUiModel.ongoing(trip.getTripId(), trip.getTripName(), ddayText,
-                    toAvatarEntries(trip.getMembers()), progress, isOwner, isOngoing);
+                    avatars, progress, isOwner, isOngoing);
         }
-        return ArchiveTripUiModel.planned(trip.getTripId(), trip.getTripName(), ddayText, isOwner, isOngoing);
+        return ArchiveTripUiModel.planned(trip.getTripId(), trip.getTripName(), ddayText,
+                avatars, progress, isOwner, isOngoing);
     }
 
     private List<AvatarStackHelper.Entry> toAvatarEntries(List<TripMember> members) {
