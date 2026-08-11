@@ -68,10 +68,7 @@ final class ChecklistDuplicateDetector {
     private static Set<String> selectedAiItemNames(List<PackingItem> items) {
         Set<String> names = new HashSet<>();
         for (PackingItem item : items) {
-            if (item != null
-                    && "AI".equalsIgnoreCase(item.getSource())
-                    && !"EXCLUDED".equalsIgnoreCase(item.getItemStatus())
-                    && !"DELETED".equalsIgnoreCase(item.getItemStatus())) {
+            if (ChecklistItemSelection.isSelectedRecommendation(item)) {
                 names.add(normalizedName(item.getItemName()));
             }
         }

@@ -407,7 +407,8 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
         }
         for (PackingItem item : source) {
             if (!"DELETED".equalsIgnoreCase(item.getItemStatus())
-                    && !"EXCLUDED".equalsIgnoreCase(item.getItemStatus())) {
+                    && !"EXCLUDED".equalsIgnoreCase(item.getItemStatus())
+                    && !ChecklistItemSelection.isUnselectedRecommendation(item)) {
                 result.add(item);
             }
         }

@@ -17,9 +17,12 @@ public class ChecklistProgressCalculatorTest {
         PackingItem userItem = item(3L, 3L, "USER", "ACTIVE", true);
         PackingItem defaultItem = item(4L, 4L, "DEFAULT", "ACTIVE", true);
         PackingItem excludedAi = item(5L, 5L, "AI", "EXCLUDED", true);
+        PackingItem uncheckedAi = item(6L, 6L, "AI", "ACTIVE", true);
+        uncheckedAi.setScope("PERSONAL");
 
         ChecklistProgressCalculator.Progress progress = ChecklistProgressCalculator.calculate(
-                Arrays.asList(completedAi, incompleteAi, userItem, defaultItem, excludedAi));
+                Arrays.asList(completedAi, incompleteAi, userItem, defaultItem,
+                        excludedAi, uncheckedAi));
 
         assertEquals(1, progress.completed);
         assertEquals(2, progress.total);
@@ -33,6 +36,25 @@ public class ChecklistProgressCalculatorTest {
 
         ChecklistProgressCalculator.Progress progress = ChecklistProgressCalculator.calculate(
                 Arrays.asList(firstAssignee, secondAssignee));
+
+        assertEquals(0, progress.completed);
+        assertEquals(1, progress.total);
+        assertEquals(0, progress.percent());
+    }
+
+    @Test
+    public void oneCheckedOutOfFifteenShowsZeroOfOne() {
+        PackingItem[] recommendations = new PackingItem[15];
+        recommendations[0] = item(1L, 1L, "AI", "ACTIVE", false);
+        recommendations[0].setScope("COMMON");
+        for (int index = 1; index < recommendations.length; index++) {
+            recommendations[index] = item(
+                    index + 1L, index + 1L, "AI", "ACTIVE", false);
+            recommendations[index].setScope("PERSONAL");
+        }
+
+        ChecklistProgressCalculator.Progress progress =
+                ChecklistProgressCalculator.calculate(Arrays.asList(recommendations));
 
         assertEquals(0, progress.completed);
         assertEquals(1, progress.total);
