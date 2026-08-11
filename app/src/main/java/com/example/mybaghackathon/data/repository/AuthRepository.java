@@ -6,8 +6,8 @@ import com.example.mybaghackathon.model.User;
 // 인증(로그인) 관련 데이터 접근 규칙을 정의하는 인터페이스
 public interface AuthRepository {
 
-    // 카카오 access_token으로 로그인하고 성공 시 JWT를 저장한다
-    AppResult<User> loginWithKakao(String kakaoAccessToken);
+    // 카카오 access_token으로 로그인하고 성공 시 JWT를 저장한다. 필수 동의 값도 서버에 전달
+    AppResult<User> loginWithKakao(String kakaoAccessToken, boolean privacyAgreed, boolean termsAgreed);
 
     // 로그아웃 처리 후 저장된 토큰을 지운다
     AppResult<Void> logout();
