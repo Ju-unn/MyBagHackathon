@@ -21,7 +21,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.mybaghackathon"
+        applicationId = "com.mybagteam.mybag"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
