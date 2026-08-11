@@ -26,7 +26,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /** S12 · 내 목록. 체크, 수정, 스와이프 삭제와 실행 취소를 제공한다. */
 public class ChecklistMineFragment extends Fragment implements ChecklistDataConsumer {
@@ -74,9 +73,6 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
             }
         }
 
-        Set<Long> duplicateItemIds = ChecklistDuplicateDetector.findDuplicateItemIds(
-                host.getChecklistItems(), currentUserId);
-
         boolean empty = host.isChecklistLoaded() && myItems.isEmpty();
         binding.checklistMineEmptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
         list.setVisibility(empty ? View.GONE : View.VISIBLE);
@@ -86,24 +82,19 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         }
 
         for (PackingItem item : myItems) {
-            list.addView(createItemRow(
-                    list, item, duplicateItemIds.contains(item.getPackingItemId())));
+            list.addView(createItemRow(list, item));
         }
     }
 
-    private View createItemRow(LinearLayout parent, PackingItem item, boolean duplicate) {
+    private View createItemRow(LinearLayout parent, PackingItem item) {
         View swipeContainer = LayoutInflater.from(requireContext())
                 .inflate(R.layout.molecule_checklist_swipe_delete_row, parent, false);
         View row = swipeContainer.findViewById(R.id.checklistSwipeContent);
-        row.setBackgroundResource(duplicate
-                ? R.drawable.bg_checklist_item_duplicate
-                : R.drawable.bg_checklist_item_normal);
+        row.setBackgroundResource(R.drawable.bg_checklist_item_normal);
         TextView label = row.findViewById(R.id.checklistItemLabel);
         label.setText(item.getItemName());
         updateCompletedStyle(label, item.isCompleted());
         row.findViewById(R.id.checklistItemAvatar).setVisibility(View.GONE);
-        TextView duplicateBadge = row.findViewById(R.id.checklistItemDuplicateBadge);
-        duplicateBadge.setVisibility(duplicate ? View.VISIBLE : View.GONE);
 
         CheckboxView checkbox = row.findViewById(R.id.checklistItemCheckbox);
         checkbox.setState(item.isCompleted() ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);

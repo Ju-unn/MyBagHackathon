@@ -26,9 +26,8 @@
         android:layout_marginEnd="8dp"
         app:avatarInitial="김" />
 
-    <View
+    <com.example.mybaghackathon.ui.atoms.CheckboxView
         android:id="@+id/assignmentRowConfirm"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:background="@drawable/oval_stroke" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>
