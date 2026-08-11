@@ -1,12 +1,14 @@
 package com.example.mybaghackathon.ui.login;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mybaghackathon.MainActivity;
+import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.app.MyBagApplication;
 import com.example.mybaghackathon.data.repository.AuthRepository;
 import com.example.mybaghackathon.databinding.ActivityLoginBinding;
@@ -22,6 +24,9 @@ import kotlin.Unit;
 public class LoginActivity extends AppCompatActivity implements LoginContract.View {
 
     public static final String EXTRA_POST_LOGIN_INVITE_CODE = "post_login_invite_code";
+    private static final String TAG = "KakaoLogin";
+    private static final String PRIVACY_POLICY_URL = "https://mybag.duckdns.org/privacy-policy.html";
+    private static final String TERMS_URL = "https://mybag.duckdns.org/terms.html";
 
     private ActivityLoginBinding binding;
     private LoginContract.Presenter presenter;
@@ -37,6 +42,24 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         presenter = new LoginPresenter(this, authRepository);
 
         binding.loginKakaoButton.setOnClickListener(v -> startKakaoLogin());
+
+        // 필수 동의 게이팅 — 둘 다 체크해야 카카오 버튼 활성화
+        binding.agreePrivacy.setOnCheckedChangeListener((b, checked) -> updateLoginButtonState());
+        binding.agreeTerms.setOnCheckedChangeListener((b, checked) -> updateLoginButtonState());
+        binding.viewPrivacy.setOnClickListener(v -> openUrl(PRIVACY_POLICY_URL));
+        binding.viewTerms.setOnClickListener(v -> openUrl(TERMS_URL));
+        updateLoginButtonState();
+    }
+
+    // 개인정보처리방침·이용약관 필수 동의가 모두 체크됐을 때만 로그인 버튼 활성화
+    private void updateLoginButtonState() {
+        boolean bothAgreed = binding.agreePrivacy.isChecked() && binding.agreeTerms.isChecked();
+        binding.loginKakaoButton.setEnabled(bothAgreed);
+        binding.loginKakaoButton.setAlpha(bothAgreed ? 1f : 0.4f);
+    }
+
+    private void openUrl(String url) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
 
     @Override
@@ -46,6 +69,10 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     }
 
     private void startKakaoLogin() {
+        if (!binding.agreePrivacy.isChecked() || !binding.agreeTerms.isChecked()) {
+            Toast.makeText(this, R.string.login_agree_required, Toast.LENGTH_SHORT).show();
+            return;
+        }
         setLoading(true);
 
         if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(this)) {
@@ -75,7 +102,10 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
             }
             return Unit.INSTANCE;
         }
-        presenter.login(token.getAccessToken());
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "카카오 액세스 토큰 발급: " + token.getAccessToken());
+        }
+        presenter.login(token.getAccessToken(), binding.agreePrivacy.isChecked(), binding.agreeTerms.isChecked());
         return Unit.INSTANCE;
     }
 
@@ -88,7 +118,11 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     @Override
     public void setLoading(boolean loading) {
-        binding.loginKakaoButton.setEnabled(!loading);
+        if (loading) {
+            binding.loginKakaoButton.setEnabled(false);
+        } else {
+            updateLoginButtonState();
+        }
     }
 
     @Override

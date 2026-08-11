@@ -84,15 +84,61 @@
 
         </FrameLayout>
 
-        <TextView
-            android:id="@+id/loginTerms"
+        <!-- 필수 동의 — 둘 다 체크해야 카카오 버튼 활성화(LoginActivity에서 게이팅) -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_xl"
-            android:gravity="center"
-            android:text="@string/login_terms"
-            android:textColor="@color/bag_text_tertiary_safe"
-            android:textSize="11sp" />
+            android:layout_marginTop="@dimen/space_lg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/agreePrivacy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/login_agree_privacy"
+                android:textColor="@color/bag_text_secondary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/viewPrivacy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/space_xs"
+                android:text="@string/login_agree_view"
+                android:textColor="@color/bag_text_tertiary_safe"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/agreeTerms"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/login_agree_terms"
+                android:textColor="@color/bag_text_secondary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/viewTerms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/space_xs"
+                android:text="@string/login_agree_view"
+                android:textColor="@color/bag_text_tertiary_safe"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
