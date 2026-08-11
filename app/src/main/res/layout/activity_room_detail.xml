@@ -121,115 +121,11 @@
                     android:visibility="gone" />
 
                 <LinearLayout
-                    android:id="@+id/roomDetailWeatherRow1"
+                    android:id="@+id/roomDetailWeatherList"
                     android:layout_width="match_parent"
-                    android:layout_height="32dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_md"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/roomDetailWeatherDate1"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:gravity="center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        tools:text="@string/room_detail_weather_day1"
-                        android:textAppearance="@style/TextAppearance.Bag.BodyMMedium" />
-
-                    <com.example.mybaghackathon.ui.atoms.WeatherIconView
-                        android:id="@+id/roomDetailWeatherIcon1"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-
-                    <TextView
-                        android:id="@+id/roomDetailWeatherStatus1"
-                        android:layout_width="80dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center_vertical|end"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        tools:text="@string/room_detail_weather_status1"
-                        android:textAppearance="@style/TextAppearance.Bag.BodyM" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/roomDetailWeatherRow2"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="@dimen/space_2xs"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/roomDetailWeatherDate2"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:gravity="center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        tools:text="@string/room_detail_weather_day2"
-                        android:textAppearance="@style/TextAppearance.Bag.BodyMMedium" />
-
-                    <com.example.mybaghackathon.ui.atoms.WeatherIconView
-                        android:id="@+id/roomDetailWeatherIcon2"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-
-                    <TextView
-                        android:id="@+id/roomDetailWeatherStatus2"
-                        android:layout_width="80dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center_vertical|end"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        tools:text="@string/room_detail_weather_status2"
-                        android:textAppearance="@style/TextAppearance.Bag.BodyM" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/roomDetailWeatherRow3"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="@dimen/space_2xs"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/roomDetailWeatherDate3"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:gravity="center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        tools:text="@string/room_detail_weather_day3"
-                        android:textAppearance="@style/TextAppearance.Bag.BodyMMedium" />
-
-                    <com.example.mybaghackathon.ui.atoms.WeatherIconView
-                        android:id="@+id/roomDetailWeatherIcon3"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-
-                    <TextView
-                        android:id="@+id/roomDetailWeatherStatus3"
-                        android:layout_width="80dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center_vertical|end"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        tools:text="@string/room_detail_weather_status3"
-                        android:textAppearance="@style/TextAppearance.Bag.BodyM" />
-                </LinearLayout>
+                    android:orientation="vertical" />
             </LinearLayout>
 
             <LinearLayout

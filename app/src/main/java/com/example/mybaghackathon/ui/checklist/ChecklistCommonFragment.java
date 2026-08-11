@@ -5,11 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -22,9 +23,10 @@ import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.ChipView;
 import com.example.mybaghackathon.ui.atoms.PriorityDotView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
+import com.example.mybaghackathon.ui.organisms.SwipeRevealHelper;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
 import com.example.mybaghackathon.ui.overlay.AssignItemSheet;
-import com.example.mybaghackathon.ui.overlay.EditItemSheet;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,6 +39,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
     private FragmentChecklistCommonBinding binding;
     private ChecklistHost host;
     private int selectedPriority = -1;
+    private final SwipeRevealHelper.Tracker swipeTracker = new SwipeRevealHelper.Tracker();
     // 같은 이름으로 여러 명에게 배정된(row가 인원 수만큼 나뉜) 공용 물품을 화면에서 한 줄로 묶어
     // 보여주기 위한 맵 — 대표(첫 번째) packing_item_id -> 그룹 전체. renderChecklist()마다 새로 채워짐.
     private final Map<Long, List<PackingItem>> groupsByAnchorId = new LinkedHashMap<>();
@@ -79,6 +82,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         binding = FragmentChecklistCommonBinding.inflate(inflater, container, false);
         host = (ChecklistHost) requireActivity();
         bindFilters();
+        bindPermissionGuide();
         bindAddButton();
         renderChecklist();
         return binding.getRoot();
@@ -121,6 +125,12 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         });
     }
 
+    private void bindPermissionGuide() {
+        binding.checklistClaimNote.setText(host.isCurrentUserHost()
+                ? R.string.checklist_claim_note_host
+                : R.string.checklist_claim_note_member);
+    }
+
     @Override
     public void renderChecklist() {
         if (binding == null || host == null) {
@@ -128,7 +138,9 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         }
         binding.checklistCommonAddWrapper.setVisibility(
                 host.isCurrentUserHost() ? View.VISIBLE : View.GONE);
+        bindPermissionGuide();
         LinearLayout sections = binding.checklistCommonSections;
+        SwipeRevealHelper.closeOpenRow(swipeTracker);
         sections.removeAllViews();
         groupsByAnchorId.clear();
         boolean hasVisibleItems = false;
@@ -199,8 +211,10 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         PackingItem first = group.get(0);
         boolean grouped = group.size() > 1;
 
-        View row = LayoutInflater.from(requireContext())
-                .inflate(R.layout.molecule_checklist_item_row, parent, false);
+        View swipeContainer = LayoutInflater.from(requireContext())
+                .inflate(R.layout.molecule_checklist_common_swipe_delete_row, parent, false);
+        View row = swipeContainer.findViewById(R.id.checklistSwipeContent);
+        row.setBackgroundResource(R.drawable.bg_checklist_item_normal);
         TextView label = row.findViewById(R.id.checklistItemLabel);
         label.setText(first.getItemName());
 
@@ -211,17 +225,21 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                 break;
             }
         }
-        boolean targetCompleted = !allCompleted;
         CheckboxView checkbox = row.findViewById(R.id.checklistItemCheckbox);
         checkbox.setState(allCompleted ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
-        checkbox.setEnabled(host.isCurrentUserHost());
+        boolean completedState = allCompleted;
         if (host.isCurrentUserHost()) {
             checkbox.setOnCheckChangeListener(state -> {
-                for (PackingItem item : group) {
-                    if (item.isCompleted() != targetCompleted) {
-                        host.toggleChecklistItem(item);
-                    }
-                }
+                checkbox.setState(completedState
+                        ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
+                showAssigneePicker(group);
+            });
+        } else {
+            checkbox.setOnCheckChangeListener(state -> {
+                checkbox.setState(completedState
+                        ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
+                Toast.makeText(requireContext(),
+                        R.string.checklist_assignment_host_only, Toast.LENGTH_SHORT).show();
             });
         }
 
@@ -245,11 +263,25 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         }
 
         bindRestriction(row, first.getRestrictionType());
-        bindItemActions(row, group);
         if (host.isCurrentUserHost()) {
-            row.setOnClickListener(v -> showAssigneePicker(group));
+            float revealWidth = getResources().getDimension(
+                    R.dimen.checklist_delete_reveal_width);
+            SwipeRevealHelper.reset(row);
+            SwipeRevealHelper.attach(row, revealWidth, swipeTracker);
+            row.setOnClickListener(v -> {
+                if (SwipeRevealHelper.isOpen(swipeTracker, row)) {
+                    SwipeRevealHelper.closeOpenRow(swipeTracker);
+                } else {
+                    showAssigneePicker(group);
+                }
+            });
+            swipeContainer.findViewById(R.id.checklistSwipeDeleteButton)
+                    .setOnClickListener(v -> {
+                        SwipeRevealHelper.closeOpenRow(swipeTracker);
+                        confirmDeleteGroup(group);
+                    });
         }
-        return row;
+        return swipeContainer;
     }
 
     // 여러 명에게 배정된 물품 — 아바타를 최대 2개까지 겹쳐 보여주고, 그 이상은 "+N"으로 표시
@@ -312,36 +344,25 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         return false;
     }
 
-    private void bindItemActions(View row, List<PackingItem> group) {
-        View moreButton = row.findViewById(R.id.checklistItemMoreButton);
-        if (!host.isCurrentUserHost()) {
-            moreButton.setVisibility(View.GONE);
+    private void confirmDeleteGroup(List<PackingItem> group) {
+        if (group.isEmpty()) {
             return;
         }
-        boolean grouped = group.size() > 1;
-        moreButton.setVisibility(View.VISIBLE);
-        moreButton.setOnClickListener(v -> {
-            PopupMenu menu = new PopupMenu(requireContext(), moreButton);
-            menu.inflate(R.menu.checklist_common_host_actions);
-            if (grouped) {
-                // 그룹 전체를 대상으로 이름/우선순위를 부분 수정하는 건 애매해서 이번엔 삭제만 지원
-                menu.getMenu().findItem(R.id.actionEditChecklistItem).setVisible(false);
-            }
-            menu.setOnMenuItemClickListener(menuItem -> {
-                if (menuItem.getItemId() == R.id.actionEditChecklistItem) {
-                    showEditSheet(group.get(0));
-                    return true;
-                }
-                if (menuItem.getItemId() == R.id.actionDeleteChecklistItem) {
+        AlertDialog dialog = new MaterialAlertDialogBuilder(
+                requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
+                .setTitle(R.string.checklist_common_delete_title)
+                .setMessage(getString(
+                        R.string.checklist_common_delete_message,
+                        group.get(0).getItemName()))
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.action_delete, (ignored, which) -> {
                     for (PackingItem item : group) {
                         host.deleteChecklistItem(item);
                     }
-                    return true;
-                }
-                return false;
-            });
-            menu.show();
-        });
+                })
+                .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.clay_600));
     }
 
     private void showAssigneePicker(List<PackingItem> group) {
@@ -381,23 +402,6 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
             }
         }
         return result;
-    }
-
-    private void showEditSheet(PackingItem item) {
-        EditItemSheet sheet = EditItemSheet.newInstance(
-                item.getItemName(), priorityLevel(item.getPriority()));
-        sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
-            @Override
-            public void onItemRenamed(String newLabel, int priorityLevel) {
-                host.updateChecklistItem(item, newLabel, priorityLevel);
-            }
-
-            @Override
-            public void onItemDeleted() {
-                host.deleteChecklistItem(item);
-            }
-        });
-        sheet.show(getParentFragmentManager(), "edit_common_item");
     }
 
     private void bindRestriction(View row, String type) {

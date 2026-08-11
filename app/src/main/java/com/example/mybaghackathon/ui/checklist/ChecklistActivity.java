@@ -241,7 +241,6 @@ public class ChecklistActivity extends AppCompatActivity
             multiBinding.checklistTripName.setText(tripName);
             multiBinding.checklistProgressLabel.setText(summary);
             multiBinding.checklistProgressBar.setProgress(progress);
-            multiBinding.checklistCollaborationNote.setText(memberCount + "명이 함께 준비 중이에요");
         }
     }
 

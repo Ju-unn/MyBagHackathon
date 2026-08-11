@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 /** S09 방 상세 화면. 화면 표시와 사용자 입력 전달만 담당한다. */
 public class RoomDetailActivity extends AppCompatActivity implements RoomDetailContract.View {
@@ -189,7 +190,7 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         binding.roomDetailDestinationValue.setText(
                 joinNonEmpty(" ", trip.getDestinationCountry(), trip.getDestinationCity()));
         binding.roomDetailDatesValue.setText(
-                joinNonEmpty(" ~ ", trip.getStartDate(), trip.getEndDate()));
+                formatTripDateRange(trip.getStartDate(), trip.getEndDate()));
         updateHostUi(isHost);
         showMembers(trip.getMembers());
     }
@@ -202,42 +203,26 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         lastWeather = weatherList == null
                 ? Collections.emptyList() : new ArrayList<>(weatherList);
         lastWeatherState = null;
-        View[] rows = {
-                binding.roomDetailWeatherRow1,
-                binding.roomDetailWeatherRow2,
-                binding.roomDetailWeatherRow3
-        };
-        TextView[] dates = {
-                binding.roomDetailWeatherDate1,
-                binding.roomDetailWeatherDate2,
-                binding.roomDetailWeatherDate3
-        };
-        WeatherIconView[] icons = {
-                binding.roomDetailWeatherIcon1,
-                binding.roomDetailWeatherIcon2,
-                binding.roomDetailWeatherIcon3
-        };
-        TextView[] statuses = {
-                binding.roomDetailWeatherStatus1,
-                binding.roomDetailWeatherStatus2,
-                binding.roomDetailWeatherStatus3
-        };
-
-        int count = Math.min(weatherList == null ? 0 : weatherList.size(), rows.length);
         binding.roomDetailWeatherState.setVisibility(View.GONE);
-        for (int index = 0; index < rows.length; index++) {
-            boolean visible = index < count;
-            rows[index].setVisibility(visible ? View.VISIBLE : View.GONE);
-            if (!visible) {
-                continue;
-            }
-            Weather weather = weatherList.get(index);
-            dates[index].setText(formatWeatherDate(weather.getDate()));
-            icons[index].setType(WeatherMapper.toIconType(weather.getCondition()));
-            statuses[index].setText(getString(
+        binding.roomDetailWeatherList.setVisibility(View.VISIBLE);
+        binding.roomDetailWeatherList.removeAllViews();
+        for (Weather weather : lastWeather) {
+            View row = LayoutInflater.from(this).inflate(
+                    R.layout.molecule_weather_day_row, binding.roomDetailWeatherList, false);
+            ((TextView) row.findViewById(R.id.weatherRowDate))
+                    .setText(formatWeatherDate(weather.getDate()));
+            ((WeatherIconView) row.findViewById(R.id.weatherRowIcon))
+                    .setType(WeatherMapper.toIconType(weather.getCondition()));
+            ((TextView) row.findViewById(R.id.weatherRowStatus)).setText(getString(
                     R.string.room_detail_weather_status_format,
                     conditionLabel(weather.getCondition()),
                     Math.round(weather.getTempMax())));
+            if (binding.roomDetailWeatherList.getChildCount() > 0) {
+                LinearLayout.LayoutParams params =
+                        (LinearLayout.LayoutParams) row.getLayoutParams();
+                params.topMargin = getResources().getDimensionPixelSize(R.dimen.space_sm);
+            }
+            binding.roomDetailWeatherList.addView(row);
         }
     }
 
@@ -358,9 +343,8 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         lastWeatherState = message;
         binding.roomDetailWeatherState.setText(message);
         binding.roomDetailWeatherState.setVisibility(View.VISIBLE);
-        binding.roomDetailWeatherRow1.setVisibility(View.GONE);
-        binding.roomDetailWeatherRow2.setVisibility(View.GONE);
-        binding.roomDetailWeatherRow3.setVisibility(View.GONE);
+        binding.roomDetailWeatherList.removeAllViews();
+        binding.roomDetailWeatherList.setVisibility(View.GONE);
     }
 
     private void setActionsEnabled(boolean enabled) {
@@ -467,6 +451,27 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
                     : new SimpleDateFormat("M.d(E)", Locale.KOREA).format(date);
         } catch (ParseException ignored) {
             return value;
+        }
+    }
+
+    private String formatTripDateRange(String startDate, String endDate) {
+        if (!hasText(startDate) || !hasText(endDate)) {
+            return joinNonEmpty(" — ", startDate, endDate);
+        }
+        try {
+            SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+            input.setLenient(false);
+            Date start = input.parse(startDate);
+            Date end = input.parse(endDate);
+            if (start == null || end == null || end.before(start)) {
+                return joinNonEmpty(" — ", startDate, endDate);
+            }
+            long nights = TimeUnit.MILLISECONDS.toDays(end.getTime() - start.getTime());
+            SimpleDateFormat display = new SimpleDateFormat("M.d", Locale.KOREA);
+            return display.format(start) + " — " + display.format(end)
+                    + " · " + nights + "박" + (nights + 1) + "일";
+        } catch (ParseException ignored) {
+            return joinNonEmpty(" — ", startDate, endDate);
         }
     }
 
