@@ -43,9 +43,11 @@ public class TripRoomUiModel {
                 tripId, State.ACTIVE, title, ddayText, avatars, progressPercent, isOwner, isOngoing);
     }
 
-    public static TripRoomUiModel upcoming(long tripId, String title, String ddayText, boolean isOwner,
-                                            boolean isOngoing) {
-        return new TripRoomUiModel(tripId, State.UPCOMING, title, ddayText, null, 0, isOwner, isOngoing);
+    public static TripRoomUiModel upcoming(long tripId, String title, String ddayText,
+                                            List<AvatarStackHelper.Entry> avatars, int progressPercent,
+                                            boolean isOwner, boolean isOngoing) {
+        return new TripRoomUiModel(
+                tripId, State.UPCOMING, title, ddayText, avatars, progressPercent, isOwner, isOngoing);
     }
 
     public static TripRoomUiModel past(long tripId, String title, String ddayText, boolean isOwner) {

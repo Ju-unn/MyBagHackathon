@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * O4 · 여행방 카드(TripRoomCard) — pen.dev 스펙 기준 세 가지 상태(진행중/예정/
  * 지난 여행) 모두 동일하게 inflate된 organism_trip_room_card.xml에 값을 바인딩함:
- * 진행중 = bg/inverse + 데코레이션 + 아바타들 + 진행률.
- * 예정 = bg/surface + 뉴트럴 디데이, 아바타/진행률 없음.
+ * 진행중(목록 맨 앞) = bg/inverse(검정 강조) + 데코레이션 + 아바타들 + 진행률.
+ * 예정 = bg/surface(흰색) + 뉴트럴 디데이 + 아바타들 + 진행률(진행중과 동일하게 자세히 표시).
  * 지난 여행 = bg/surface + 뉴트럴 디데이(지난 일수), 아바타/진행률 없음.
  *
  * 기능: 하나의 카드 레이아웃을 상태별로(bindActive/bindUpcoming/bindPast)
@@ -64,12 +64,14 @@ public class TripRoomCardBinder {
 
         ProgressBar bar = root.findViewById(R.id.tripCardProgressBar);
         bar.setVisibility(View.VISIBLE);
+        bar.setProgressDrawable(ContextCompat.getDrawable(ctx, R.drawable.bg_progress_bar_on_dark));
         bar.setProgress(percent);
 
         root.findViewById(R.id.tripCardHint).setVisibility(View.GONE);
     }
 
-    public static void bindUpcoming(View root, String title, String ddayText, boolean isOngoing) {
+    public static void bindUpcoming(View root, String title, String ddayText,
+                                     List<AvatarStackHelper.Entry> avatars, int percent, boolean isOngoing) {
         Context ctx = root.getContext();
         MaterialCardView card = root.findViewById(R.id.tripCardRoot);
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_surface));
@@ -92,8 +94,25 @@ public class TripRoomCardBinder {
         dday.setText(ddayText);
         dday.setBrand(false);
 
-        root.findViewById(R.id.tripCardBottomRow).setVisibility(View.GONE);
-        root.findViewById(R.id.tripCardProgressBar).setVisibility(View.GONE);
+        // avatars가 null이면(진행률을 따로 불러오지 않는 화면) 기존처럼 하단 영역을 감춘다.
+        boolean showDetails = avatars != null;
+        root.findViewById(R.id.tripCardBottomRow).setVisibility(showDetails ? View.VISIBLE : View.GONE);
+        if (showDetails) {
+            LinearLayout stack = root.findViewById(R.id.tripCardAvatarStack);
+            AvatarStackHelper.populate(ctx, stack, avatars, 28);
+
+            TextView progressLabel = root.findViewById(R.id.tripCardProgressLabel);
+            progressLabel.setText(ctx.getString(R.string.checklist_progress_format, percent));
+            progressLabel.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_secondary));
+        }
+
+        ProgressBar bar = root.findViewById(R.id.tripCardProgressBar);
+        bar.setVisibility(showDetails ? View.VISIBLE : View.GONE);
+        if (showDetails) {
+            bar.setProgressDrawable(ContextCompat.getDrawable(ctx, R.drawable.bg_progress_bar));
+            bar.setProgress(percent);
+        }
+
         root.findViewById(R.id.tripCardHint).setVisibility(View.GONE);
     }
 
