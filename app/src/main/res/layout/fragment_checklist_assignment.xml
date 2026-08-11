@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- S13 · 체크리스트 분담 현황 탭 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base"
@@ -27,15 +28,12 @@
                 android:id="@+id/checklistAssignmentAvatarStack"
                 layout="@layout/molecule_avatar_stack" />
 
-            <!-- TODO(배포전): checklist_assignment_summary가 목업 더미값("2명이 함께
-                 준비 중"). 코드가 덮어쓰지만 android:text 대신 tools:text로 바꾸는 게
-                 더 안전함. -->
             <TextView
                 android:id="@+id/checklistAssignmentSummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/space_md"
-                android:text="@string/checklist_assignment_summary"
+                tools:text="@string/checklist_assignment_summary"
                 android:textAppearance="@style/TextAppearance.Bag.BodyMMedium" />
 
         </LinearLayout>

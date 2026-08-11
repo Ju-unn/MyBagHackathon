@@ -2,6 +2,7 @@
 <!-- S10 · 날씨·의식주 팁 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bag_bg_base">
@@ -48,9 +49,6 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <!-- TODO(배포전): feedback_region/temperature/period가 목업 더미값
-                         (도쿄, 11°~14° 등). 코드가 실제 데이터로 덮어쓰지만 android:text
-                         대신 tools:text로 바꾸는 게 더 안전함. -->
                     <TextView
                         android:id="@+id/feedbackRegion"
                         android:layout_width="0dp"
@@ -59,7 +57,7 @@
                         android:layout_weight="1"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="@string/feedback_region"
+                        tools:text="@string/feedback_region"
                         android:textAppearance="@style/TextAppearance.Bag.TitleS"
                         android:textStyle="bold" />
 
@@ -67,7 +65,7 @@
                         android:id="@+id/feedbackTemperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/feedback_temperature"
+                        tools:text="@string/feedback_temperature"
                         android:textAppearance="@style/TextAppearance.Bag.BodyLBold"
                         android:textColor="@color/bag_text_brand"
                         android:textStyle="bold" />
@@ -78,7 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_sm"
-                    android:text="@string/feedback_period"
+                    tools:text="@string/feedback_period"
                     android:textAppearance="@style/TextAppearance.Bag.LabelM" />
             </LinearLayout>
 
