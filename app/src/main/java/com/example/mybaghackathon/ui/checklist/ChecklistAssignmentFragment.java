@@ -17,6 +17,7 @@ import com.example.mybaghackathon.databinding.FragmentChecklistAssignmentBinding
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.model.TripMember;
 import com.example.mybaghackathon.ui.atoms.AvatarView;
+import com.example.mybaghackathon.ui.atoms.CheckboxView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -128,7 +129,7 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         AvatarView avatar = row.findViewById(R.id.assignmentRowAvatar);
         avatar.setInitial(initial(member.getNickname()));
         avatar.setAvatarColor(ContextCompat.getColor(requireContext(), avatarColor(member.getUserId())));
-        row.findViewById(R.id.assignmentRowConfirm).setVisibility(View.GONE);
+        bindCompletionState(row, item);
         addWithSpacing(list, row);
     }
 
@@ -137,6 +138,21 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         row.findViewById(R.id.assignmentRowAvatar).setVisibility(View.GONE);
         row.findViewById(R.id.assignmentRowConfirm).setVisibility(View.GONE);
         addWithSpacing(list, row);
+    }
+
+    /**
+     * 분담 현황은 상태 확인 화면이므로 여기서는 체크를 변경하지 않는다.
+     * 담당자가 내 목록에서 체크하면 서버 재조회 후 같은 PackingItem.completed 값이 반영된다.
+     */
+    private void bindCompletionState(View row, PackingItem item) {
+        CheckboxView checkbox = row.findViewById(R.id.assignmentRowConfirm);
+        checkbox.setVisibility(View.VISIBLE);
+        checkbox.setState(item.isCompleted() ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
+        checkbox.setClickable(false);
+        checkbox.setFocusable(false);
+        checkbox.setContentDescription(getString(item.isCompleted()
+                ? R.string.checklist_assignment_item_completed
+                : R.string.checklist_assignment_item_not_completed));
     }
 
     private View inflateRow(LinearLayout list, String label) {

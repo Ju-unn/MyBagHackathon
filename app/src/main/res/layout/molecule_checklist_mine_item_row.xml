@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- M12 · ChecklistItemRow — 상태 = 미체크/체크/제외,
-     담당자 = 없음/지정됨, 제한사항 = 없음/태그됨.
-     높이 48dp (제한사항 태그 줄이 보일 때는 62dp). -->
+<!-- 내 목록 전용 행: 공용 리스트의 왼쪽 체크박스 배치를 유지하기 위해 별도 구성한다. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,10 +7,10 @@
     android:layout_height="wrap_content"
     android:minHeight="48dp"
     android:orientation="vertical"
+    android:paddingStart="@dimen/space_md"
     android:paddingTop="9dp"
-    android:paddingBottom="9dp"
-    android:paddingStart="0dp"
-    android:paddingEnd="0dp">
+    android:paddingEnd="0dp"
+    android:paddingBottom="9dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,37 +18,26 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <com.example.mybaghackathon.ui.atoms.CheckboxView
-            android:id="@+id/checklistItemCheckbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="-13dp" />
-
         <TextView
             android:id="@+id/checklistItemLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="@dimen/space_md"
+            android:layout_marginEnd="@dimen/space_sm"
             android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.Bag.BodyL"
             tools:text="여권" />
 
+        <!-- 기존 바인딩 코드를 안전하게 공유하기 위한 숨김 슬롯 -->
         <com.example.mybaghackathon.ui.atoms.AvatarView
             android:id="@+id/checklistItemAvatar"
             android:layout_width="26dp"
             android:layout_height="26dp"
-            android:layout_marginEnd="@dimen/space_md"
-            android:visibility="gone"
-            app:avatarInitial="유" />
+            android:visibility="gone" />
 
-        <!-- 여러 명에게 배정된 물품용 — 아바타를 겹쳐서 보여주는 컨테이너(checklistItemAvatar 대신 사용) -->
         <LinearLayout
             android:id="@+id/checklistItemAvatarGroup"
             android:layout_width="wrap_content"
             android:layout_height="26dp"
-            android:layout_marginEnd="@dimen/space_md"
-            android:gravity="center_vertical"
             android:orientation="horizontal"
             android:visibility="gone" />
 
@@ -64,6 +51,11 @@
             android:src="@drawable/ic_more_vertical"
             android:visibility="gone"
             app:tint="@color/bag_text_secondary" />
+
+        <com.example.mybaghackathon.ui.atoms.CheckboxView
+            android:id="@+id/checklistItemCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <com.example.mybaghackathon.ui.atoms.RestrictionTagView
@@ -71,7 +63,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginStart="30dp"
         android:visibility="gone" />
-
 </LinearLayout>

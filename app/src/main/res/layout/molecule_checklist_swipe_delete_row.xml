@@ -37,7 +37,7 @@
 
     <include
         android:id="@+id/checklistSwipeContent"
-        layout="@layout/molecule_checklist_item_row"
+        layout="@layout/molecule_checklist_mine_item_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
