@@ -20,6 +20,11 @@ public class ChecklistItemDto {
     @SerializedName("created_by_user_id")
     private long createdByUserId;
 
+    // 다중 배정으로 복제된 row들은 같은 값(원본 row의 packing_item_id)을 가짐.
+    // 서버가 항상 채워서 내려주므로(미복제 물품은 자기 자신의 id) 그룹핑 키로 그대로 쓰면 됨.
+    @SerializedName("item_group_id")
+    private long itemGroupId;
+
     @SerializedName("item_name")
     private String itemName;
 
@@ -68,6 +73,10 @@ public class ChecklistItemDto {
 
     public long getCreatedByUserId() {
         return createdByUserId;
+    }
+
+    public long getItemGroupId() {
+        return itemGroupId;
     }
 
     public String getItemName() {

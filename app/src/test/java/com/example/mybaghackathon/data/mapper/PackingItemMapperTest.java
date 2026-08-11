@@ -22,4 +22,26 @@ public class PackingItemMapperTest {
 
         assertEquals(7L, item.getCreatedByUserId());
     }
+
+    @Test
+    public void checklistResponse_mapsItemGroupId() {
+        String json = "{\"packing_item_id\":12,\"trip_id\":3,\"item_group_id\":11,"
+                + "\"item_name\":\"여권\",\"item_scope\":\"COMMON\",\"is_completed\":false}";
+
+        PackingItem item = PackingItemMapper.fromChecklistItem(
+                new Gson().fromJson(json, ChecklistItemDto.class));
+
+        assertEquals(11L, item.getItemGroupId());
+    }
+
+    @Test
+    public void itemGroupIdFallsBackToOwnIdWhenMissing() {
+        String json = "{\"packing_item_id\":12,\"trip_id\":3,"
+                + "\"item_name\":\"여권\",\"item_scope\":\"COMMON\",\"is_completed\":false}";
+
+        PackingItem item = PackingItemMapper.fromChecklistItem(
+                new Gson().fromJson(json, ChecklistItemDto.class));
+
+        assertEquals(12L, item.getItemGroupId());
+    }
 }
