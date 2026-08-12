@@ -300,7 +300,7 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
     private void showEditSheet(ChecklistDuplicateDetector.ItemGroup itemGroup) {
         PackingItem personalItem = itemGroup.getPersonalItem();
         if (personalItem == null) {
-            showUnassignDialog(itemGroup.getCommonItem());
+            showCommonItemEditor(itemGroup.getCommonItem());
             return;
         }
         if (!ChecklistItemVisibility.isOwnedPersonal(personalItem, host.getCurrentUserId())) {
@@ -324,6 +324,30 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
             }
         });
         sheet.show(getParentFragmentManager(), "edit_personal_item");
+    }
+
+    // 참여자가 1명뿐이면 "담당 해제"라는 개념이 성립하지 않는다(나 말고 배정할 사람이 없음) —
+    // AI 추천 등 공용 항목도 개인 항목과 동일하게 오버레이로 이름 수정/삭제하게 한다.
+    // 참여자가 2명 이상일 때만 기존 담당 해제 확인창을 띄운다.
+    private void showCommonItemEditor(PackingItem commonItem) {
+        if (host.getTripMemberCount() > 1) {
+            showUnassignDialog(commonItem);
+            return;
+        }
+        EditItemSheet sheet = EditItemSheet.newInstance(
+                commonItem.getItemName(), priorityLevel(commonItem.getPriority()));
+        sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
+            @Override
+            public void onItemRenamed(String newLabel, int priorityLevel) {
+                host.updateChecklistItem(commonItem, newLabel, priorityLevel);
+            }
+
+            @Override
+            public void onItemDeleted() {
+                host.deleteChecklistItemWithUndo(commonItem);
+            }
+        });
+        sheet.show(getParentFragmentManager(), "edit_common_item_solo");
     }
 
     private void removeFromMine(PackingItem item) {

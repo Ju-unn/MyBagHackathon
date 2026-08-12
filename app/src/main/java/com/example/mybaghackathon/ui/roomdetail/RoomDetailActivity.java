@@ -197,6 +197,8 @@ public class RoomDetailActivity extends AppCompatActivity implements RoomDetailC
         int expectedMemberCount = trip.getExpectedMemberCount() == null
                 || trip.getExpectedMemberCount() <= 0
                 ? joinedMemberCount : trip.getExpectedMemberCount();
+        binding.roomDetailMemberCount.setText(getString(
+                R.string.room_detail_member_count_format, joinedMemberCount, expectedMemberCount));
         updateInviteUi(isHost, expectedMemberCount, joinedMemberCount);
         showMembers(trip.getMembers());
     }

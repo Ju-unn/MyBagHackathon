@@ -52,8 +52,8 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         }
 
         bindAvatarStack(members);
-        binding.checklistAssignmentSummary.setText(
-                host.getTripMemberCount() + "명이 함께 준비 중");
+        binding.checklistAssignmentSummary.setText(getString(
+                R.string.checklist_assignment_summary, members.size()));
 
         LinearLayout assigned = binding.checklistAssignmentList;
         LinearLayout unassigned = binding.checklistUnassignedList;
