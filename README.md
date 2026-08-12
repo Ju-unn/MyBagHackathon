@@ -5,8 +5,9 @@
 생성한 준비물은 같은 여행방에 참여한 동행자들과 공유하며, 담당자와 준비 상태를 함께 관리합니다.
 
 > 이 문서는 Manyfast의 기능명세서와 유저플로우를 기준으로 작성했습니다.  
-> Android는 **Java + XML Layout**을 사용합니다. (초기 설계에서는 MVP 패턴을 계획했으나, 실제 구현은 Fragment/Activity가 `AppContainer`로 조립된 Repository를 직접 호출하는 구조입니다. 별도 Presenter 계층은 없습니다.)  
-> 서버는 구축이 완료된 **AWS EC2 + Apache2 + PHP + MySQL** 환경을 사용합니다. 서버 API는 이 문서(9~10번 섹션)가 아니라 **`mybag` 백엔드 레포의 `APIs.md`**를 최신 기준으로 참고하세요.
+> Android는 **Java + XML Layout + MVP 패턴**을 사용합니다. 각 화면은 `Activity`/`Fragment`(View) + `Contract` + `Presenter`로 구성하고, `Presenter`가 `AppContainer`에 조립된 `Repository`를 호출합니다. DI 프레임워크(Dagger/Hilt)는 쓰지 않고 `AppContainer`가 생성자 조립으로 직접 처리합니다.  
+> 서버는 구축이 완료된 **AWS EC2 + Apache2 + PHP + MySQL** 환경을 사용합니다. 서버 API는 이 문서(9~10번 섹션)가 아니라 **`mybag` 백엔드 레포의 `APIs.md`**를 최신 기준으로 참고하세요.  
+> 앱 `applicationId`는 `com.mybagteam.mybag`, 소스 패키지(`namespace`)는 `com.example.mybaghackathon`입니다.
 
 ---
 
@@ -34,7 +35,7 @@
 - XML 화면 디자인 완성본
 - 전체 국가·항공사의 반입 규정 수집
 - 배포 자동화와 운영 모니터링 상세 설정
-- FCM 푸시 알림 앱 수신·표시 (서버 발송 로직은 구현 완료, 8번 섹션 `service` 참고)
+- `CHECKLIST_ASSIGNED`(담당자 지정) 알림의 앱 수신·표시 (D-7·D-3·D-1 출발 알림과 방 삭제 알림 수신·표시는 구현 완료, 8번 섹션 `service` 참고)
 
 ---
 
@@ -43,13 +44,14 @@
 ### Android
 
 - Java
-- XML Layout
-- MVP 패턴
+- XML Layout (ViewBinding)
+- MVP 패턴 (Contract + Presenter, `AppContainer` 생성자 조립 DI)
 - Retrofit2
 - OkHttp
 - Gson
 - Glide
-- WorkManager
+- Kakao SDK (user / share)
+- Firebase Cloud Messaging
 
 ### Server
 
@@ -70,7 +72,7 @@
 - Open-Meteo Geocoding API
 - Kakao Login API
 - 국토교통부·한국교통안전공단 반입 제한 공공데이터 - 미착수(현재는 GPT가 반입 제한 항목을 추론)
-- Firebase Cloud Messaging - **서버 발송 로직 구현 완료**(담당자 지정 알림, 출발 D-7·D-3·D-1 알림). 앱에서 실제로 수신해 알림으로 표시하는 부분은 미구현
+- Firebase Cloud Messaging - **서버 발송 + 앱 수신 구현 완료**. 서버가 담당자 지정(`CHECKLIST_ASSIGNED`)·출발 D-7·D-3·D-1·방 삭제(`TRIP_DELETED`) 알림을 발송하고, 앱 `FcmMessagingService`가 출발 알림과 방 삭제 알림을 로컬 알림으로 표시(채널·딥링크 포함)합니다. 담당자 지정 알림의 앱 표시만 남아 있습니다
 
 ---
 
@@ -119,10 +121,11 @@
 
 ### 알림
 
-- WorkManager 기반 기기 내부 알림 대신 서버가 FCM으로 발송하는 방식으로 확정했습니다.
+- 기기 내부 스케줄링 대신 서버가 FCM으로 발송하는 방식으로 확정했습니다.
 - 담당자 본인을 지정하면 같은 트립의 다른 참여자에게 `CHECKLIST_ASSIGNED` 알림을 보냅니다.
 - 출발 D-7·D-3·D-1이 되면 서버 crontab이 매일 09시(KST)에 대상자를 계산해 `DEPARTURE_D7`/`DEPARTURE_D3`/`DEPARTURE_D1` 알림을 보냅니다.
-- 두 경우 다 FCM data 페이로드만 사용합니다(`notification` 페이로드 아님). 앱에서 `FcmMessagingService.onMessageReceived()`를 채워서 로컬 알림(채널·아이콘·딥링크)으로 표시하는 작업이 아직 남아있습니다. 페이로드 필드는 안드로이드팀 전달 문서를 참고하세요.
+- 방장이 방을 삭제하면 참여자에게 `TRIP_DELETED` 알림을 보냅니다.
+- 전부 FCM data 페이로드만 사용합니다(`notification` 페이로드 아님). `FcmMessagingService.onMessageReceived()`가 data의 `type`을 보고 출발 알림·방 삭제 알림을 로컬 알림(`trip_notifications` 채널)으로 표시하며, 탭하면 `RoomDetailActivity`로 딥링크합니다. `CHECKLIST_ASSIGNED`의 앱 표시만 아직 남아 있습니다. 페이로드 필드는 안드로이드팀 전달 문서를 참고하세요.
 
 ---
 
@@ -236,14 +239,15 @@
 
 현재 상태:
 
-- 서버 발송 로직(담당자 지정 알림, 출발 D-7·D-3·D-1 알림)은 배포·검증까지 끝났습니다.
-- 앱에서 토큰 등록(`POST /api/auth/fcm-token.php`)은 연결돼 있습니다.
-- 수신 후 실제 알림으로 표시하는 부분(`FcmMessagingService.onMessageReceived()`)은 아직 안 만들었습니다.
+- 서버 발송 로직(담당자 지정, 출발 D-7·D-3·D-1, 방 삭제 알림)은 배포·검증까지 끝났습니다.
+- 앱 토큰 등록은 `AuthRepository.registerFcmToken()`(`onNewToken`에서 호출)으로 연결돼 있습니다.
+- 앱 수신·표시(`FcmMessagingService.onMessageReceived()`)는 출발 알림·방 삭제 알림에 대해 구현 완료입니다. 담당자 지정 알림의 앱 표시만 남아 있습니다.
 
 사용 목적:
 
-- 준비물 담당자 지정 알림 (`CHECKLIST_ASSIGNED`)
+- 준비물 담당자 지정 알림 (`CHECKLIST_ASSIGNED`) — 앱 표시 미구현
 - 출발 예정 D-7·D-3·D-1 알림 (`DEPARTURE_D7`/`DEPARTURE_D3`/`DEPARTURE_D1`)
+- 방 삭제 알림 (`TRIP_DELETED`)
 - 공용 체크리스트 변경 알림 — 미구현, 필요 여부 팀 결정 남음
 
 ---
@@ -311,7 +315,7 @@ EC2는 이미 구축되어 있으므로 실제 월 비용은 팀 AWS 계정에�
 ### FCM
 
 - FCM 자체 사용 비용은 무료입니다.
-- 현재는 연결 전이며 구현 예정입니다.
+- 서버 발송과 앱 수신(출발·방 삭제 알림) 모두 연결 완료입니다.
 
 ### 비용 절감 방법
 
@@ -332,7 +336,7 @@ EC2는 이미 구축되어 있으므로 실제 월 비용은 팀 AWS 계정에�
 - AWS EC2에서는 Apache2와 PHP REST API가 요청을 처리합니다.
 - PHP REST API는 MySQL에 데이터를 저장합니다.
 - PHP REST API는 필요한 경우 OpenAI, Open-Meteo, Kakao API를 호출합니다.
-- PHP 서버가 FCM으로 담당자 지정·출발 예정 알림을 발송합니다. 앱에서 수신해 로컬 알림으로 표시하는 부분만 남았습니다.
+- PHP 서버가 FCM으로 담당자 지정·출발 예정·방 삭제 알림을 발송하고, 앱 `FcmMessagingService`가 출발/방 삭제 알림을 로컬 알림으로 표시합니다.
 
 ### 데이터 흐름
 
@@ -347,7 +351,7 @@ EC2는 이미 구축되어 있으므로 실제 월 비용은 팀 AWS 계정에�
 
 ## 8. Android 패키지 구조
 
-기본 패키지는 `com.example.mybaghackathon`입니다. UI는 S01~S16 화면 흐름을 기준으로 구성하고, 서버 연결 코드는 `data` 아래에서 Api·DTO·Mapper·Repository로 분리합니다. DI는 별도 프레임워크 없이 `app/AppContainer.java`가 생성자 조립으로 직접 처리합니다.
+소스 패키지는 `com.example.mybaghackathon`입니다. UI는 S01~S16 화면 흐름을 기준으로 구성하며 각 화면은 **View(Activity/Fragment) + Contract + Presenter** 세 축의 MVP로 나눕니다. 서버 연결 코드는 `data` 아래에서 Api·DTO·Mapper·Repository로 분리하고, DI는 별도 프레임워크 없이 `app/AppContainer.java`가 생성자 조립으로 처리합니다.
 
 ```text
 com.example.mybaghackathon
@@ -360,7 +364,7 @@ com.example.mybaghackathon
 │   ├── AppError.java
 │   └── Constants.java
 ├── service
-│   └── FcmMessagingService.java           # FCM 토큰 갱신·수신 진입점. 로컬 알림 표시는 미구현
+│   └── FcmMessagingService.java           # FCM 토큰 갱신·수신 진입점. 출발·방 삭제 알림 로컬 표시 구현 완료
 ├── model
 │   ├── User.java
 │   ├── Trip.java
@@ -375,10 +379,13 @@ com.example.mybaghackathon
 │   ├── UserDefaultItem.java                # "내 기본 물품" 모델
 │   ├── NotificationSettings.java
 │   ├── Weather.java
+│   ├── WeatherForecast.java
 │   └── WeatherFeedback.java
 ├── data
-│   ├── ChecklistItem.java                 # UI 확인용 더미 데이터, 실 연동 시 model/PackingItem으로 교체 예정
+│   ├── ChecklistItem.java                 # 체크리스트 UI 모델
 │   ├── remote
+│   │   ├── adapter
+│   │   │   └── FlexibleBooleanAdapter.java  # 서버가 0/1·"true" 등으로 주는 boolean 관용 파싱
 │   │   ├── api
 │   │   │   ├── ApiClient.java
 │   │   │   ├── AuthApi.java
@@ -394,7 +401,7 @@ com.example.mybaghackathon
 │   │       ├── auth/{KakaoLoginRequestDto, AuthTokenDto}.java
 │   │       ├── trip/{TripDto, TripMemberDto, TripInviteDto, TripCreateRequestDto,
 │   │       │         TripDetailResponseDto, TripJoinRequestDto, TripJoinResponseDto,
-│   │       │         TripListResponseDto, TripMembersResponseDto}.java
+│   │       │         TripListResponseDto, TripMembersResponseDto, TripIdRequestDto}.java
 │   │       ├── upload/TripUploadDto.java
 │   │       ├── analysis/{AnalysisRequestDto, AnalysisResponseDto, ConfirmRequestDto,
 │   │       │            RestrictedItemDto}.java
@@ -406,7 +413,7 @@ com.example.mybaghackathon
 │   │       │               DefaultItemUpdateRequestDto, DefaultItemIdRequestDto,
 │   │       │               DefaultItemListResponseDto}.java
 │   │       ├── weather/{WeatherDto, WeatherForecastDto, WeatherFeedbackDto}.java
-│   │       └── notification/{NotificationSettingsDto, NotificationSettingsUpdateRequestDto, FcmTokenDto}.java   # 화면(NotificationSettingsActivity) 연결은 아직 남음
+│   │       └── notification/{NotificationSettingsDto, NotificationSettingsUpdateRequestDto, FcmTokenDto}.java
 │   ├── mapper
 │   │   ├── UserMapper.java
 │   │   ├── TripMapper.java
@@ -416,7 +423,7 @@ com.example.mybaghackathon
 │   │   ├── DefaultItemMapper.java
 │   │   └── NotificationMapper.java
 │   ├── repository
-│   │   ├── AuthRepository.java / AuthRepositoryImpl.java
+│   │   ├── AuthRepository.java / AuthRepositoryImpl.java         # 로그인·FCM 토큰 등록 포함
 │   │   ├── TripRepository.java / TripRepositoryImpl.java
 │   │   ├── UploadRepository.java / UploadRepositoryImpl.java
 │   │   ├── AnalysisRepository.java / AnalysisRepositoryImpl.java
@@ -425,63 +432,75 @@ com.example.mybaghackathon
 │   │   ├── DefaultItemRepository.java / DefaultItemRepositoryImpl.java
 │   │   └── NotificationSettingsRepository.java / NotificationSettingsRepositoryImpl.java
 │   └── local
-│       └── TokenStorage.java
+│       ├── TokenStorage.java              # 로그인 토큰
+│       └── UserStorage.java               # 로그인 사용자 프로필 캐시
 ├── ui
 │   ├── EdgeToEdgeUtil.java
-│   ├── splash/SplashActivity.java          # 로그인 상태 확인 후 LoginActivity/MainActivity로 분기 + 알림 권한 요청
-│   ├── login/
-│   │   ├── LoginActivity.java              # 카카오 SDK 로그인(카카오톡 앱 우선, 실패 시 계정 웹 로그인 폴백) 연동 완료
-│   │   ├── LoginPresenter.java
-│   │   └── LoginContract.java
+│   ├── StepTextAnimator.java              # 분석 중 단계 안내 텍스트 애니메이션
+│   ├── splash/{SplashActivity, SplashContract, SplashPresenter}.java   # S01, 로그인 분기 + 알림 권한 요청
+│   ├── login/{LoginActivity, LoginContract, LoginPresenter}.java       # S02, 카카오 SDK 로그인(앱 우선, 웹 폴백)
 │   ├── home/
-│   │   ├── HomeFragment.java               # S03, 더미 데이터
+│   │   ├── {HomeFragment, HomeContract, HomePresenter}.java            # S03
 │   │   ├── TripRoomUiModel.java
 │   │   └── adapter/TripRoomAdapter.java
-│   ├── createroom/CreateRoomActivity.java  # S04
-│   ├── upload/ScheduleUploadActivity.java  # S05
-│   ├── analyzing/AnalyzingActivity.java    # S06
-│   ├── analysisresult/AnalysisResultActivity.java  # S07
-│   ├── review/ScheduleReviewActivity.java  # S08
-│   ├── roomdetail/RoomDetailActivity.java  # S09, 아직 하드코딩 상태 + ChecklistActivity로 trip_id 미전달
-│   ├── feedback/WeatherFeedbackActivity.java  # S10
+│   ├── createroom/{CreateRoomActivity, CreateRoomContract, CreateRoomPresenter}.java   # S04
+│   ├── upload/{ScheduleUploadActivity, UploadContract, UploadPresenter}.java           # S05
+│   ├── analyzing/{AnalyzingActivity, AnalyzingContract, AnalyzingPresenter}.java       # S06
+│   ├── analysisresult/{AnalysisResultActivity, AnalysisResultContract, AnalysisResultPresenter}.java  # S07
+│   ├── review/{ScheduleReviewActivity, ReviewContract, ReviewPresenter}.java           # S08
+│   ├── roomdetail/{RoomDetailActivity, RoomDetailContract, RoomDetailPresenter}.java   # S09, trip_id·초대코드 Intent로 전달
+│   ├── invite/{InviteJoinActivity, InviteJoinContract, InviteJoinPresenter}.java       # 초대 링크 진입(딥링크)
+│   ├── feedback/{WeatherFeedbackActivity, WeatherFeedbackContract, WeatherFeedbackPresenter}.java  # S10
 │   ├── checklist/
-│   │   ├── ChecklistActivity.java
-│   │   ├── ChecklistCommonFragment.java    # S11
-│   │   ├── ChecklistMineFragment.java      # S12
-│   │   └── ChecklistAssignmentFragment.java  # S13
-│   ├── archive/TripArchiveFragment.java    # S14, 탭 UI는 있고 데이터는 더미
-│   ├── profile/ProfileFragment.java        # S15
-│   ├── settings/NotificationSettingsActivity.java  # S16
-│   ├── overlay/{AddItemSheet, EditItemSheet, InviteShareSheet}.java
+│   │   ├── ChecklistActivity.java · ChecklistContract.java · ChecklistPresenter.java
+│   │   ├── ChecklistCommonFragment.java      # S11
+│   │   ├── ChecklistMineFragment.java        # S12
+│   │   ├── ChecklistAssignmentFragment.java  # S13
+│   │   └── ChecklistHost/ChecklistDataConsumer/ChecklistItemSelection/ChecklistItemVisibility/
+│   │       ChecklistSelectionStore/ChecklistSelectionFilter/ChecklistProgressCalculator/
+│   │       ChecklistDuplicateDetector.java    # 탭 간 선택·진행률·중복 계산 헬퍼
+│   ├── archive/
+│   │   ├── {TripArchiveFragment, ArchiveContract, ArchivePresenter}.java   # S14
+│   │   ├── ArchiveTripUiModel.java
+│   │   └── adapter/ArchiveTripAdapter.java
+│   ├── profile/
+│   │   ├── {ProfileFragment, ProfileContract, ProfilePresenter}.java       # S15
+│   │   ├── {ProfileItemsActivity, ProfileItemsContract, ProfileItemsPresenter}.java   # 내 기본 물품 관리
+│   │   ├── ProfileItemAdapter.java
+│   │   └── PriorityLevels.java
+│   ├── settings/{NotificationSettingsActivity, NotificationSettingsContract, NotificationSettingsPresenter}.java  # S16
+│   ├── overlay/{AddItemSheet, EditItemSheet, EditFieldSheet, AssignItemSheet,
+│   │           InviteShareSheet, RestrictionInfoSheet}.java
 │   ├── atoms/{AvatarView, CheckboxView, ChipView, DDayBadgeView, IconButtonView,
 │   │         PriorityDotView, RestrictionTagView, WeatherIconView}.java
 │   ├── molecules/AvatarStackHelper.java
-│   └── organisms/TripRoomCardBinder.java
+│   └── organisms/{TripRoomCardBinder, SwipeRevealHelper}.java
 └── util
     ├── ImageCompressor.java
     ├── DateUtils.java
     ├── PrefsManager.java
-    └── ReminderScheduler.java
+    └── ReminderScheduler.java             # 기기 내부 스케줄 잔재. 알림은 서버 FCM으로 이관돼 현재 미사용
 ```
 
 ### 패키지별 책임
 
-- `app`은 `AppContainer`로 `TokenStorage → ApiClient → 각 Api → Repository` 순으로 조립·보관합니다. 별도 DI 프레임워크(Dagger/Hilt) 없이 생성자 주입만 사용합니다.
+- `app`은 `AppContainer`로 `TokenStorage/UserStorage → ApiClient → 각 Api → Repository` 순으로 조립·보관합니다. 별도 DI 프레임워크(Dagger/Hilt) 없이 생성자 주입만 사용합니다.
 - `service`는 FCM 백그라운드 서비스입니다. UI 패키지가 아니라 최상위에 독립적으로 있습니다.
-- `model`은 화면이 실제로 사용하는 앱 내부 데이터를 정의합니다. Presenter가 아니라 Fragment/Activity가 직접 사용합니다.
-- `data.remote.api`는 EC2 PHP REST API의 Retrofit 요청을 정의합니다.
+- `model`은 화면이 실제로 사용하는 앱 내부 데이터를 정의합니다. Presenter가 Repository에서 받은 값을 Model로 다뤄 View에 전달합니다.
+- `data.remote.api`는 EC2 PHP REST API의 Retrofit 요청을, `data.remote.adapter`는 서버 JSON의 관용 타입 파싱을 담당합니다.
 - `data.remote.dto`는 서버의 요청·응답 JSON 형식을 기능별로 구분합니다.
 - `data.mapper`는 서버 DTO를 Android Model로 변환합니다.
 - `data.repository`는 화면이 사용할 데이터 접근 규칙과 구현체를 제공하며, `AppContainer`에 조립된 것만 실제로 쓰입니다.
-- `data.local`은 로그인 token처럼 기기에 보관해야 하는 값만 관리합니다.
-- `ui`는 S01~S16 화면 흐름과 오버레이, 그리고 `atoms`/`molecules`/`organisms` 공용 컴포넌트를 기능별 패키지로 구분합니다.
+- `data.local`은 로그인 token·사용자 프로필처럼 기기에 보관해야 하는 값만 관리합니다.
+- `ui`는 각 화면을 `Activity/Fragment(View) + Contract + Presenter`로 나누고, 오버레이(`overlay`)와 `atoms`/`molecules`/`organisms` 공용 컴포넌트를 기능별 패키지로 구분합니다.
 
 ### 화면 연결 시 참고할 흐름
 
 - S08 "방 생성 완료" 시점에 `tripRepository.createTrip()`을 호출해 서버가 반환한 `trip_id`부터 이후 화면에서 `TripRepository`를 사용합니다. (별도 "생성 세션" 단계 없이, `upload_id`/`analysis_id`만으로 여기까지 진행됩니다.)
-- S09는 날씨 팁과 체크리스트로 이동하는 여행방 허브 화면입니다.
+- S09 `RoomDetailActivity`는 `trip_id`·방 이름·방장 여부·초대 코드·생성 직후 여부를 Intent extra로 받아 이후 화면(체크리스트 등)에 전달합니다.
+- 초대 링크(`https://mybag.duckdns.org/invite/{code}` 또는 카카오 스킴)로 앱에 진입하면 `InviteJoinActivity`가 초대 코드를 받아 참여 처리하고, 미로그인 시 로그인 후 재개합니다.
 - S10은 S09에서 진입하고 뒤로 가기로 복귀하며 체크리스트로 직접 이동하지 않습니다.
-- 참여자가 1명이면 `ChecklistMineFragment`만 표시하고, 2명 이상이면 체크리스트 3개 탭을 표시합니다.
+- 방 생성 시 설정한 `expected_member_count`가 1명이면 `ChecklistMineFragment`만, 2명 이상이면 체크리스트 3개 탭을 표시합니다. (현재 참여자 수가 아니라 설정 인원 기준)
 
 ---
 
@@ -509,7 +528,7 @@ Android 앱
 ├── Kakao 사용자 정보 API
 ├── OpenAI Responses API
 ├── Open-Meteo API
-└── FCM HTTP v1 API · 구현 예정
+└── FCM HTTP v1 API · 발송 구현 완료
 ```
 
 ### 권장 디렉터리 구조
