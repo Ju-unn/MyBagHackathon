@@ -51,15 +51,12 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
             memberById.put(member.getUserId(), member);
         }
 
-        bindAvatarStack(members);
-        binding.checklistAssignmentSummary.setText(getString(
-                R.string.checklist_assignment_summary, members.size()));
-
         LinearLayout assigned = binding.checklistAssignmentList;
         LinearLayout unassigned = binding.checklistUnassignedList;
         assigned.removeAllViews();
         unassigned.removeAllViews();
 
+        List<TripMember> activeMembers = new ArrayList<>();
         for (TripMember member : members) {
             List<PackingItem> memberItems = new ArrayList<>();
             for (PackingItem item : host.getChecklistItems()) {
@@ -70,11 +67,23 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
                 }
             }
             if (!memberItems.isEmpty()) {
+                activeMembers.add(member);
                 addMemberHeader(assigned, member);
                 for (PackingItem item : memberItems) {
                     addAssignedRow(assigned, item);
                 }
             }
+        }
+
+        // 담당 항목을 하나라도 배정받은 사람이 없으면 요약 줄(아바타+"N명이 준비 중") 자체를 숨긴다 —
+        // 참여만 하고 아직 아무것도 지정 안 된 상태를 "N명이 준비 중"으로 보여주면 안 되기 때문.
+        if (activeMembers.isEmpty()) {
+            binding.checklistAssignmentSummaryRow.setVisibility(View.GONE);
+        } else {
+            binding.checklistAssignmentSummaryRow.setVisibility(View.VISIBLE);
+            bindAvatarStack(activeMembers);
+            binding.checklistAssignmentSummary.setText(getString(
+                    R.string.checklist_assignment_summary, activeMembers.size()));
         }
 
         for (PackingItem item : host.getChecklistItems()) {

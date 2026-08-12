@@ -17,8 +17,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- 참여 인원 요약 -->
+        <!-- 참여 인원 요약: 담당 항목이 하나라도 배정된 사람이 없으면 클래스에서 GONE 처리 -->
         <LinearLayout
+            android:id="@+id/checklistAssignmentSummaryRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
