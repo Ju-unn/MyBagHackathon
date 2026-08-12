@@ -29,16 +29,17 @@ public class ChecklistProgressCalculatorTest {
     }
 
     @Test
-    public void duplicatedAssignmentRowsCountAsOneCommonItem() {
+    public void multiAssigneeRowsEachCountSeparately() {
+        // 같은 item_group_id를 공유하는 다중 배정 row 2개 — 분담 현황처럼 담당자별로 1개씩 센다.
         PackingItem firstAssignee = commonItem(10L, 7L, "AI", "ACTIVE", true);
         PackingItem secondAssignee = commonItem(11L, 7L, "AI", "ACTIVE", false);
 
         ChecklistProgressCalculator.Progress progress = ChecklistProgressCalculator.calculate(
                 Arrays.asList(firstAssignee, secondAssignee));
 
-        assertEquals(0, progress.completed);
-        assertEquals(1, progress.total);
-        assertEquals(0, progress.percent());
+        assertEquals(1, progress.completed);
+        assertEquals(2, progress.total);
+        assertEquals(50, progress.percent());
     }
 
     @Test

@@ -138,7 +138,22 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             view.showError("공용 물품의 담당자는 방장 또는 현재 담당자만 변경할 수 있습니다.");
             return;
         }
-        runRepositoryAction(() -> packingRepository.assign(item.getPackingItemId(), userId));
+        runRepositoryAction(() -> assignAndResetCompletionIfNeeded(item, userId));
+    }
+
+    // 서버의 단일 담당자 변경(assign.php → ChecklistRepository::assign)은 완료 상태를 건드리지
+    // 않는다(다중 배정 동기화의 reassignForSync만 초기화함) — 그래서 체크된 물품의 담당자를
+    // 바꾸거나 해제해도 is_completed가 그대로 남아 진행률이 안 줄어드는 문제가 있었다.
+    // 담당자가 실제로 바뀌는데 이미 체크돼 있으면, assign 전에 먼저 체크를 해제한다.
+    private AppResult<?> assignAndResetCompletionIfNeeded(PackingItem item, Long newAssigneeUserId) {
+        boolean assigneeChanging = !java.util.Objects.equals(item.getAssigneeUserId(), newAssigneeUserId);
+        if (assigneeChanging && item.isCompleted()) {
+            AppResult<Boolean> toggleResult = packingRepository.toggleCheck(item.getPackingItemId());
+            if (!toggleResult.isSuccess()) {
+                return toggleResult;
+            }
+        }
+        return packingRepository.assign(item.getPackingItemId(), newAssigneeUserId);
     }
 
     @Override
@@ -290,7 +305,7 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             return;
         }
         runRepositoryAction(() -> {
-            AppResult<Void> unassignResult = packingRepository.assign(commonItem.getPackingItemId(), null);
+            AppResult<?> unassignResult = assignAndResetCompletionIfNeeded(commonItem, null);
             if (!unassignResult.isSuccess()) {
                 return unassignResult;
             }

@@ -2,14 +2,13 @@ package com.example.mybaghackathon.ui.checklist;
 
 import com.example.mybaghackathon.model.PackingItem;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Calculates progress from every active common(공용) checklist item — AI recommendations the
- * host kept, and items the host added directly to the common list — grouped by item_group_id so
- * multi-assignee duplicate rows count once.
+ * Calculates progress by counting every active common(공용) checklist row individually — AI
+ * recommendations the host kept, and items added directly to the common list. Multi-assignee
+ * items contribute one row per assignee (matching the 분담 현황 tab, where each assignee sees
+ * their own row), so a 2-person assignment counts as 2 toward the total rather than 1.
  */
 final class ChecklistProgressCalculator {
 
@@ -17,30 +16,20 @@ final class ChecklistProgressCalculator {
     }
 
     static Progress calculate(List<PackingItem> items) {
-        Map<Long, GroupProgress> groups = new LinkedHashMap<>();
+        int total = 0;
+        int completed = 0;
         if (items != null) {
             for (PackingItem item : items) {
                 if (!isActiveCommonItem(item)) {
                     continue;
                 }
-                long groupId = item.getItemGroupId();
-                GroupProgress group = groups.get(groupId);
-                if (group == null) {
-                    group = new GroupProgress();
-                    groups.put(groupId, group);
+                total++;
+                if (item.isCompleted()) {
+                    completed++;
                 }
-                group.hasItem = true;
-                group.allCompleted &= item.isCompleted();
             }
         }
-
-        int completed = 0;
-        for (GroupProgress group : groups.values()) {
-            if (group.hasItem && group.allCompleted) {
-                completed++;
-            }
-        }
-        return new Progress(completed, groups.size());
+        return new Progress(completed, total);
     }
 
     private static boolean isActiveCommonItem(PackingItem item) {
@@ -62,10 +51,5 @@ final class ChecklistProgressCalculator {
         int percent() {
             return total == 0 ? 0 : Math.round(completed * 100f / total);
         }
-    }
-
-    private static final class GroupProgress {
-        private boolean hasItem;
-        private boolean allCompleted = true;
     }
 }
