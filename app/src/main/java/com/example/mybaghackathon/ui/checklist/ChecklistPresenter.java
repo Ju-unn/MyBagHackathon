@@ -138,7 +138,7 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             view.showError("공용 물품의 담당자는 방장 또는 현재 담당자만 변경할 수 있습니다.");
             return;
         }
-        runRepositoryAction(() -> assignAndResetCompletionIfNeeded(item, userId));
+        runRepositoryAction(() -> unassignOrRemoveRow(item, userId));
     }
 
     // 서버의 단일 담당자 변경(assign.php → ChecklistRepository::assign)은 완료 상태를 건드리지
@@ -154,6 +154,35 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             }
         }
         return packingRepository.assign(item.getPackingItemId(), newAssigneeUserId);
+    }
+
+    // 다중 배정된 물품(item_group_id를 공유하는 row가 2개 이상)에서 담당자 한 명만 담당
+    // 해제하는 경우는 assign(null)로 "미지정" row를 남기면 안 된다 — 그 row는 그 사람 몫으로
+    // 복제된 것이라, 방장이 공용 리스트에서 인원을 뺄 때(assignMultiple) row 자체가 삭제되는 것과
+    // 똑같이 이 row도 통째로 지워야 진행률 총 개수가 맞다. 단독 배정 물품은 기존처럼 "미지정"으로
+    // 남겨 방장이 다시 배정할 수 있게 한다.
+    private AppResult<?> unassignOrRemoveRow(PackingItem item, Long newAssigneeUserId) {
+        if (newAssigneeUserId == null && isMultiAssigneeGroup(item)) {
+            return packingRepository.deleteItem(item.getPackingItemId());
+        }
+        return assignAndResetCompletionIfNeeded(item, newAssigneeUserId);
+    }
+
+    private boolean isMultiAssigneeGroup(PackingItem item) {
+        long groupId = item.getItemGroupId();
+        if (groupId <= 0L) {
+            return false;
+        }
+        int count = 0;
+        for (PackingItem candidate : items) {
+            if (candidate != null && candidate.getItemGroupId() == groupId) {
+                count++;
+                if (count > 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -305,7 +334,7 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             return;
         }
         runRepositoryAction(() -> {
-            AppResult<?> unassignResult = assignAndResetCompletionIfNeeded(commonItem, null);
+            AppResult<?> unassignResult = unassignOrRemoveRow(commonItem, null);
             if (!unassignResult.isSuccess()) {
                 return unassignResult;
             }
