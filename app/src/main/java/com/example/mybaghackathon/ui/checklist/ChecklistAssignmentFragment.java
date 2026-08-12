@@ -52,8 +52,8 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         }
 
         bindAvatarStack(members);
-        binding.checklistAssignmentSummary.setText(
-                host.getTripMemberCount() + "명이 함께 준비 중");
+        binding.checklistAssignmentSummary.setText(getString(
+                R.string.checklist_assignment_summary, members.size()));
 
         LinearLayout assigned = binding.checklistAssignmentList;
         LinearLayout unassigned = binding.checklistUnassignedList;
@@ -70,7 +70,7 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
                 }
             }
             if (!memberItems.isEmpty()) {
-                addMemberHeader(assigned, member, memberItems);
+                addMemberHeader(assigned, member);
                 for (PackingItem item : memberItems) {
                     addAssignedRow(assigned, item);
                 }
@@ -95,8 +95,7 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
 
     private void addMemberHeader(
             LinearLayout list,
-            TripMember member,
-            List<PackingItem> memberItems
+            TripMember member
     ) {
         View header = LayoutInflater.from(requireContext())
                 .inflate(R.layout.molecule_member_list_item, list, false);
@@ -105,18 +104,6 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         avatar.setInitial(initial(member.getNickname()));
         avatar.setAvatarColor(ContextCompat.getColor(requireContext(), avatarColor(member.getUserId())));
         avatar.setImageUrl(member.getProfileImageUrl());
-        int completedCount = 0;
-        for (PackingItem item : memberItems) {
-            if (item.isCompleted()) {
-                completedCount++;
-            }
-        }
-        TextView progress = header.findViewById(R.id.memberProgress);
-        progress.setText(getString(
-                R.string.checklist_member_progress_format,
-                completedCount,
-                memberItems.size()));
-        progress.setVisibility(View.VISIBLE);
         header.findViewById(R.id.memberHostBadge).setVisibility(
                 "OWNER".equalsIgnoreCase(member.getRole()) ? View.VISIBLE : View.GONE);
 
