@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +19,6 @@ import com.example.mybaghackathon.databinding.FragmentChecklistCommonBinding;
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.model.TripMember;
 import com.example.mybaghackathon.ui.atoms.AvatarView;
-import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.ChipView;
 import com.example.mybaghackathon.ui.atoms.PriorityDotView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
@@ -249,30 +247,8 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         TextView label = row.findViewById(R.id.checklistItemLabel);
         label.setText(first.getItemName());
 
-        boolean allCompleted = true;
-        for (PackingItem item : group) {
-            if (!item.isCompleted()) {
-                allCompleted = false;
-                break;
-            }
-        }
-        CheckboxView checkbox = row.findViewById(R.id.checklistItemCheckbox);
-        checkbox.setState(allCompleted ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
-        boolean completedState = allCompleted;
-        if (host.isCurrentUserHost()) {
-            checkbox.setOnCheckChangeListener(state -> {
-                checkbox.setState(completedState
-                        ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
-                showAssigneePicker(group);
-            });
-        } else {
-            checkbox.setOnCheckChangeListener(state -> {
-                checkbox.setState(completedState
-                        ? CheckboxView.CHECKED : CheckboxView.UNCHECKED);
-                Toast.makeText(requireContext(),
-                        R.string.checklist_assignment_host_only, Toast.LENGTH_SHORT).show();
-            });
-        }
+        // 완료 체크는 분담 현황 탭 전용 — 공용 리스트는 담당자 배정·조회 화면이라 체크박스를 안 보여준다.
+        row.findViewById(R.id.checklistItemCheckbox).setVisibility(View.GONE);
 
         List<TripMember> assignees = new ArrayList<>();
         for (PackingItem item : group) {

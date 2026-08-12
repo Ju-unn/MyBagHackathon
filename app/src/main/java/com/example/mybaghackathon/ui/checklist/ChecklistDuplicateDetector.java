@@ -4,10 +4,8 @@ import com.example.mybaghackathon.model.PackingItem;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 /**
  * 내 목록에 표시할 원본 행을 만든다.
@@ -33,13 +31,9 @@ final class ChecklistDuplicateDetector {
             return new ArrayList<>();
         }
 
-        Set<String> selectedAiItemNames = selectedAiItemNames(items);
         for (PackingItem item : items) {
             String key = normalizedName(item.getItemName());
             boolean personal = ChecklistItemVisibility.isOwnedPersonal(item, currentUserId);
-            if (personal && isDefaultItem(item) && !selectedAiItemNames.contains(key)) {
-                personal = false;
-            }
             boolean common = ChecklistItemVisibility.isAssignedCommon(item, currentUserId)
                     || (includeUnassignedCommon && ChecklistItemVisibility.isCommon(item));
             if (!personal && !common) {
@@ -63,20 +57,6 @@ final class ChecklistDuplicateDetector {
             result.add(new ItemGroup(group.personalItem, group.commonItem));
         }
         return result;
-    }
-
-    private static Set<String> selectedAiItemNames(List<PackingItem> items) {
-        Set<String> names = new HashSet<>();
-        for (PackingItem item : items) {
-            if (ChecklistItemSelection.isSelectedRecommendation(item)) {
-                names.add(normalizedName(item.getItemName()));
-            }
-        }
-        return names;
-    }
-
-    private static boolean isDefaultItem(PackingItem item) {
-        return "DEFAULT".equalsIgnoreCase(item.getSource());
     }
 
     static String normalizedName(String name) {

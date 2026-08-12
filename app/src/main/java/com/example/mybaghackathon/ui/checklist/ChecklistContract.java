@@ -56,6 +56,13 @@ public interface ChecklistContract {
         /** 실행취소 없이 즉시 삭제 — 방장이 공용 물품을 지울 때 사용(BS.. 공용 탭 더보기 메뉴). */
         void deleteItem(PackingItem item);
 
+        /**
+         * 병합된 항목(개인 기본 물품 + 나에게 배정된 공용 물품)을 내 목록에서 제거한다.
+         * 공용 물품은 담당 해제만 하고(공용 목록엔 유지), 개인 기본 물품 원본은 삭제해서
+         * 담당 해제 후 다시 단독으로 재등장하지 않게 한다.
+         */
+        void removeMergedItem(PackingItem personalItem, PackingItem commonItem);
+
         void onDestroy();
     }
 }

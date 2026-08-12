@@ -6,7 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Calculates progress only from AI items that were generated into the trip checklist. */
+/**
+ * Calculates progress from every active common(공용) checklist item — AI recommendations the
+ * host kept, and items the host added directly to the common list — grouped by item_group_id so
+ * multi-assignee duplicate rows count once.
+ */
 final class ChecklistProgressCalculator {
 
     private ChecklistProgressCalculator() {
@@ -16,7 +20,7 @@ final class ChecklistProgressCalculator {
         Map<Long, GroupProgress> groups = new LinkedHashMap<>();
         if (items != null) {
             for (PackingItem item : items) {
-                if (!ChecklistItemSelection.isSelectedRecommendation(item)) {
+                if (!isActiveCommonItem(item)) {
                     continue;
                 }
                 long groupId = item.getItemGroupId();
@@ -37,6 +41,13 @@ final class ChecklistProgressCalculator {
             }
         }
         return new Progress(completed, groups.size());
+    }
+
+    private static boolean isActiveCommonItem(PackingItem item) {
+        return item != null
+                && ChecklistItemVisibility.isCommon(item)
+                && !"EXCLUDED".equalsIgnoreCase(item.getItemStatus())
+                && !"DELETED".equalsIgnoreCase(item.getItemStatus());
     }
 
     static final class Progress {

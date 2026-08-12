@@ -32,16 +32,15 @@ public class ChecklistSelectionFilterTest {
     }
 
     @Test
-    public void selectedDefaultIsKeptButUnselectedDefaultIsRemoved() {
-        PackingItem selectedDefault = item(20L, "passport", "DEFAULT");
-        PackingItem unselectedDefault = item(21L, "charger", "DEFAULT");
+    public void defaultItemsAreKeptRegardlessOfRecommendationSelection() {
+        PackingItem matchingDefault = item(20L, "passport", "DEFAULT");
+        PackingItem nonMatchingDefault = item(21L, "charger", "DEFAULT");
 
         List<PackingItem> filtered = ChecklistSelectionFilter.apply(
-                java.util.Arrays.asList(selectedDefault, unselectedDefault),
+                java.util.Arrays.asList(matchingDefault, nonMatchingDefault),
                 Collections.singleton(ChecklistSelectionFilter.normalize("passport")));
 
-        assertEquals(1, filtered.size());
-        assertSame(selectedDefault, filtered.get(0));
+        assertEquals(2, filtered.size());
     }
 
     private PackingItem aiItem(long id, String name, String scope) {
