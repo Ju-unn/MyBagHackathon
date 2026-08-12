@@ -312,6 +312,11 @@ public class ChecklistActivity extends AppCompatActivity
     }
 
     @Override
+    public void deleteChecklistItemGroup(List<PackingItem> group) {
+        presenter.deleteGroup(group);
+    }
+
+    @Override
     public void removeMergedItem(PackingItem personalItem, PackingItem commonItem) {
         presenter.removeMergedItem(personalItem, commonItem);
     }

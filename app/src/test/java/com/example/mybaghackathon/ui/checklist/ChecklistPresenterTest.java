@@ -141,6 +141,40 @@ public class ChecklistPresenterTest {
     }
 
     @Test
+    public void deleteGroup_deletesEveryRowInOneLoadingCycle() {
+        Fixture fixture = new Fixture(true);
+        fixture.loadInitialData();
+
+        PackingItem itemA = fixture.commonItem(101L, 8L);
+        PackingItem itemB = fixture.commonItem(102L, 9L);
+        PackingItem itemC = fixture.commonItem(103L, 10L);
+        List<PackingItem> group = java.util.Arrays.asList(itemA, itemB, itemC);
+
+        fixture.presenter.deleteGroup(group);
+        // 세 row 삭제가 전부 같은 executor 작업(같은 loading 사이클) 안에서 처리돼야 한다 —
+        // deleteItem을 row마다 따로 호출하면 loading 가드에 막혀 실행 대기열에 여러 개가
+        // 쌓이는데, 여기서는 한 개의 작업만 큐에 쌓여야 정상이다.
+        assertEquals(1, fixture.executor.size());
+        fixture.executor.runNext();
+
+        assertEquals(3, fixture.packingRepository.deleteCalls);
+        assertFalse(fixture.view.errorShown);
+    }
+
+    @Test
+    public void nonHostCannotDeleteGroup() {
+        Fixture fixture = new Fixture(false);
+        PackingItem itemA = fixture.commonItem(101L, CURRENT_USER_ID);
+        PackingItem itemB = fixture.commonItem(102L, 8L);
+        fixture.loadInitialData();
+
+        fixture.presenter.deleteGroup(java.util.Arrays.asList(itemA, itemB));
+
+        assertEquals(0, fixture.packingRepository.deleteCalls);
+        assertTrue(fixture.view.errorShown);
+    }
+
+    @Test
     public void nonHostCannotDeleteCommonItemImmediately() {
         Fixture fixture = new Fixture(false);
         PackingItem common = fixture.replaceWithCommonItem(99L);

@@ -41,6 +41,9 @@ public interface ChecklistHost {
     /** 실행취소 안내 없이 즉시 삭제 — 방장이 공용 물품을 지울 때 사용. */
     void deleteChecklistItem(PackingItem item);
 
+    /** 다중 배정된 공용 물품 그룹(같은 item_group_id) 전체를 한 번에 삭제 — 방장 전용. */
+    void deleteChecklistItemGroup(List<PackingItem> group);
+
     /**
      * 병합된 항목(개인 기본 물품 + 나에게 배정된 공용 물품)을 내 목록에서 제거한다.
      * 공용 물품은 담당 해제만 하고(공용 목록엔 유지), 개인 기본 물품 원본은 삭제해서

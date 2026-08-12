@@ -362,11 +362,8 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                         R.string.checklist_common_delete_message,
                         group.get(0).getItemName()))
                 .setNegativeButton(R.string.action_cancel, null)
-                .setPositiveButton(R.string.action_delete, (ignored, which) -> {
-                    for (PackingItem item : group) {
-                        host.deleteChecklistItem(item);
-                    }
-                })
+                .setPositiveButton(R.string.action_delete, (ignored, which) ->
+                        host.deleteChecklistItemGroup(group))
                 .show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 .setTextColor(ContextCompat.getColor(requireContext(), R.color.clay_600));
