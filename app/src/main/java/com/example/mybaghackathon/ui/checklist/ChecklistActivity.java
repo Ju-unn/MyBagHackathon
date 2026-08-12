@@ -21,7 +21,6 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /** S11~S13 체크리스트 View. 화면 전환과 표시, 사용자 입력 전달만 담당한다. */
 public class ChecklistActivity extends AppCompatActivity
@@ -44,7 +43,6 @@ public class ChecklistActivity extends AppCompatActivity
     private boolean soloMode;
     private boolean loaded;
     private boolean resumedOnce;
-    private Set<String> selectedRecommendationNames;
     private String tripName = "여행 체크리스트";
 
     @Override
@@ -70,7 +68,6 @@ public class ChecklistActivity extends AppCompatActivity
         memberCount = Math.max(1, getIntent().getIntExtra(EXTRA_MEMBER_COUNT, 1));
         isHost = getIntent().getBooleanExtra(EXTRA_IS_HOST, false);
         soloMode = memberCount <= 1;
-        selectedRecommendationNames = ChecklistSelectionStore.load(this, tripId);
     }
 
     private void initializePresenter() {
@@ -167,9 +164,7 @@ public class ChecklistActivity extends AppCompatActivity
         this.memberCount = safeMemberCount;
         this.isHost = isHost;
         this.items.clear();
-        this.items.addAll(ChecklistSelectionFilter.apply(
-                items == null ? Collections.emptyList() : items,
-                selectedRecommendationNames));
+        this.items.addAll(items == null ? Collections.emptyList() : items);
         this.members.clear();
         this.members.addAll(members == null ? Collections.emptyList() : members);
         loaded = true;
@@ -231,6 +226,8 @@ public class ChecklistActivity extends AppCompatActivity
     }
 
     private void updateHeader() {
+        // 1인방은 화면에 보이는 "내 목록"(선택 AI + 기본/개인 물품, 이름 병합) 기준,
+        // 다인방은 공용 물품(item_group_id 단위) 기준으로 진행률을 센다.
         ChecklistProgressCalculator.Progress result = soloMode
                 ? ChecklistProgressCalculator.calculateForMine(items, currentUserId)
                 : ChecklistProgressCalculator.calculate(items);

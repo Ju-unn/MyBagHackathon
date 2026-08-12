@@ -11,15 +11,12 @@ import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.model.Trip;
 import com.example.mybaghackathon.model.TripMember;
 import com.example.mybaghackathon.ui.checklist.ChecklistProgressCalculator;
-import com.example.mybaghackathon.ui.checklist.ChecklistSelectionFilter;
-import com.example.mybaghackathon.ui.checklist.ChecklistSelectionStore;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -64,8 +61,7 @@ public class ArchivePresenter implements ArchiveContract.Presenter {
             Map<Long, Integer> progressByTripId = new HashMap<>();
             for (Trip trip : trips) {
                 // listMyTrips()의 요약 정보 대신 getTripDetail()로 멤버·예상 인원수를 다시 불러온다 —
-                // ChecklistPresenter도 같은 API로 1인/다인 여부를 정하므로, 소스를 통일해야
-                // 카드의 진행률 계산 분기(calculate/calculateForMine)가 체크리스트와 항상 일치한다.
+                // 아바타 표시와, 진행률 계산 시 1인/다인 방을 가르는 데(체크리스트 화면과 동일 기준) 쓴다.
                 List<TripMember> members = Collections.emptyList();
                 AppResult<Trip> detailResult = tripRepository.getTripDetail(trip.getTripId());
                 if (detailResult.isSuccess() && detailResult.getData() != null) {
@@ -78,7 +74,7 @@ public class ArchivePresenter implements ArchiveContract.Presenter {
                 if (packingResult.isSuccess() && packingResult.getData() != null) {
                     boolean solo = isSoloTrip(trip, members);
                     progressByTripId.put(trip.getTripId(),
-                            completionPercent(trip.getTripId(), packingResult.getData(), solo));
+                            completionPercent(packingResult.getData(), solo));
                 }
             }
 
@@ -128,19 +124,14 @@ public class ArchivePresenter implements ArchiveContract.Presenter {
         executor.shutdownNow();
     }
 
-    // 체크리스트 화면(ChecklistActivity#updateHeader)과 정확히 같은 계산을 쓴다 —
-    // 1인 방은 "내 목록" 병합 기준(calculateForMine), 다인 방은 공용 목록의 활성 항목
-    // 기준(calculate)이라 카드와 방 안 체크리스트의 진행률이 항상 일치해야 한다.
-    // 방 생성 시 이 기기에서 선택 안 한 AI 추천 물품은 서버에 COMMON으로 남아있어도
-    // 체크리스트 화면(ChecklistSelectionFilter)처럼 분모에서 빼야 숫자가 맞는다.
-    private int completionPercent(long tripId, List<PackingItem> items, boolean solo) {
+    // 체크리스트 화면(ChecklistActivity#updateHeader)과 동일한 계산 — 1인방은 "내 목록"
+    // (선택 AI + 기본/개인 물품) 기준, 다인방은 공용 물품 기준. 서버가 선택한 AI 추천만
+    // 반환하므로 카드와 방 안 체크리스트의 진행률이 항상 일치한다.
+    private int completionPercent(List<PackingItem> items, boolean solo) {
         List<PackingItem> active = activeItems(items);
-        Set<String> selectedNames = ChecklistSelectionStore.load(appContext, tripId);
-        List<PackingItem> visible = ChecklistSelectionFilter.apply(active, selectedNames);
-        ChecklistProgressCalculator.Progress progress = solo
-                ? ChecklistProgressCalculator.calculateForMine(visible, currentUserId)
-                : ChecklistProgressCalculator.calculate(visible);
-        return progress.percent();
+        return solo
+                ? ChecklistProgressCalculator.calculateForMine(active, currentUserId).percent()
+                : ChecklistProgressCalculator.calculate(active).percent();
     }
 
     // ChecklistActivity가 memberCount<=1일 때 soloMode로 전환하는 것과 동일한 기준.

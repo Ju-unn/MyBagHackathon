@@ -35,8 +35,7 @@ public interface ReviewContract {
         void navigateToRoomDetail(
                 long tripId,
                 String roomName,
-                String inviteCode,
-                ArrayList<String> selectedItemNames
+                String inviteCode
         );
     }
 
