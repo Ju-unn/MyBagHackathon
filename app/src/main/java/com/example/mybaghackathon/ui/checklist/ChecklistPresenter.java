@@ -138,7 +138,22 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             view.showError("공용 물품의 담당자는 방장 또는 현재 담당자만 변경할 수 있습니다.");
             return;
         }
-        runRepositoryAction(() -> packingRepository.assign(item.getPackingItemId(), userId));
+        runRepositoryAction(() -> assignAndResetCompletionIfNeeded(item, userId));
+    }
+
+    // 서버의 단일 담당자 변경(assign.php → ChecklistRepository::assign)은 완료 상태를 건드리지
+    // 않는다(다중 배정 동기화의 reassignForSync만 초기화함) — 그래서 체크된 물품의 담당자를
+    // 바꾸거나 해제해도 is_completed가 그대로 남아 진행률이 안 줄어드는 문제가 있었다.
+    // 담당자가 실제로 바뀌는데 이미 체크돼 있으면, assign 전에 먼저 체크를 해제한다.
+    private AppResult<?> assignAndResetCompletionIfNeeded(PackingItem item, Long newAssigneeUserId) {
+        boolean assigneeChanging = !java.util.Objects.equals(item.getAssigneeUserId(), newAssigneeUserId);
+        if (assigneeChanging && item.isCompleted()) {
+            AppResult<Boolean> toggleResult = packingRepository.toggleCheck(item.getPackingItemId());
+            if (!toggleResult.isSuccess()) {
+                return toggleResult;
+            }
+        }
+        return packingRepository.assign(item.getPackingItemId(), newAssigneeUserId);
     }
 
     @Override
@@ -263,6 +278,20 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
         deleteOnServer(item);
     }
 
+    @Override
+    public void deleteGroup(List<PackingItem> group) {
+        if (group == null || group.isEmpty()) {
+            return;
+        }
+        for (PackingItem item : group) {
+            if (item == null || !canDelete(item)) {
+                view.showError(permissionMessage(group.get(0)));
+                return;
+            }
+        }
+        deleteGroupOnServer(group);
+    }
+
     // 공용 담당 해제와 개인 기본 물품 원본 삭제를 한 번에 처리 — 담당 해제 후 개인 물품이
     // 다시 단독으로 내 목록에 재등장하지 않도록 순서대로 서버에 반영한다.
     @Override
@@ -276,7 +305,7 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
             return;
         }
         runRepositoryAction(() -> {
-            AppResult<Void> unassignResult = packingRepository.assign(commonItem.getPackingItemId(), null);
+            AppResult<?> unassignResult = assignAndResetCompletionIfNeeded(commonItem, null);
             if (!unassignResult.isSuccess()) {
                 return unassignResult;
             }
@@ -374,6 +403,32 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
                 if (!result.isSuccess()) {
                     post(() -> view.showRetryableError(
                             messageOf(result, "항목을 삭제하지 못했습니다.")));
+                }
+                loadChecklistOnWorker();
+            } catch (RuntimeException error) {
+                post(() -> view.showRetryableError(
+                        "서버 응답을 처리하지 못했습니다. 잠시 후 다시 시도해주세요."));
+                loadChecklistOnWorker();
+            }
+        });
+    }
+
+    // group 안의 row를 순서대로 삭제 요청하되, 전부 같은 loading 사이클(같은 executor 작업)
+    // 안에서 처리해 loading 가드에 막혀 첫 row 이후가 조용히 무시되는 일이 없게 한다.
+    private void deleteGroupOnServer(List<PackingItem> group) {
+        if (destroyed || loading) {
+            return;
+        }
+        startLoading();
+        executor.execute(() -> {
+            try {
+                for (PackingItem item : group) {
+                    AppResult<Void> result = packingRepository.deleteItem(item.getPackingItemId());
+                    if (!result.isSuccess()) {
+                        post(() -> view.showRetryableError(
+                                messageOf(result, "항목을 삭제하지 못했습니다.")));
+                        break;
+                    }
                 }
                 loadChecklistOnWorker();
             } catch (RuntimeException error) {

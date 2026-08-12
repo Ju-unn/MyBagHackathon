@@ -109,6 +109,57 @@ public class ChecklistPresenterTest {
         assertEquals(null, fixture.packingRepository.lastAssigneeUserId);
     }
 
+    // 서버 assign.php(단일 담당자 변경)는 is_completed를 안 건드리므로, 체크된 물품의 담당자를
+    // 해제하면 클라이언트가 assign 전에 먼저 체크를 해제해서 진행률이 되돌아가게 해야 한다.
+    @Test
+    public void unassigningCompletedCommonItem_resetsCompletionBeforeAssign() {
+        Fixture fixture = new Fixture(false);
+        PackingItem common = fixture.replaceWithCommonItem(CURRENT_USER_ID);
+        common.setCompleted(true);
+        fixture.loadInitialData();
+
+        fixture.presenter.assignItem(common, null);
+        fixture.executor.runNext();
+
+        assertEquals(1, fixture.packingRepository.toggleCheckCalls);
+        assertEquals(1, fixture.packingRepository.assignCalls);
+        assertEquals(null, fixture.packingRepository.lastAssigneeUserId);
+    }
+
+    @Test
+    public void unassigningIncompleteCommonItem_doesNotToggleCheck() {
+        Fixture fixture = new Fixture(false);
+        PackingItem common = fixture.replaceWithCommonItem(CURRENT_USER_ID);
+        common.setCompleted(false);
+        fixture.loadInitialData();
+
+        fixture.presenter.assignItem(common, null);
+        fixture.executor.runNext();
+
+        assertEquals(0, fixture.packingRepository.toggleCheckCalls);
+        assertEquals(1, fixture.packingRepository.assignCalls);
+    }
+
+    @Test
+    public void removeMergedItem_resetsCompletionThenUnassignsAndDeletesPersonalItem() {
+        Fixture fixture = new Fixture(false);
+        fixture.packingRepository.items.clear();
+        PackingItem personal = fixture.personalItem(11L);
+        PackingItem common = fixture.commonItem(22L, CURRENT_USER_ID);
+        common.setCompleted(true);
+        fixture.packingRepository.items.add(personal);
+        fixture.packingRepository.items.add(common);
+        fixture.loadInitialData();
+
+        fixture.presenter.removeMergedItem(personal, common);
+        fixture.executor.runNext();
+
+        assertEquals(1, fixture.packingRepository.toggleCheckCalls);
+        assertEquals(1, fixture.packingRepository.assignCalls);
+        assertEquals(null, fixture.packingRepository.lastAssigneeUserId);
+        assertEquals(1, fixture.packingRepository.deleteCalls);
+    }
+
     @Test
     public void hostCanAssignCommonItemToMultipleMembers() {
         Fixture fixture = new Fixture(true);
@@ -138,6 +189,40 @@ public class ChecklistPresenterTest {
 
         assertEquals(1, fixture.packingRepository.deleteCalls);
         assertFalse(fixture.view.deleteUndoShown);
+    }
+
+    @Test
+    public void deleteGroup_deletesEveryRowInOneLoadingCycle() {
+        Fixture fixture = new Fixture(true);
+        fixture.loadInitialData();
+
+        PackingItem itemA = fixture.commonItem(101L, 8L);
+        PackingItem itemB = fixture.commonItem(102L, 9L);
+        PackingItem itemC = fixture.commonItem(103L, 10L);
+        List<PackingItem> group = java.util.Arrays.asList(itemA, itemB, itemC);
+
+        fixture.presenter.deleteGroup(group);
+        // 세 row 삭제가 전부 같은 executor 작업(같은 loading 사이클) 안에서 처리돼야 한다 —
+        // deleteItem을 row마다 따로 호출하면 loading 가드에 막혀 실행 대기열에 여러 개가
+        // 쌓이는데, 여기서는 한 개의 작업만 큐에 쌓여야 정상이다.
+        assertEquals(1, fixture.executor.size());
+        fixture.executor.runNext();
+
+        assertEquals(3, fixture.packingRepository.deleteCalls);
+        assertFalse(fixture.view.errorShown);
+    }
+
+    @Test
+    public void nonHostCannotDeleteGroup() {
+        Fixture fixture = new Fixture(false);
+        PackingItem itemA = fixture.commonItem(101L, CURRENT_USER_ID);
+        PackingItem itemB = fixture.commonItem(102L, 8L);
+        fixture.loadInitialData();
+
+        fixture.presenter.deleteGroup(java.util.Arrays.asList(itemA, itemB));
+
+        assertEquals(0, fixture.packingRepository.deleteCalls);
+        assertTrue(fixture.view.errorShown);
     }
 
     @Test
@@ -298,6 +383,18 @@ public class ChecklistPresenterTest {
             return item;
         }
 
+        private PackingItem personalItem(long packingItemId) {
+            PackingItem item = new PackingItem();
+            item.setPackingItemId(packingItemId);
+            item.setTripId(TRIP_ID);
+            item.setCreatedByUserId(CURRENT_USER_ID);
+            item.setItemName("여권");
+            item.setScope("PERSONAL");
+            item.setAssigneeUserId(CURRENT_USER_ID);
+            item.setItemStatus("ACTIVE");
+            return item;
+        }
+
     }
 
     private static final class RecordingView implements ChecklistContract.View {
@@ -448,6 +545,7 @@ public class ChecklistPresenterTest {
         private int addCalls;
         private int deleteCalls;
         private int assignCalls;
+        private int toggleCheckCalls;
         private Long lastAssigneeUserId;
         private int assignMultipleCalls;
         private long lastGroupId;
@@ -467,6 +565,7 @@ public class ChecklistPresenterTest {
 
         @Override
         public AppResult<Boolean> toggleCheck(long itemId) {
+            toggleCheckCalls++;
             return AppResult.success(true);
         }
 

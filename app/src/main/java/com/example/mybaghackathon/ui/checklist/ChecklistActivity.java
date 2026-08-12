@@ -229,8 +229,9 @@ public class ChecklistActivity extends AppCompatActivity
     }
 
     private void updateHeader() {
-        ChecklistProgressCalculator.Progress result =
-                ChecklistProgressCalculator.calculate(items);
+        ChecklistProgressCalculator.Progress result = soloMode
+                ? ChecklistProgressCalculator.calculateForMine(items, currentUserId)
+                : ChecklistProgressCalculator.calculate(items);
         int progress = result.percent();
         String summary = result.completed + "/" + result.total + " 완료";
 
@@ -309,6 +310,11 @@ public class ChecklistActivity extends AppCompatActivity
     @Override
     public void deleteChecklistItem(PackingItem item) {
         presenter.deleteItem(item);
+    }
+
+    @Override
+    public void deleteChecklistItemGroup(List<PackingItem> group) {
+        presenter.deleteGroup(group);
     }
 
     @Override
