@@ -10,12 +10,12 @@ import java.util.List;
  * items contribute one row per assignee (matching the 분담 현황 tab, where each assignee sees
  * their own row), so a 2-person assignment counts as 2 toward the total rather than 1.
  */
-final class ChecklistProgressCalculator {
+public final class ChecklistProgressCalculator {
 
     private ChecklistProgressCalculator() {
     }
 
-    static Progress calculate(List<PackingItem> items) {
+    public static Progress calculate(List<PackingItem> items) {
         int total = 0;
         int completed = 0;
         if (items != null) {
@@ -36,7 +36,7 @@ final class ChecklistProgressCalculator {
     // AI 추천만 COMMON으로 저장되고, 그 뒤에 "내 목록"에서 직접 추가한 물품은 전부 PERSONAL이라
     // calculate()(COMMON 기준)로는 나중에 추가한 물품이 진행률에 안 잡힌다. 그래서 1인 방은
     // 화면에 실제로 보이는 "내 목록" 병합 결과(ChecklistDuplicateDetector)를 그대로 센다.
-    static Progress calculateForMine(List<PackingItem> items, long currentUserId) {
+    public static Progress calculateForMine(List<PackingItem> items, long currentUserId) {
         List<ChecklistDuplicateDetector.ItemGroup> groups =
                 ChecklistDuplicateDetector.groupForMine(items, currentUserId, true);
         int completed = 0;
@@ -55,7 +55,7 @@ final class ChecklistProgressCalculator {
                 && !"DELETED".equalsIgnoreCase(item.getItemStatus());
     }
 
-    static final class Progress {
+    public static final class Progress {
         final int completed;
         final int total;
 
@@ -64,7 +64,7 @@ final class ChecklistProgressCalculator {
             this.total = total;
         }
 
-        int percent() {
+        public int percent() {
             return total == 0 ? 0 : Math.round(completed * 100f / total);
         }
     }

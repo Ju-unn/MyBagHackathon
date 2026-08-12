@@ -9,12 +9,12 @@ import java.util.Locale;
 import java.util.Set;
 
 /** Applies the exact checked recommendation set without inferring selection from scope. */
-final class ChecklistSelectionFilter {
+public final class ChecklistSelectionFilter {
 
     private ChecklistSelectionFilter() {
     }
 
-    static List<PackingItem> apply(List<PackingItem> items, Set<String> selectedNames) {
+    public static List<PackingItem> apply(List<PackingItem> items, Set<String> selectedNames) {
         List<PackingItem> result = new ArrayList<>();
         if (items == null) {
             return result;

@@ -57,8 +57,9 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         View root = binding.getRoot();
 
         AppContainer appContainer = ((MyBagApplication) requireActivity().getApplication()).getAppContainer();
-        presenter = new HomePresenter(this, appContainer.tripRepository, appContainer.packingRepository);
         currentUserId = appContainer.tokenStorage.getUserId();
+        presenter = new HomePresenter(this, appContainer.tripRepository, appContainer.packingRepository,
+                currentUserId, requireContext());
 
         binding.homeTopAppBar.topAppBarTitle.setText(R.string.home_title);
         binding.homeTopAppBar.topAppBarAction.setVisibility(View.GONE);
@@ -194,12 +195,23 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         boolean isOngoing = DateUtils.isTravelingNow(trip.getStartDate(), trip.getEndDate());
         int progress = progressByTripId.getOrDefault(trip.getTripId(), 0);
         List<AvatarStackHelper.Entry> avatars = toAvatarEntries(trip.getMembers());
+        boolean solo = isSoloTrip(trip);
         if (highlight) {
             return TripRoomUiModel.active(trip.getTripId(), trip.getTripName(), ddayText,
-                    avatars, progress, isOwner, isOngoing);
+                    avatars, progress, isOwner, isOngoing, solo);
         }
         return TripRoomUiModel.upcoming(trip.getTripId(), trip.getTripName(), ddayText,
-                avatars, progress, isOwner, isOngoing);
+                avatars, progress, isOwner, isOngoing, solo);
+    }
+
+    // HomePresenter#isSoloTrip과 동일한 기준 — 진행률 라벨을 "체크리스트"(1인) vs
+    // "공용 리스트"(다인)로 가르는 데도 체크리스트 화면과 같은 판정이 필요하다.
+    private boolean isSoloTrip(Trip trip) {
+        Integer expected = trip.getExpectedMemberCount();
+        int effectiveCount = expected == null || expected <= 0
+                ? Math.max(1, trip.getMembers().size())
+                : expected;
+        return effectiveCount <= 1;
     }
 
     private List<AvatarStackHelper.Entry> toAvatarEntries(List<TripMember> members) {
