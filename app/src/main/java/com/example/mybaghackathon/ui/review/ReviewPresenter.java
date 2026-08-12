@@ -99,8 +99,7 @@ public class ReviewPresenter implements ReviewContract.Presenter {
                     view.navigateToRoomDetail(
                             invite.getTripId(),
                             roomName,
-                            invite.getInviteCode(),
-                            new ArrayList<>(itemScopeByName.keySet()));
+                            invite.getInviteCode());
                 } else {
                     view.setGenerating(false);
                     view.showGenerateError(result.getError().getMessage());

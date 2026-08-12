@@ -25,7 +25,6 @@ import com.example.mybaghackathon.ui.atoms.CheckboxView;
 import com.example.mybaghackathon.ui.atoms.PriorityDotView;
 import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
 import com.example.mybaghackathon.ui.atoms.WeatherIconView;
-import com.example.mybaghackathon.ui.checklist.ChecklistSelectionStore;
 import com.example.mybaghackathon.ui.overlay.RestrictionInfoSheet;
 import com.example.mybaghackathon.ui.roomdetail.RoomDetailActivity;
 import com.example.mybaghackathon.ui.upload.ScheduleUploadActivity;
@@ -267,10 +266,8 @@ public class ScheduleReviewActivity extends AppCompatActivity implements ReviewC
     public void navigateToRoomDetail(
             long tripId,
             String roomName,
-            String inviteCode,
-            ArrayList<String> selectedItemNames
+            String inviteCode
     ) {
-        ChecklistSelectionStore.save(this, tripId, selectedItemNames);
         Intent roomDetailIntent = new Intent(this, RoomDetailActivity.class);
         roomDetailIntent.putExtra(EXTRA_TRIP_ID, tripId);
         roomDetailIntent.putExtra(RoomDetailActivity.EXTRA_ROOM_NAME, roomName);
