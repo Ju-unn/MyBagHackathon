@@ -63,7 +63,7 @@ public class HomePresenter implements HomeContract.Presenter {
             Map<Long, Integer> progressByTripId = new HashMap<>();
             for (Trip trip : trips) {
                 // listMyTrips()의 요약 정보 대신 getTripDetail()로 멤버·예상 인원수를 다시 불러온다 —
-                // 카드의 아바타 표시와 인원수별 % 표기에 쓴다(진행률 값 자체는 공용 물품 기준으로 통일).
+                // 아바타 표시와, 진행률 계산 시 1인/다인 방을 가르는 데(체크리스트 화면과 동일 기준) 쓴다.
                 List<TripMember> members = Collections.emptyList();
                 AppResult<Trip> detailResult = tripRepository.getTripDetail(trip.getTripId());
                 if (detailResult.isSuccess() && detailResult.getData() != null) {
@@ -74,8 +74,9 @@ public class HomePresenter implements HomeContract.Presenter {
                 }
                 AppResult<List<PackingItem>> packingResult = packingRepository.listItems(trip.getTripId(), null);
                 if (packingResult.isSuccess() && packingResult.getData() != null) {
+                    boolean solo = isSoloTrip(trip, members);
                     progressByTripId.put(trip.getTripId(),
-                            completionPercent(packingResult.getData()));
+                            completionPercent(packingResult.getData(), solo));
                 }
             }
 
@@ -113,11 +114,23 @@ public class HomePresenter implements HomeContract.Presenter {
         executor.shutdownNow();
     }
 
-    // 체크리스트 화면(ChecklistActivity#updateHeader)과 동일한 계산 — 1인/다인 방 모두
-    // 활성 공용 물품만 센다. 서버가 이미 선택한 AI 추천만 COMMON으로 반환하므로 홈 카드와
-    // 방 안 체크리스트의 진행률이 항상 일치한다.
-    private int completionPercent(List<PackingItem> items) {
-        return ChecklistProgressCalculator.calculate(activeItems(items)).percent();
+    // 체크리스트 화면(ChecklistActivity#updateHeader)과 동일한 계산 — 1인방은 "내 목록"
+    // (선택 AI + 기본/개인 물품) 기준, 다인방은 공용 물품 기준. 서버가 선택한 AI 추천만
+    // 반환하므로 홈 카드와 방 안 체크리스트의 진행률이 항상 일치한다.
+    private int completionPercent(List<PackingItem> items, boolean solo) {
+        List<PackingItem> active = activeItems(items);
+        return solo
+                ? ChecklistProgressCalculator.calculateForMine(active, currentUserId).percent()
+                : ChecklistProgressCalculator.calculate(active).percent();
+    }
+
+    // ChecklistActivity가 memberCount<=1일 때 soloMode로 전환하는 것과 동일한 기준.
+    private boolean isSoloTrip(Trip trip, List<TripMember> members) {
+        Integer expected = trip.getExpectedMemberCount();
+        int effectiveCount = expected == null || expected <= 0
+                ? Math.max(1, members.size())
+                : expected;
+        return effectiveCount <= 1;
     }
 
     private List<PackingItem> activeItems(List<PackingItem> items) {

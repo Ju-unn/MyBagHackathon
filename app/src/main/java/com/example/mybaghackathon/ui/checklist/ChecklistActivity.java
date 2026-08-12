@@ -224,8 +224,11 @@ public class ChecklistActivity extends AppCompatActivity
     }
 
     private void updateHeader() {
-        // 진행률은 1인/다인 방 모두 활성 공용 물품만 센다(개인·기본 물품 제외).
-        ChecklistProgressCalculator.Progress result = ChecklistProgressCalculator.calculate(items);
+        // 1인방은 화면에 보이는 "내 목록"(선택 AI + 기본/개인 물품, 이름 병합) 기준,
+        // 다인방은 공용 물품(item_group_id 단위) 기준으로 진행률을 센다.
+        ChecklistProgressCalculator.Progress result = soloMode
+                ? ChecklistProgressCalculator.calculateForMine(items, currentUserId)
+                : ChecklistProgressCalculator.calculate(items);
         int progress = result.percent();
         String summary = result.completed + "/" + result.total + " 완료";
 

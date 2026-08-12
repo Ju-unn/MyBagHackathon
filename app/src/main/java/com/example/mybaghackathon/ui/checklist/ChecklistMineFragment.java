@@ -267,11 +267,14 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
     }
 
     private void confirmRemoveFromMine(PackingItem item) {
-        if (ChecklistItemVisibility.isAssignedCommon(item, host.getCurrentUserId())) {
+        long uid = host.getCurrentUserId();
+        if (ChecklistItemVisibility.isAssignedCommon(item, uid)) {
             showUnassignDialog(item);
             return;
         }
-        if (!ChecklistItemVisibility.isOwnedPersonal(item, host.getCurrentUserId())) {
+        // 1인방은 담당 해제 개념이 없어 AI 미배정 공용도 개인 물품처럼 삭제한다(탭 편집 경로와 동일).
+        boolean soloCommon = ChecklistItemVisibility.isCommon(item) && host.getTripMemberCount() <= 1;
+        if (!ChecklistItemVisibility.isOwnedPersonal(item, uid) && !soloCommon) {
             return;
         }
 
@@ -357,6 +360,9 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         } else if (ChecklistItemVisibility.isOwnedPersonal(item, currentUserId)) {
             // packing_items의 여행 체크리스트 항목만 삭제한다.
             // 프로필의 user_default_items 원본은 별도 저장소이므로 변경되지 않는다.
+            host.deleteChecklistItemWithUndo(item);
+        } else if (ChecklistItemVisibility.isCommon(item) && host.getTripMemberCount() <= 1) {
+            // 1인방 미배정 공용(AI 추천) 삭제 — 담당 해제 대신 항목 자체를 삭제한다.
             host.deleteChecklistItemWithUndo(item);
         }
     }
