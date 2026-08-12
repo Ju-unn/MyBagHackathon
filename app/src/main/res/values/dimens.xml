@@ -31,6 +31,22 @@
     <!-- 화면 콘텐츠 좌우 여백 — values-sw*/dimens.xml에서 화면 폭별로 재정의됨 -->
     <dimen name="screen_margin">20dp</dimen>
 
+    <!-- 뒤로가기 버튼(ic_back)은 24dp 아이콘 박스 안에서 화살표 꺾쇠가 x=8~15 구간에
+         그려져 있고, 버튼 자체도 12dp 패딩이 있어서 "꺾쇠가 실제로 보이는 위치"는
+         버튼의 layout_marginStart보다 20dp(12dp 버튼 패딩 + 8dp 아이콘 내부 여백) 더
+         오른쪽이다. 이 20dp를 상쇄해서 꺾쇠 위치를 본문 텍스트 시작점(screen_margin)에
+         맞추기 위한 마진값 — 상단바가 별도 좌우 패딩 없는 화면에서 씀(= screen_margin - 20dp).
+         values-sw600dp/dimens.xml에서 화면 폭별로 재정의됨 -->
+    <!-- 계산상으로는 0dp가 맞지만, 실기기에서 꺾쇠 왼쪽 획이 화면 끝에 바짝 붙어
+         잘려 보인다는 리포트가 있어 1dp 여유를 더 줌. -->
+    <dimen name="topbar_back_button_margin">1dp</dimen>
+
+    <!-- 위와 같은 목적이지만, 상단바가 이미 screen_margin만큼 패딩된 컨테이너 안에 있는
+         화면(방 상세, 분석 결과)용 — 부모 패딩의 screen_margin과 목표 위치의 screen_margin이
+         상쇄되어 화면 폭과 무관하게 항상 -20dp로 고정(= screen_margin - screen_margin - 20dp).
+         마찬가지로 1dp 여유를 더함. -->
+    <dimen name="topbar_back_button_margin_padded">-19dp</dimen>
+
     <!-- 자주 쓰는 컴포넌트 크기 -->
     <dimen name="avatar_size_sm">24dp</dimen>
     <dimen name="avatar_size_md">26dp</dimen>

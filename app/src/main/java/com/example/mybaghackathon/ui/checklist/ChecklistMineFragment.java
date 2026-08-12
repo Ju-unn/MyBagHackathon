@@ -133,6 +133,8 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
             bindEmptyState(!allMyItems.isEmpty());
             return;
         }
+        binding.checklistMineFilterRow.setVisibility(View.VISIBLE);
+        binding.checklistMineSwipeHint.setVisibility(View.VISIBLE);
 
         for (int priority = 0; priority < 3; priority++) {
             if (selectedPriority >= 0 && selectedPriority != priority) {
@@ -372,6 +374,12 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
                 ? R.string.checklist_filter_empty_desc
                 : R.string.checklist_mine_empty_desc);
         action.setVisibility(View.GONE);
+
+        // 아직 아이템이 하나도 없을 땐 필터 칩/스와이프 안내문이 걸러낼 대상 자체가 없으므로
+        // 같이 숨겨서, 다른 탭들과 EmptyState 그림이 같은 높이에 오도록 맞춘다.
+        int filterVisibility = filteredOut ? View.VISIBLE : View.GONE;
+        binding.checklistMineFilterRow.setVisibility(filterVisibility);
+        binding.checklistMineSwipeHint.setVisibility(filterVisibility);
     }
 
     private void bindRestriction(View row, String type) {

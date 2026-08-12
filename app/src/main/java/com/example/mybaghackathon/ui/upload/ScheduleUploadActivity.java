@@ -74,6 +74,8 @@ public class ScheduleUploadActivity extends AppCompatActivity implements UploadC
         binding.uploadTopAppBar.topAppBarTitle.setText(R.string.upload_title);
         binding.uploadTopAppBar.topAppBarDesc.setText(R.string.upload_desc);
         binding.uploadTopAppBar.topAppBarDesc.setVisibility(View.VISIBLE);
+        binding.uploadTopAppBar.topAppBarLargeBack.setVisibility(View.VISIBLE);
+        binding.uploadTopAppBar.topAppBarLargeBack.setOnClickListener(v -> finish());
 
         binding.uploadDropzone.setOnClickListener(v -> {
             if (!presenter.canPickMorePhotos()) {

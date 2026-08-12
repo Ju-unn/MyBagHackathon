@@ -170,10 +170,16 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         }
 
         boolean empty = host.isChecklistLoaded() && !hasVisibleItems;
+        // sections가 비어도 marginTop(space_lg)은 그대로 남아 EmptyState를 다른 탭보다
+        // 더 아래로 밀어내므로, GONE으로 완전히 접어서 다른 탭들과 오프셋을 맞춘다.
+        sections.setVisibility(hasVisibleItems ? View.VISIBLE : View.GONE);
         binding.checklistCommonEmptyState.getRoot().setVisibility(
                 empty ? View.VISIBLE : View.GONE);
         if (empty) {
             bindEmptyState(hasAnyCommonItems);
+        } else {
+            binding.checklistCommonFilterRow.setVisibility(View.VISIBLE);
+            binding.checklistClaimNote.setVisibility(View.VISIBLE);
         }
     }
 
@@ -440,6 +446,13 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                         ? R.string.checklist_filter_empty_desc
                         : R.string.checklist_common_empty_desc);
         binding.checklistCommonEmptyState.emptyStateAction.setVisibility(View.GONE);
+
+        // 아직 아이템이 하나도 없을 땐 필터 칩/안내문이 걸러낼 대상 자체가 없으므로 같이 숨겨서,
+        // 다른 탭들과 EmptyState 그림이 같은 높이에 오도록 맞춘다. 필터로 걸러진 경우엔
+        // 다른 필터로 되돌아갈 수 있어야 하니 그대로 둔다.
+        int filterVisibility = filteredOut ? View.VISIBLE : View.GONE;
+        binding.checklistCommonFilterRow.setVisibility(filterVisibility);
+        binding.checklistClaimNote.setVisibility(filterVisibility);
     }
 
     private int priorityLevel(String value) {

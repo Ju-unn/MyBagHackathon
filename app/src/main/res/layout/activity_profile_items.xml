@@ -12,7 +12,8 @@
         layout="@layout/organism_top_app_bar_compact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space_sm"
+        android:layout_marginStart="@dimen/topbar_back_button_margin"
+        android:layout_marginTop="@dimen/space_lg"
         android:layout_marginEnd="@dimen/screen_margin" />
 
     <androidx.core.widget.NestedScrollView

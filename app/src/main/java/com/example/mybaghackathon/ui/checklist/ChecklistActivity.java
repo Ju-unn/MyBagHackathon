@@ -89,6 +89,7 @@ public class ChecklistActivity extends AppCompatActivity
             soloBinding = ActivityChecklistSoloBinding.inflate(getLayoutInflater());
             setContentView(soloBinding.getRoot());
             EdgeToEdgeUtil.applySystemBarPadding(this, soloBinding.getRoot());
+            soloBinding.checklistSoloBack.setOnClickListener(v -> finish());
             if (savedInstanceState == null) {
                 showFragment(new ChecklistMineFragment(), R.id.checklistSoloFragmentContainer);
             }
@@ -98,6 +99,7 @@ public class ChecklistActivity extends AppCompatActivity
         multiBinding = ActivityChecklistBinding.inflate(getLayoutInflater());
         setContentView(multiBinding.getRoot());
         EdgeToEdgeUtil.applySystemBarPadding(this, multiBinding.getRoot());
+        multiBinding.checklistBack.setOnClickListener(v -> finish());
 
         if (savedInstanceState == null) {
             showFragment(new ChecklistCommonFragment(), R.id.checklistFragmentContainer);

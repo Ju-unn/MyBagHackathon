@@ -1,6 +1,7 @@
 package com.example.mybaghackathon.ui.checklist;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,28 +78,60 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
 
         // 담당 항목을 하나라도 배정받은 사람이 없으면 요약 줄(아바타+"N명이 준비 중") 자체를 숨긴다 —
         // 참여만 하고 아직 아무것도 지정 안 된 상태를 "N명이 준비 중"으로 보여주면 안 되기 때문.
+        // 이때 그 위 요소들(요약 줄, 지정 목록)의 marginTop이 그대로 남으면 "미지정" 위에
+        // 아무 내용도 없는 여백만 계속 쌓여 어정쩡해 보이므로, 비어있을 땐 margin도 같이 걷어낸다.
         if (activeMembers.isEmpty()) {
             binding.checklistAssignmentSummaryRow.setVisibility(View.GONE);
+            setTopMargin(binding.checklistAssignmentList, 0);
+            setTopMargin(binding.checklistUnassignedTitle, 0);
         } else {
             binding.checklistAssignmentSummaryRow.setVisibility(View.VISIBLE);
             bindAvatarStack(activeMembers);
             binding.checklistAssignmentSummary.setText(getString(
                     R.string.checklist_assignment_summary, activeMembers.size()));
+            setTopMargin(binding.checklistAssignmentList, R.dimen.space_xl);
+            setTopMargin(binding.checklistUnassignedTitle, R.dimen.space_2xl);
         }
 
+        boolean hasCommonItems = false;
         for (PackingItem item : host.getChecklistItems()) {
-            if (ChecklistItemVisibility.isCommon(item)
-                    && (item.getAssigneeUserId() == null
-                    || !memberById.containsKey(item.getAssigneeUserId()))) {
-                addUnassignedRow(unassigned, item);
+            if (ChecklistItemVisibility.isCommon(item)) {
+                hasCommonItems = true;
+                if (item.getAssigneeUserId() == null
+                        || !memberById.containsKey(item.getAssigneeUserId())) {
+                    addUnassignedRow(unassigned, item);
+                }
             }
         }
 
         if (unassigned.getChildCount() == 0 && host.isChecklistLoaded()) {
+            // 실제 항목 행(molecule_assignment_row)은 카드 배경 + 50dp 높이로 스타일링돼 있는데,
+            // 이 placeholder만 배경 없는 맨 텍스트면 붕 떠 보이므로 같은 카드 스타일로 맞춘다.
             TextView empty = new TextView(requireContext());
             empty.setText(R.string.checklist_unassigned_empty);
             empty.setTextAppearance(R.style.TextAppearance_Bag_BodyM);
+            empty.setTextColor(ContextCompat.getColor(requireContext(), R.color.bag_text_secondary));
+            empty.setBackgroundResource(R.drawable.bg_input_field);
+            empty.setGravity(Gravity.CENTER_VERTICAL);
+            int paddingH = dp(16);
+            empty.setPadding(paddingH, 0, paddingH, 0);
+            empty.setMinHeight(dp(50));
             unassigned.addView(empty);
+        }
+
+        // 공용 준비물 자체가 하나도 없으면 "미지정" 섹션이 텅 빈 채 상단에 떠 보이므로,
+        // 다른 탭(공용 리스트/내 목록)과 같은 EmptyState 컴포넌트로 통일해서 보여준다.
+        boolean showEmptyState = !hasCommonItems && host.isChecklistLoaded();
+        binding.checklistAssignmentUnassignedSection.setVisibility(
+                showEmptyState ? View.GONE : View.VISIBLE);
+        binding.checklistAssignmentEmptyState.getRoot().setVisibility(
+                showEmptyState ? View.VISIBLE : View.GONE);
+        if (showEmptyState) {
+            binding.checklistAssignmentEmptyState.emptyStateTitle
+                    .setText(R.string.checklist_assignment_empty_title);
+            binding.checklistAssignmentEmptyState.emptyStateDesc
+                    .setText(R.string.checklist_assignment_empty_desc);
+            binding.checklistAssignmentEmptyState.emptyStateAction.setVisibility(View.GONE);
         }
     }
 
@@ -164,6 +197,13 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         checkbox.setContentDescription(getString(item.isCompleted()
                 ? R.string.checklist_assignment_item_completed
                 : R.string.checklist_assignment_item_not_completed));
+    }
+
+    private void setTopMargin(View view, int dimenRes) {
+        int margin = dimenRes == 0 ? 0 : getResources().getDimensionPixelSize(dimenRes);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        params.topMargin = margin;
+        view.setLayoutParams(params);
     }
 
     private View inflateRow(LinearLayout list, String label) {

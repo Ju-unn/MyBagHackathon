@@ -26,7 +26,10 @@
 
             <include
                 android:id="@+id/confirmTopAppBar"
-                layout="@layout/organism_top_app_bar_compact" />
+                layout="@layout/organism_top_app_bar_compact"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginStart="@dimen/topbar_back_button_margin_padded" />
 
             <FrameLayout
                 android:id="@+id/confirmDestinationCard"
