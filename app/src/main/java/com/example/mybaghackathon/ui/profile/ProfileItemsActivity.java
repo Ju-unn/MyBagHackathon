@@ -3,6 +3,7 @@ package com.example.mybaghackathon.ui.profile;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,11 +33,15 @@ import java.util.List;
 public class ProfileItemsActivity extends AppCompatActivity implements ProfileItemsContract.View {
 
     private static final int FILTER_ALL = -1;
+    private static final String STATE_EXPANDED_HIGH = "expanded_high";
+    private static final String STATE_EXPANDED_MID = "expanded_mid";
+    private static final String STATE_EXPANDED_LOW = "expanded_low";
 
     private ActivityProfileItemsBinding binding;
     private ProfileItemsContract.Presenter presenter;
     private List<UserDefaultItem> allItems = new ArrayList<>();
     private int currentFilter = FILTER_ALL;
+    private final boolean[] expandedPriorities = {true, true, true};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +69,17 @@ public class ProfileItemsActivity extends AppCompatActivity implements ProfileIt
             sheet.show(getSupportFragmentManager(), "add_item");
         });
 
+        restoreExpansionState(savedInstanceState);
+
         presenter.loadItems();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(STATE_EXPANDED_HIGH, expandedPriorities[PriorityLevels.HIGH]);
+        outState.putBoolean(STATE_EXPANDED_MID, expandedPriorities[PriorityLevels.MID]);
+        outState.putBoolean(STATE_EXPANDED_LOW, expandedPriorities[PriorityLevels.LOW]);
     }
 
     @Override
@@ -147,7 +162,7 @@ public class ProfileItemsActivity extends AppCompatActivity implements ProfileIt
         ((TextView) header.findViewById(R.id.sectionHeaderLabel))
                 .setText(getString(R.string.review_priority_count_format, label, items.size()));
         LinearLayout.LayoutParams headerLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         if (sections.getChildCount() > 0) headerLp.topMargin = dp(16);
         sections.addView(header, headerLp);
 
@@ -173,6 +188,36 @@ public class ProfileItemsActivity extends AppCompatActivity implements ProfileIt
         }
 
         sections.addView(card);
+        bindSectionToggle(header, card, level, label);
+    }
+
+    private void bindSectionToggle(View header, View card, int level, String label) {
+        ImageView toggle = header.findViewById(R.id.sectionHeaderToggle);
+        Runnable applyState = () -> {
+            boolean expanded = expandedPriorities[level];
+            card.setVisibility(expanded ? View.VISIBLE : View.GONE);
+            toggle.setRotation(expanded ? 90f : 0f);
+            header.setContentDescription(getString(expanded
+                    ? R.string.checklist_section_collapse
+                    : R.string.checklist_section_expand, label));
+        };
+        header.setOnClickListener(v -> {
+            expandedPriorities[level] = !expandedPriorities[level];
+            applyState.run();
+        });
+        applyState.run();
+    }
+
+    private void restoreExpansionState(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return;
+        }
+        expandedPriorities[PriorityLevels.HIGH] =
+                savedInstanceState.getBoolean(STATE_EXPANDED_HIGH, true);
+        expandedPriorities[PriorityLevels.MID] =
+                savedInstanceState.getBoolean(STATE_EXPANDED_MID, true);
+        expandedPriorities[PriorityLevels.LOW] =
+                savedInstanceState.getBoolean(STATE_EXPANDED_LOW, true);
     }
 
     private int dp(int value) {
