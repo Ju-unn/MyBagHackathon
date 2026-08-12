@@ -1,5 +1,6 @@
 package com.example.mybaghackathon.ui.home;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -10,12 +11,16 @@ import com.example.mybaghackathon.data.repository.TripRepository;
 import com.example.mybaghackathon.model.PackingItem;
 import com.example.mybaghackathon.model.Trip;
 import com.example.mybaghackathon.model.TripMember;
+import com.example.mybaghackathon.ui.checklist.ChecklistProgressCalculator;
+import com.example.mybaghackathon.ui.checklist.ChecklistSelectionFilter;
+import com.example.mybaghackathon.ui.checklist.ChecklistSelectionStore;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -28,16 +33,20 @@ public class HomePresenter implements HomeContract.Presenter {
     private final HomeContract.View view;
     private final TripRepository tripRepository;
     private final PackingRepository packingRepository;
+    private final long currentUserId;
+    private final Context appContext;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private volatile boolean destroyed;
 
     public HomePresenter(HomeContract.View view, TripRepository tripRepository,
-                          PackingRepository packingRepository) {
+                          PackingRepository packingRepository, long currentUserId, Context context) {
         this.view = view;
         this.tripRepository = tripRepository;
         this.packingRepository = packingRepository;
+        this.currentUserId = currentUserId;
+        this.appContext = context.getApplicationContext();
     }
 
     @Override
@@ -56,13 +65,22 @@ public class HomePresenter implements HomeContract.Presenter {
             // 아바타·체크리스트 진행률은 모든 방 카드에 자세히 표시하므로 전부 불러온다.
             Map<Long, Integer> progressByTripId = new HashMap<>();
             for (Trip trip : trips) {
-                AppResult<List<TripMember>> membersResult = tripRepository.listMembers(trip.getTripId());
-                if (membersResult.isSuccess() && membersResult.getData() != null) {
-                    trip.setMembers(membersResult.getData());
+                // listMyTrips()의 요약 정보 대신 getTripDetail()로 멤버·예상 인원수를 다시 불러온다 —
+                // ChecklistPresenter도 같은 API로 1인/다인 여부를 정하므로, 소스를 통일해야
+                // 카드의 진행률 계산 분기(calculate/calculateForMine)가 체크리스트와 항상 일치한다.
+                List<TripMember> members = Collections.emptyList();
+                AppResult<Trip> detailResult = tripRepository.getTripDetail(trip.getTripId());
+                if (detailResult.isSuccess() && detailResult.getData() != null) {
+                    Trip detail = detailResult.getData();
+                    members = detail.getMembers() == null ? Collections.emptyList() : detail.getMembers();
+                    trip.setMembers(members);
+                    trip.setExpectedMemberCount(detail.getExpectedMemberCount());
                 }
                 AppResult<List<PackingItem>> packingResult = packingRepository.listItems(trip.getTripId(), null);
                 if (packingResult.isSuccess() && packingResult.getData() != null) {
-                    progressByTripId.put(trip.getTripId(), completionPercent(packingResult.getData()));
+                    boolean solo = isSoloTrip(trip, members);
+                    progressByTripId.put(trip.getTripId(),
+                            completionPercent(trip.getTripId(), packingResult.getData(), solo));
                 }
             }
 
@@ -100,17 +118,40 @@ public class HomePresenter implements HomeContract.Presenter {
         executor.shutdownNow();
     }
 
-    private int completionPercent(List<PackingItem> items) {
-        if (items.isEmpty()) {
-            return 0;
-        }
-        int completed = 0;
+    // 체크리스트 화면(ChecklistActivity#updateHeader)과 정확히 같은 계산을 쓴다 —
+    // 1인 방은 "내 목록" 병합 기준(calculateForMine), 다인 방은 공용 목록의 활성 항목
+    // 기준(calculate)이라 홈 카드와 방 안 체크리스트의 진행률이 항상 일치해야 한다.
+    // 방 생성 시 이 기기에서 선택 안 한 AI 추천 물품은 서버에 COMMON으로 남아있어도
+    // 체크리스트 화면(ChecklistSelectionFilter)처럼 분모에서 빼야 숫자가 맞는다.
+    private int completionPercent(long tripId, List<PackingItem> items, boolean solo) {
+        List<PackingItem> active = activeItems(items);
+        Set<String> selectedNames = ChecklistSelectionStore.load(appContext, tripId);
+        List<PackingItem> visible = ChecklistSelectionFilter.apply(active, selectedNames);
+        ChecklistProgressCalculator.Progress progress = solo
+                ? ChecklistProgressCalculator.calculateForMine(visible, currentUserId)
+                : ChecklistProgressCalculator.calculate(visible);
+        return progress.percent();
+    }
+
+    // ChecklistActivity가 memberCount<=1일 때 soloMode로 전환하는 것과 동일한 기준.
+    private boolean isSoloTrip(Trip trip, List<TripMember> members) {
+        Integer expected = trip.getExpectedMemberCount();
+        int effectiveCount = expected == null || expected <= 0
+                ? Math.max(1, members.size())
+                : expected;
+        return effectiveCount <= 1;
+    }
+
+    private List<PackingItem> activeItems(List<PackingItem> items) {
+        List<PackingItem> result = new ArrayList<>();
         for (PackingItem item : items) {
-            if (item.isCompleted()) {
-                completed++;
+            if (item != null
+                    && !"DELETED".equalsIgnoreCase(item.getItemStatus())
+                    && !"EXCLUDED".equalsIgnoreCase(item.getItemStatus())) {
+                result.add(item);
             }
         }
-        return Math.round(100f * completed / items.size());
+        return result;
     }
 
     private int compareByStartDate(String a, String b) {

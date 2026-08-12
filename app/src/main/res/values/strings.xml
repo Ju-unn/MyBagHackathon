@@ -50,6 +50,7 @@
     <string name="trip_leave_dialog_message_format">\'%1$s\' 방에서 나가시겠어요?\n다시 참여하려면 초대가 필요해요</string>
     <string name="trip_left_toast">여행방에서 나갔어요</string>
     <string name="checklist_progress_format">체크리스트 %1$d%% 완료</string>
+    <string name="checklist_progress_format_common">공용 리스트 %1$d%% 완료</string>
     <string name="checklist_assignment_item_completed">담당 물품 준비 완료</string>
     <string name="checklist_assignment_item_not_completed">담당 물품 준비 전</string>
     <string name="nav_home">홈</string>
