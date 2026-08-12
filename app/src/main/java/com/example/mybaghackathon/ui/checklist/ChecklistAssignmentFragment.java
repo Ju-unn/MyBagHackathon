@@ -70,7 +70,7 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
                 }
             }
             if (!memberItems.isEmpty()) {
-                addMemberHeader(assigned, member, memberItems);
+                addMemberHeader(assigned, member);
                 for (PackingItem item : memberItems) {
                     addAssignedRow(assigned, item);
                 }
@@ -93,11 +93,7 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         }
     }
 
-    private void addMemberHeader(
-            LinearLayout list,
-            TripMember member,
-            List<PackingItem> memberItems
-    ) {
+    private void addMemberHeader(LinearLayout list, TripMember member) {
         View header = LayoutInflater.from(requireContext())
                 .inflate(R.layout.molecule_member_list_item, list, false);
         ((TextView) header.findViewById(R.id.memberName)).setText(member.getNickname());
@@ -105,18 +101,6 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         avatar.setInitial(initial(member.getNickname()));
         avatar.setAvatarColor(ContextCompat.getColor(requireContext(), avatarColor(member.getUserId())));
         avatar.setImageUrl(member.getProfileImageUrl());
-        int completedCount = 0;
-        for (PackingItem item : memberItems) {
-            if (item.isCompleted()) {
-                completedCount++;
-            }
-        }
-        TextView progress = header.findViewById(R.id.memberProgress);
-        progress.setText(getString(
-                R.string.checklist_member_progress_format,
-                completedCount,
-                memberItems.size()));
-        progress.setVisibility(View.VISIBLE);
         header.findViewById(R.id.memberHostBadge).setVisibility(
                 "OWNER".equalsIgnoreCase(member.getRole()) ? View.VISIBLE : View.GONE);
 

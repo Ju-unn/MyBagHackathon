@@ -242,25 +242,27 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
         return swipeContainer;
     }
 
+    // 병합된 행(개인 기본 물품 + 나에게 배정된 공용 물품)은 공용 물품으로만 취급한다 —
+    // 개인 물품 삭제 여부를 물을 필요 없이 곧장 담당 해제로 처리하고, 개인 기본 물품 원본도
+    // 함께 삭제해서 담당 해제 후 다시 단독으로 재등장하지 않게 한다.
     private void confirmRemoveFromMine(ChecklistDuplicateDetector.ItemGroup itemGroup) {
         if (itemGroup.isMerged()) {
-            showMergedRemoveOptions(itemGroup);
+            showMergedUnassignDialog(itemGroup);
             return;
         }
         confirmRemoveFromMine(itemGroup.getDisplayItem());
     }
 
-    private void showMergedRemoveOptions(ChecklistDuplicateDetector.ItemGroup itemGroup) {
+    private void showMergedUnassignDialog(ChecklistDuplicateDetector.ItemGroup itemGroup) {
+        PackingItem commonItem = itemGroup.getCommonItem();
+        PackingItem personalItem = itemGroup.getPersonalItem();
         new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
-                .setTitle(R.string.checklist_merged_remove_title)
-                .setItems(R.array.checklist_merged_remove_options, (dialog, which) -> {
-                    if (which == 0) {
-                        confirmRemoveFromMine(itemGroup.getPersonalItem());
-                    } else if (which == 1) {
-                        showUnassignDialog(itemGroup.getCommonItem());
-                    }
-                })
+                .setTitle(R.string.checklist_unassign_title)
+                .setMessage(getString(
+                        R.string.checklist_merged_unassign_message, commonItem.getItemName()))
                 .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.checklist_unassign_action,
+                        (dialog, which) -> host.removeMergedItem(personalItem, commonItem))
                 .show();
     }
 
@@ -315,7 +317,7 @@ public class ChecklistMineFragment extends Fragment implements ChecklistDataCons
             @Override
             public void onItemDeleted() {
                 if (itemGroup.isMerged()) {
-                    showMergedRemoveOptions(itemGroup);
+                    showMergedUnassignDialog(itemGroup);
                 } else {
                     removeFromMine(personalItem);
                 }

@@ -87,7 +87,7 @@ public class ChecklistDuplicateDetectorTest {
     }
 
     @Test
-    public void unselectedDefaultItemIsExcludedFromMine() {
+    public void defaultItemWithoutMatchingAiItemStillShowsInMine() {
         PackingItem defaultItem = item(
                 1L, "PERSONAL", CURRENT_USER_ID, null, "passport");
         defaultItem.setSource("DEFAULT");
@@ -96,11 +96,12 @@ public class ChecklistDuplicateDetectorTest {
                 ChecklistDuplicateDetector.groupForMine(
                         Arrays.asList(defaultItem), CURRENT_USER_ID, true);
 
-        assertEquals(0, groups.size());
+        assertEquals(1, groups.size());
+        assertSame(defaultItem, groups.get(0).getPersonalItem());
     }
 
     @Test
-    public void defaultItemIsIncludedOnlyWhenMatchingAiItemWasSelected() {
+    public void defaultItemMergesWithMatchingAiItemWhenSelected() {
         PackingItem defaultItem = item(
                 1L, "PERSONAL", CURRENT_USER_ID, null, "passport");
         defaultItem.setSource("DEFAULT");

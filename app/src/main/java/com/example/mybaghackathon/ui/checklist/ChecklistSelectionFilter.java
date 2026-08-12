@@ -28,19 +28,16 @@ final class ChecklistSelectionFilter {
             if (item == null) {
                 continue;
             }
-            boolean matchesSelection = selectedNames.contains(normalize(item.getItemName()));
             if ("AI".equalsIgnoreCase(item.getSource())) {
-                if (matchesSelection) {
+                if (selectedNames.contains(normalize(item.getItemName()))) {
                     // Checked recommendations are common checklist items regardless of the
                     // legacy scope returned by create.php.
                     item.setScope("COMMON");
                     result.add(item);
                 }
-            } else if ("DEFAULT".equalsIgnoreCase(item.getSource())) {
-                if (matchesSelection) {
-                    result.add(item);
-                }
             } else {
+                // 프로필 기본 물품(DEFAULT)·직접 추가(USER) 물품은 추천 선택 여부와 무관하게
+                // 방 참여 시점에 항상 내 목록에 보인다.
                 result.add(item);
             }
         }

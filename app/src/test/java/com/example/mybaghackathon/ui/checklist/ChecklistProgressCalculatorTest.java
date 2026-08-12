@@ -11,25 +11,27 @@ import java.util.Arrays;
 public class ChecklistProgressCalculatorTest {
 
     @Test
-    public void progressCountsOnlyActiveAiGroups() {
-        PackingItem completedAi = item(1L, 1L, "AI", "ACTIVE", true);
-        PackingItem incompleteAi = item(2L, 2L, "AI", "ACTIVE", false);
-        PackingItem userItem = item(3L, 3L, "USER", "ACTIVE", true);
-        PackingItem defaultItem = item(4L, 4L, "DEFAULT", "ACTIVE", true);
-        PackingItem excludedAi = item(5L, 5L, "AI", "EXCLUDED", true);
+    public void progressCountsAllActiveCommonItemsRegardlessOfSource() {
+        PackingItem completedAi = commonItem(1L, 1L, "AI", "ACTIVE", true);
+        PackingItem incompleteAi = commonItem(2L, 2L, "AI", "ACTIVE", false);
+        PackingItem completedManualCommon = commonItem(3L, 3L, "USER", "ACTIVE", true);
+        PackingItem personalDefaultItem = item(4L, 4L, "DEFAULT", "ACTIVE", true);
+        personalDefaultItem.setScope("PERSONAL");
+        PackingItem excludedCommon = commonItem(5L, 5L, "AI", "EXCLUDED", true);
 
         ChecklistProgressCalculator.Progress progress = ChecklistProgressCalculator.calculate(
-                Arrays.asList(completedAi, incompleteAi, userItem, defaultItem, excludedAi));
+                Arrays.asList(completedAi, incompleteAi, completedManualCommon,
+                        personalDefaultItem, excludedCommon));
 
-        assertEquals(1, progress.completed);
-        assertEquals(2, progress.total);
-        assertEquals(50, progress.percent());
+        assertEquals(2, progress.completed);
+        assertEquals(3, progress.total);
+        assertEquals(67, progress.percent());
     }
 
     @Test
-    public void duplicatedAssignmentRowsCountAsOneSelectedItem() {
-        PackingItem firstAssignee = item(10L, 7L, "AI", "ACTIVE", true);
-        PackingItem secondAssignee = item(11L, 7L, "AI", "ACTIVE", false);
+    public void duplicatedAssignmentRowsCountAsOneCommonItem() {
+        PackingItem firstAssignee = commonItem(10L, 7L, "AI", "ACTIVE", true);
+        PackingItem secondAssignee = commonItem(11L, 7L, "AI", "ACTIVE", false);
 
         ChecklistProgressCalculator.Progress progress = ChecklistProgressCalculator.calculate(
                 Arrays.asList(firstAssignee, secondAssignee));
@@ -61,6 +63,13 @@ public class ChecklistProgressCalculatorTest {
         assertEquals(0, progress.completed);
         assertEquals(1, progress.total);
         assertEquals(0, progress.percent());
+    }
+
+    private PackingItem commonItem(
+            long id, long groupId, String source, String status, boolean completed) {
+        PackingItem item = item(id, groupId, source, status, completed);
+        item.setScope("COMMON");
+        return item;
     }
 
     private PackingItem item(long id, long groupId, String source, String status, boolean completed) {
