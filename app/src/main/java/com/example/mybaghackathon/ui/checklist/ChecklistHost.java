@@ -26,6 +26,9 @@ public interface ChecklistHost {
 
     void updateChecklistItem(PackingItem item, String name, int priorityLevel);
 
+    /** 다중 배정된 공용 물품 그룹(같은 item_group_id) 전체를 한 번에 수정 — 방장 전용. */
+    void updateChecklistItemGroup(List<PackingItem> group, String name, int priorityLevel);
+
     void toggleChecklistItem(PackingItem item);
 
     void assignChecklistItem(PackingItem item, Long userId);

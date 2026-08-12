@@ -35,6 +35,14 @@ public interface ChecklistContract {
 
         void updateItem(PackingItem item, String name, int priorityLevel);
 
+        /**
+         * 다중 배정으로 row가 나뉜 공용 물품 그룹(같은 item_group_id)의 이름/우선순위를
+         * 한 번의 로딩 사이클 안에서 전부 수정한다. deleteGroup과 같은 이유로(row별
+         * updateItem을 따로 호출하면 loading 가드에 막혀 첫 row만 반영됨) 그룹 전체를
+         * 하나의 서버 작업으로 묶어 처리한다.
+         */
+        void updateItemGroup(List<PackingItem> group, String name, int priorityLevel);
+
         void toggleItem(PackingItem item);
 
         void assignItem(PackingItem item, Long userId);

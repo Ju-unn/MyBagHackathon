@@ -25,6 +25,7 @@
         android:orientation="vertical">
 
         <HorizontalScrollView
+            android:id="@+id/checklistMineFilterRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fillViewport="false"
@@ -87,6 +88,7 @@
             tools:visibility="visible" />
 
         <TextView
+            android:id="@+id/checklistMineSwipeHint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_md"
@@ -97,6 +99,7 @@
             android:id="@+id/checklistMineEmptyState"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/empty_state_top_margin"
             android:visibility="gone">
 
             <include layout="@layout/organism_empty_state" />

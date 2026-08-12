@@ -25,6 +25,7 @@ import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
 import com.example.mybaghackathon.ui.organisms.SwipeRevealHelper;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
 import com.example.mybaghackathon.ui.overlay.AssignItemSheet;
+import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
@@ -170,10 +171,16 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         }
 
         boolean empty = host.isChecklistLoaded() && !hasVisibleItems;
+        // sections가 비어도 marginTop(space_lg)은 그대로 남아 EmptyState를 다른 탭보다
+        // 더 아래로 밀어내므로, GONE으로 완전히 접어서 다른 탭들과 오프셋을 맞춘다.
+        sections.setVisibility(hasVisibleItems ? View.VISIBLE : View.GONE);
         binding.checklistCommonEmptyState.getRoot().setVisibility(
                 empty ? View.VISIBLE : View.GONE);
         if (empty) {
             bindEmptyState(hasAnyCommonItems);
+        } else {
+            binding.checklistCommonFilterRow.setVisibility(View.VISIBLE);
+            binding.checklistClaimNote.setVisibility(View.VISIBLE);
         }
     }
 
@@ -272,7 +279,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         bindRestriction(row, first.getRestrictionType());
         if (host.isCurrentUserHost()) {
             float revealWidth = getResources().getDimension(
-                    R.dimen.checklist_delete_reveal_width);
+                    R.dimen.checklist_common_row_reveal_width);
             SwipeRevealHelper.reset(row);
             SwipeRevealHelper.attach(row, revealWidth, swipeTracker);
             row.setOnClickListener(v -> {
@@ -282,6 +289,11 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                     showAssigneePicker(group);
                 }
             });
+            swipeContainer.findViewById(R.id.checklistSwipeEditButton)
+                    .setOnClickListener(v -> {
+                        SwipeRevealHelper.closeOpenRow(swipeTracker);
+                        showEditSheet(first, group);
+                    });
             swipeContainer.findViewById(R.id.checklistSwipeDeleteButton)
                     .setOnClickListener(v -> {
                         SwipeRevealHelper.closeOpenRow(swipeTracker);
@@ -289,6 +301,23 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                     });
         }
         return swipeContainer;
+    }
+
+    private void showEditSheet(PackingItem item, List<PackingItem> group) {
+        EditItemSheet sheet = EditItemSheet.newInstance(
+                item.getItemName(), priorityLevel(item.getPriority()));
+        sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
+            @Override
+            public void onItemRenamed(String newLabel, int priorityLevel) {
+                host.updateChecklistItemGroup(group, newLabel, priorityLevel);
+            }
+
+            @Override
+            public void onItemDeleted() {
+                confirmDeleteGroup(group);
+            }
+        });
+        sheet.show(getParentFragmentManager(), "edit_common_item");
     }
 
     // 여러 명에게 배정된 물품 — 아바타를 최대 2개까지 겹쳐 보여주고, 그 이상은 "+N"으로 표시
@@ -440,6 +469,13 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                         ? R.string.checklist_filter_empty_desc
                         : R.string.checklist_common_empty_desc);
         binding.checklistCommonEmptyState.emptyStateAction.setVisibility(View.GONE);
+
+        // 아직 아이템이 하나도 없을 땐 필터 칩/안내문이 걸러낼 대상 자체가 없으므로 같이 숨겨서,
+        // 다른 탭들과 EmptyState 그림이 같은 높이에 오도록 맞춘다. 필터로 걸러진 경우엔
+        // 다른 필터로 되돌아갈 수 있어야 하니 그대로 둔다.
+        int filterVisibility = filteredOut ? View.VISIBLE : View.GONE;
+        binding.checklistCommonFilterRow.setVisibility(filterVisibility);
+        binding.checklistClaimNote.setVisibility(filterVisibility);
     }
 
     private int priorityLevel(String value) {

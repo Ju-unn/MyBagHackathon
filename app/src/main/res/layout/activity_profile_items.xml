@@ -12,18 +12,20 @@
         layout="@layout/organism_top_app_bar_compact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space_sm"
+        android:layout_marginStart="@dimen/topbar_back_button_margin"
+        android:layout_marginTop="@dimen/space_lg"
         android:layout_marginEnd="@dimen/screen_margin" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingStart="@dimen/screen_margin"
             android:paddingTop="@dimen/space_sm"
@@ -31,6 +33,7 @@
             android:paddingBottom="@dimen/space_2xl">
 
             <TextView
+                android:id="@+id/profileItemsHint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/profile_items_click_hint"
@@ -38,6 +41,7 @@
                 android:textColor="@color/bag_text_secondary" />
 
             <LinearLayout
+                android:id="@+id/profileItemsFilterRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_lg"
@@ -76,12 +80,27 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/profileItemsGroupedSections"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginTop="@dimen/space_lg"
-                android:orientation="vertical" />
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:id="@+id/profileItemsGroupedSections"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:orientation="vertical" />
+
+                <include
+                    android:id="@+id/profileItemsEmptyState"
+                    layout="@layout/organism_empty_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+            </FrameLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

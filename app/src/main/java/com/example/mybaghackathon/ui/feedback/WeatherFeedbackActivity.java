@@ -84,6 +84,8 @@ public class WeatherFeedbackActivity extends AppCompatActivity
 
         binding.feedbackTopAppBar.topAppBarTitle.setText(R.string.feedback_title);
         binding.feedbackTopAppBar.topAppBarAction.setVisibility(View.GONE);
+        binding.feedbackTopAppBar.topAppBarLargeBack.setVisibility(View.VISIBLE);
+        binding.feedbackTopAppBar.topAppBarLargeBack.setOnClickListener(v -> finish());
         bindIntentFallback();
         Object retained = getLastCustomNonConfigurationInstance();
         if (retained instanceof FeedbackScreenSnapshot) {

@@ -26,6 +26,7 @@
 
         <!-- 우선순위 필터 칩 -->
         <HorizontalScrollView
+            android:id="@+id/checklistCommonFilterRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fillViewport="false"
@@ -101,6 +102,7 @@
             layout="@layout/organism_empty_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/empty_state_top_margin"
             android:visibility="gone" />
 
     </LinearLayout>

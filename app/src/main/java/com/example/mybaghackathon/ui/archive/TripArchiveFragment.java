@@ -89,8 +89,6 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         activeChip.setOnClickListener(v -> selectSegment(true));
         pastChip.setOnClickListener(v -> selectSegment(false));
 
-        binding.archiveEmptyState.emptyStateTitle.setText(R.string.archive_empty_title);
-        binding.archiveEmptyState.emptyStateDesc.setText(R.string.archive_empty_desc);
         binding.archiveEmptyState.emptyStateAction.setText(R.string.empty_state_create_room);
         binding.archiveEmptyState.emptyStateAction.setOnClickListener(
                 v -> startActivity(new Intent(getContext(), CreateRoomActivity.class)));
@@ -201,6 +199,17 @@ public class TripArchiveFragment extends Fragment implements ArchiveContract.Vie
         binding.archiveTripRecycler.setVisibility(empty ? View.GONE : View.VISIBLE);
         binding.archiveEmptyState.getRoot().setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.archiveAddRoomFab.setVisibility(empty ? View.GONE : View.VISIBLE);
+        if (!empty) {
+            return;
+        }
+        // 새로 만든 방은 항상 "진행중"으로 시작해서 "지난 여행"에는 절대 안 뜨므로,
+        // 지난 여행 탭이 비었을 땐 방 만들기를 권하지 않는다.
+        binding.archiveEmptyState.emptyStateTitle.setText(
+                showingOngoing ? R.string.archive_empty_title : R.string.archive_empty_past_title);
+        binding.archiveEmptyState.emptyStateDesc.setText(
+                showingOngoing ? R.string.archive_empty_desc : R.string.archive_empty_past_desc);
+        binding.archiveEmptyState.emptyStateAction.setVisibility(
+                showingOngoing ? View.VISIBLE : View.GONE);
     }
 
     private void confirmDeleteTrip(long tripId, String title) {

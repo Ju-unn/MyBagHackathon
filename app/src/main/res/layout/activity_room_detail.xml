@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="@dimen/screen_margin"
+            android:paddingTop="@dimen/space_lg"
             android:paddingEnd="@dimen/screen_margin"
             android:paddingBottom="@dimen/space_2xl">
 
@@ -32,7 +33,8 @@
                 android:id="@+id/roomDetailTopBar"
                 layout="@layout/organism_top_app_bar_compact"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/topbar_back_button_margin_padded" />
 
             <TextView
                 android:layout_width="match_parent"

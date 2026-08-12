@@ -46,27 +46,36 @@
             android:layout_marginTop="@dimen/space_xl"
             android:orientation="vertical" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_2xl"
-            android:text="@string/checklist_unassigned"
-            android:textAppearance="@style/TextAppearance.Bag.TitleS"
-            android:textStyle="bold" />
-
         <LinearLayout
-            android:id="@+id/checklistUnassignedList"
+            android:id="@+id/checklistAssignmentUnassignedSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_md"
-            android:orientation="vertical" />
+            android:orientation="vertical">
 
-        <TextView
+            <TextView
+                android:id="@+id/checklistUnassignedTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:text="@string/checklist_unassigned"
+                android:textAppearance="@style/TextAppearance.Bag.TitleS"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/checklistUnassignedList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:orientation="vertical" />
+        </LinearLayout>
+
+        <include
+            android:id="@+id/checklistAssignmentEmptyState"
+            layout="@layout/organism_empty_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_2xl"
-            android:text="@string/checklist_assignment_hint"
-            android:textAppearance="@style/TextAppearance.Bag.Caption" />
+            android:layout_marginTop="@dimen/empty_state_top_margin"
+            android:visibility="gone" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

@@ -49,7 +49,7 @@
         <View
             style="@style/Widget.Bag.Divider"
             android:layout_marginTop="@dimen/space_lg"
-            android:background="@color/bag_text_primary" />
+            android:background="@color/bag_text_secondary" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,7 +92,7 @@
             android:id="@+id/profileViewAllRow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target_min"
-            android:background="?attr/selectableItemBackground"
+            android:background="@drawable/bg_list_row_ripple"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -115,7 +115,7 @@
         <View
             style="@style/Widget.Bag.Divider"
             android:layout_marginTop="@dimen/space_lg"
-            android:background="@color/bag_text_primary" />
+            android:background="@color/bag_text_secondary" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -129,7 +129,7 @@
             android:id="@+id/profileNotifRow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target_min"
-            android:background="?attr/selectableItemBackground"
+            android:background="@drawable/bg_list_row_ripple"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -159,7 +159,7 @@
             android:id="@+id/profileLogoutRow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target_min"
-            android:background="?attr/selectableItemBackground"
+            android:background="@drawable/bg_list_row_ripple"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 

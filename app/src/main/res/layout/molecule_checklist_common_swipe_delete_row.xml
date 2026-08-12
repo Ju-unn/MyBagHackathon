@@ -4,36 +4,73 @@
     android:layout_height="wrap_content"
     android:clipChildren="true">
 
-    <FrameLayout
-        android:id="@+id/checklistSwipeDeleteButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/action_delete">
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="@dimen/space_sm"
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal">
 
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/checklistSwipeEditButton"
             android:layout_width="@dimen/checklist_delete_button_size"
             android:layout_height="@dimen/checklist_delete_button_size"
-            android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="@dimen/space_sm"
-            android:background="@drawable/bg_circle_swipe_delete"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:contentDescription="@string/action_edit">
 
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_trash" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_circle_swipe_edit"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_2xs"
-                android:text="@string/action_delete"
-                android:textAppearance="@style/TextAppearance.Bag.LabelS"
-                android:textColor="@color/white_primitive" />
-        </LinearLayout>
-    </FrameLayout>
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_edit" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_2xs"
+                    android:text="@string/action_edit"
+                    android:textAppearance="@style/TextAppearance.Bag.LabelS"
+                    android:textColor="@color/white_primitive" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/checklistSwipeDeleteButton"
+            android:layout_width="@dimen/checklist_delete_button_size"
+            android:layout_height="@dimen/checklist_delete_button_size"
+            android:contentDescription="@string/action_delete">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_circle_swipe_delete"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_trash" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_2xs"
+                    android:text="@string/action_delete"
+                    android:textAppearance="@style/TextAppearance.Bag.LabelS"
+                    android:textColor="@color/white_primitive" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
 
     <include
         android:id="@+id/checklistSwipeContent"

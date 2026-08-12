@@ -3,4 +3,6 @@
     <!-- 태블릿 / 펼친 폴더블 기기 대응 (최소 가로폭 >= 600dp):
          내용이 화면 끝까지 늘어지지 않도록 좌우 여백을 더 넓게 잡음. -->
     <dimen name="screen_margin">40dp</dimen>
+    <!-- screen_margin(40dp) - 20dp, see values/dimens.xml -->
+    <dimen name="topbar_back_button_margin">20dp</dimen>
 </resources>

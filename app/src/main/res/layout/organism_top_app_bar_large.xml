@@ -13,10 +13,24 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
+        <!-- 기본 숨김 — 뒤로가기가 필요한 화면(S05, S10 등)에서만 코드로 보이게 처리.
+             Compact 상단바(O1 컴팩트)와 동일하게 버튼+제목을 한 줄에 배치해 통일감을 맞춤. -->
+        <ImageButton
+            android:id="@+id/topAppBarLargeBack"
+            android:layout_width="@dimen/touch_target_min"
+            android:layout_height="@dimen/touch_target_min"
+            android:layout_marginStart="@dimen/topbar_back_button_margin_padded"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_cancel"
+            android:padding="12dp"
+            android:src="@drawable/ic_back"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/topAppBarTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.Bag.DisplayM"

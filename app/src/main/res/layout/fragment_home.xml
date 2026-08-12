@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:fillViewport="true"
         android:paddingStart="@dimen/screen_margin"
         android:paddingTop="@dimen/screen_margin"
         android:paddingEnd="@dimen/screen_margin"
@@ -17,36 +18,35 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <include
                 android:id="@+id/homeTopAppBar"
                 layout="@layout/organism_top_app_bar_large" />
 
-            <!-- 공용 여행 탭의 세그먼트 컨트롤 높이만큼 빈 상태를 밀어내는 스페이서 —
-                 homeEmptyState와 함께 보이고 숨겨짐(HomeFragment#updateEmptyState). -->
-            <View
-                android:id="@+id/homeEmptyStateSpacer"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/home_empty_state_segment_offset"
-                android:visibility="gone" />
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
-            <include
-                android:id="@+id/homeEmptyState"
-                layout="@layout/organism_empty_state"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/empty_state_top_margin"
-                android:visibility="gone" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/homeTripRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:layout_marginTop="@dimen/space_xl"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/homeTripRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xl"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never" />
+                <include
+                    android:id="@+id/homeEmptyState"
+                    layout="@layout/organism_empty_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+            </FrameLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
