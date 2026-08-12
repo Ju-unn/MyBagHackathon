@@ -312,6 +312,11 @@ public class ChecklistActivity extends AppCompatActivity
     }
 
     @Override
+    public void removeMergedItem(PackingItem personalItem, PackingItem commonItem) {
+        presenter.removeMergedItem(personalItem, commonItem);
+    }
+
+    @Override
     public List<PackingItem> getChecklistItems() {
         return Collections.unmodifiableList(new ArrayList<>(items));
     }

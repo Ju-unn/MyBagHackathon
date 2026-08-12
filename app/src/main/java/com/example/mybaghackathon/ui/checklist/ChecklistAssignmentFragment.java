@@ -93,10 +93,7 @@ public class ChecklistAssignmentFragment extends Fragment implements ChecklistDa
         }
     }
 
-    private void addMemberHeader(
-            LinearLayout list,
-            TripMember member
-    ) {
+    private void addMemberHeader(LinearLayout list, TripMember member) {
         View header = LayoutInflater.from(requireContext())
                 .inflate(R.layout.molecule_member_list_item, list, false);
         ((TextView) header.findViewById(R.id.memberName)).setText(member.getNickname());

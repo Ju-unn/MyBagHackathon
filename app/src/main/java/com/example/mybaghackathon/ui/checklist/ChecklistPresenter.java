@@ -263,6 +263,27 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
         deleteOnServer(item);
     }
 
+    // 공용 담당 해제와 개인 기본 물품 원본 삭제를 한 번에 처리 — 담당 해제 후 개인 물품이
+    // 다시 단독으로 내 목록에 재등장하지 않도록 순서대로 서버에 반영한다.
+    @Override
+    public void removeMergedItem(PackingItem personalItem, PackingItem commonItem) {
+        if (personalItem == null || commonItem == null) {
+            return;
+        }
+        if (!ChecklistItemVisibility.isAssignedCommon(commonItem, currentUserId)
+                || !ChecklistItemVisibility.isOwnedPersonal(personalItem, currentUserId)) {
+            view.showError(permissionMessage(commonItem));
+            return;
+        }
+        runRepositoryAction(() -> {
+            AppResult<Void> unassignResult = packingRepository.assign(commonItem.getPackingItemId(), null);
+            if (!unassignResult.isSuccess()) {
+                return unassignResult;
+            }
+            return packingRepository.deleteItem(personalItem.getPackingItemId());
+        });
+    }
+
     @Override
     public void onDestroy() {
         destroyed = true;
