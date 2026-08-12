@@ -22,10 +22,12 @@ public class TripRoomUiModel {
     public final boolean isOwner;
     /** 오늘이 이 방의 여행 기간 안인지 — 검정 강조 카드가 아니어도 상태 라벨을 "진행중"으로 보여줄지 결정한다. */
     public final boolean isOngoing;
+    /** 참여 인원 1명인 방인지 — 진행률 라벨을 "체크리스트"(1인) vs "공용 리스트"(다인)로 갈라 보여줄지 결정한다. */
+    public final boolean solo;
 
     private TripRoomUiModel(long tripId, State state, String title, String ddayText,
                              List<AvatarStackHelper.Entry> avatars, int progressPercent, boolean isOwner,
-                             boolean isOngoing) {
+                             boolean isOngoing, boolean solo) {
         this.tripId = tripId;
         this.state = state;
         this.title = title;
@@ -34,23 +36,24 @@ public class TripRoomUiModel {
         this.progressPercent = progressPercent;
         this.isOwner = isOwner;
         this.isOngoing = isOngoing;
+        this.solo = solo;
     }
 
     public static TripRoomUiModel active(long tripId, String title, String ddayText,
                                           List<AvatarStackHelper.Entry> avatars, int progressPercent,
-                                          boolean isOwner, boolean isOngoing) {
+                                          boolean isOwner, boolean isOngoing, boolean solo) {
         return new TripRoomUiModel(
-                tripId, State.ACTIVE, title, ddayText, avatars, progressPercent, isOwner, isOngoing);
+                tripId, State.ACTIVE, title, ddayText, avatars, progressPercent, isOwner, isOngoing, solo);
     }
 
     public static TripRoomUiModel upcoming(long tripId, String title, String ddayText,
                                             List<AvatarStackHelper.Entry> avatars, int progressPercent,
-                                            boolean isOwner, boolean isOngoing) {
+                                            boolean isOwner, boolean isOngoing, boolean solo) {
         return new TripRoomUiModel(
-                tripId, State.UPCOMING, title, ddayText, avatars, progressPercent, isOwner, isOngoing);
+                tripId, State.UPCOMING, title, ddayText, avatars, progressPercent, isOwner, isOngoing, solo);
     }
 
     public static TripRoomUiModel past(long tripId, String title, String ddayText, boolean isOwner) {
-        return new TripRoomUiModel(tripId, State.PAST, title, ddayText, null, 0, isOwner, false);
+        return new TripRoomUiModel(tripId, State.PAST, title, ddayText, null, 0, isOwner, false, false);
     }
 }

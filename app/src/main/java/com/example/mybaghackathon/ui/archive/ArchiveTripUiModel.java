@@ -24,10 +24,12 @@ public class ArchiveTripUiModel {
     public final boolean isOwner;
     /** 오늘이 이 방의 여행 기간 안인지 — 검정 강조 카드가 아니어도 상태 라벨을 "진행중"으로 보여줄지 결정한다. */
     public final boolean isOngoing;
+    /** 참여 인원 1명인 방인지 — 진행률 라벨을 "체크리스트"(1인) vs "공용 리스트"(다인)로 갈라 보여줄지 결정한다. */
+    public final boolean solo;
 
     private ArchiveTripUiModel(long tripId, State state, String title, String ddayText,
                                 List<AvatarStackHelper.Entry> avatars, int progressPercent, boolean isOwner,
-                                boolean isOngoing) {
+                                boolean isOngoing, boolean solo) {
         this.tripId = tripId;
         this.state = state;
         this.title = title;
@@ -36,23 +38,24 @@ public class ArchiveTripUiModel {
         this.progressPercent = progressPercent;
         this.isOwner = isOwner;
         this.isOngoing = isOngoing;
+        this.solo = solo;
     }
 
     public static ArchiveTripUiModel ongoing(long tripId, String title, String ddayText,
                                               List<AvatarStackHelper.Entry> avatars, int progressPercent,
-                                              boolean isOwner, boolean isOngoing) {
+                                              boolean isOwner, boolean isOngoing, boolean solo) {
         return new ArchiveTripUiModel(
-                tripId, State.ONGOING, title, ddayText, avatars, progressPercent, isOwner, isOngoing);
+                tripId, State.ONGOING, title, ddayText, avatars, progressPercent, isOwner, isOngoing, solo);
     }
 
     public static ArchiveTripUiModel planned(long tripId, String title, String ddayText,
                                               List<AvatarStackHelper.Entry> avatars, int progressPercent,
-                                              boolean isOwner, boolean isOngoing) {
+                                              boolean isOwner, boolean isOngoing, boolean solo) {
         return new ArchiveTripUiModel(
-                tripId, State.PLANNED, title, ddayText, avatars, progressPercent, isOwner, isOngoing);
+                tripId, State.PLANNED, title, ddayText, avatars, progressPercent, isOwner, isOngoing, solo);
     }
 
     public static ArchiveTripUiModel past(long tripId, String title, String ddayText, boolean isOwner) {
-        return new ArchiveTripUiModel(tripId, State.PAST, title, ddayText, null, 0, isOwner, false);
+        return new ArchiveTripUiModel(tripId, State.PAST, title, ddayText, null, 0, isOwner, false, false);
     }
 }

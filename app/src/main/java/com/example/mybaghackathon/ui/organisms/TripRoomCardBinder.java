@@ -28,7 +28,8 @@ import java.util.List;
 public class TripRoomCardBinder {
 
     public static void bindActive(View root, String title, String ddayText,
-                                   List<AvatarStackHelper.Entry> avatars, int percent, boolean isOngoing) {
+                                   List<AvatarStackHelper.Entry> avatars, int percent, boolean isOngoing,
+                                   boolean solo) {
         Context ctx = root.getContext();
         MaterialCardView card = root.findViewById(R.id.tripCardRoot);
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_inverse));
@@ -59,7 +60,7 @@ public class TripRoomCardBinder {
         AvatarStackHelper.populate(ctx, stack, avatars, 28);
 
         TextView progressLabel = root.findViewById(R.id.tripCardProgressLabel);
-        progressLabel.setText(ctx.getString(R.string.checklist_progress_format, percent));
+        progressLabel.setText(ctx.getString(progressFormat(solo), percent));
         progressLabel.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_on_inverse));
 
         ProgressBar bar = root.findViewById(R.id.tripCardProgressBar);
@@ -71,7 +72,8 @@ public class TripRoomCardBinder {
     }
 
     public static void bindUpcoming(View root, String title, String ddayText,
-                                     List<AvatarStackHelper.Entry> avatars, int percent, boolean isOngoing) {
+                                     List<AvatarStackHelper.Entry> avatars, int percent, boolean isOngoing,
+                                     boolean solo) {
         Context ctx = root.getContext();
         MaterialCardView card = root.findViewById(R.id.tripCardRoot);
         card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.bag_bg_surface));
@@ -102,7 +104,7 @@ public class TripRoomCardBinder {
             AvatarStackHelper.populate(ctx, stack, avatars, 28);
 
             TextView progressLabel = root.findViewById(R.id.tripCardProgressLabel);
-            progressLabel.setText(ctx.getString(R.string.checklist_progress_format, percent));
+            progressLabel.setText(ctx.getString(progressFormat(solo), percent));
             progressLabel.setTextColor(ContextCompat.getColor(ctx, R.color.bag_text_secondary));
         }
 
@@ -114,6 +116,12 @@ public class TripRoomCardBinder {
         }
 
         root.findViewById(R.id.tripCardHint).setVisibility(View.GONE);
+    }
+
+    // 1인 방은 체크리스트 화면에도 탭이 없어 "내 목록"뿐이라 "체크리스트 N% 완료"로,
+    // 다인 방은 체크리스트 화면의 "공용 리스트" 탭 기준 진행률이라 "공용 리스트 N% 완료"로 보여준다.
+    private static int progressFormat(boolean solo) {
+        return solo ? R.string.checklist_progress_format : R.string.checklist_progress_format_common;
     }
 
     public static void bindPast(View root, String title, String ddayText) {
