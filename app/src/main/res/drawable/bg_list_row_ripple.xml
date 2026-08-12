@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 리스트 행(설정 메뉴 등)용 리플 — selectableItemBackground를 그대로 쓰면 각진 사각형으로
+     떠서 앱의 둥근 톤과 안 맞기 때문에, 리플 자체를 radius_sm으로 마스킹한다. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?android:attr/colorControlHighlight">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radius_sm" />
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+</ripple>

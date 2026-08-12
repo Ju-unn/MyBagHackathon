@@ -285,6 +285,11 @@ public class ChecklistActivity extends AppCompatActivity
     }
 
     @Override
+    public void updateChecklistItemGroup(List<PackingItem> group, String name, int priorityLevel) {
+        presenter.updateItemGroup(group, name, priorityLevel);
+    }
+
+    @Override
     public void toggleChecklistItem(PackingItem item) {
         presenter.toggleItem(item);
     }

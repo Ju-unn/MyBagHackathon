@@ -113,6 +113,21 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
     }
 
     @Override
+    public void updateItemGroup(List<PackingItem> group, String name, int priorityLevel) {
+        if (group == null || group.isEmpty() || !hasText(name)) {
+            view.showError("수정할 항목 이름을 확인해주세요.");
+            return;
+        }
+        for (PackingItem item : group) {
+            if (item == null || !canEdit(item)) {
+                view.showError(permissionMessage(group.get(0)));
+                return;
+            }
+        }
+        updateItemGroupOnServer(group, name.trim(), priorityLevel);
+    }
+
+    @Override
     public void toggleItem(PackingItem item) {
         if (item == null) {
             return;
@@ -456,6 +471,33 @@ public class ChecklistPresenter implements ChecklistContract.Presenter {
                     if (!result.isSuccess()) {
                         post(() -> view.showRetryableError(
                                 messageOf(result, "항목을 삭제하지 못했습니다.")));
+                        break;
+                    }
+                }
+                loadChecklistOnWorker();
+            } catch (RuntimeException error) {
+                post(() -> view.showRetryableError(
+                        "서버 응답을 처리하지 못했습니다. 잠시 후 다시 시도해주세요."));
+                loadChecklistOnWorker();
+            }
+        });
+    }
+
+    // deleteGroupOnServer와 같은 이유로, group 안의 row를 전부 같은 loading 사이클
+    // (같은 executor 작업) 안에서 순서대로 수정 요청한다.
+    private void updateItemGroupOnServer(List<PackingItem> group, String name, int priorityLevel) {
+        if (destroyed || loading) {
+            return;
+        }
+        startLoading();
+        executor.execute(() -> {
+            try {
+                for (PackingItem item : group) {
+                    AppResult<Void> result = packingRepository.updateItem(
+                            item.getPackingItemId(), name, null, priorityCode(priorityLevel), null);
+                    if (!result.isSuccess()) {
+                        post(() -> view.showRetryableError(
+                                messageOf(result, "항목을 수정하지 못했습니다.")));
                         break;
                     }
                 }

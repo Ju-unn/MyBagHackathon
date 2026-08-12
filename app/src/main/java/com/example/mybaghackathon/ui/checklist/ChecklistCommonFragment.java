@@ -25,6 +25,7 @@ import com.example.mybaghackathon.ui.atoms.RestrictionTagView;
 import com.example.mybaghackathon.ui.organisms.SwipeRevealHelper;
 import com.example.mybaghackathon.ui.overlay.AddItemSheet;
 import com.example.mybaghackathon.ui.overlay.AssignItemSheet;
+import com.example.mybaghackathon.ui.overlay.EditItemSheet;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
@@ -278,7 +279,7 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
         bindRestriction(row, first.getRestrictionType());
         if (host.isCurrentUserHost()) {
             float revealWidth = getResources().getDimension(
-                    R.dimen.checklist_delete_reveal_width);
+                    R.dimen.checklist_common_row_reveal_width);
             SwipeRevealHelper.reset(row);
             SwipeRevealHelper.attach(row, revealWidth, swipeTracker);
             row.setOnClickListener(v -> {
@@ -288,6 +289,11 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                     showAssigneePicker(group);
                 }
             });
+            swipeContainer.findViewById(R.id.checklistSwipeEditButton)
+                    .setOnClickListener(v -> {
+                        SwipeRevealHelper.closeOpenRow(swipeTracker);
+                        showEditSheet(first, group);
+                    });
             swipeContainer.findViewById(R.id.checklistSwipeDeleteButton)
                     .setOnClickListener(v -> {
                         SwipeRevealHelper.closeOpenRow(swipeTracker);
@@ -295,6 +301,23 @@ public class ChecklistCommonFragment extends Fragment implements ChecklistDataCo
                     });
         }
         return swipeContainer;
+    }
+
+    private void showEditSheet(PackingItem item, List<PackingItem> group) {
+        EditItemSheet sheet = EditItemSheet.newInstance(
+                item.getItemName(), priorityLevel(item.getPriority()));
+        sheet.setOnItemEditedListener(new EditItemSheet.OnItemEditedListener() {
+            @Override
+            public void onItemRenamed(String newLabel, int priorityLevel) {
+                host.updateChecklistItemGroup(group, newLabel, priorityLevel);
+            }
+
+            @Override
+            public void onItemDeleted() {
+                confirmDeleteGroup(group);
+            }
+        });
+        sheet.show(getParentFragmentManager(), "edit_common_item");
     }
 
     // 여러 명에게 배정된 물품 — 아바타를 최대 2개까지 겹쳐 보여주고, 그 이상은 "+N"으로 표시

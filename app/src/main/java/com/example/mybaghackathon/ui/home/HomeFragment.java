@@ -135,7 +135,6 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
     private void updateEmptyState() {
         boolean empty = adapter.isEmpty();
-        binding.homeEmptyStateSpacer.setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.homeEmptyState.getRoot().setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.homeTripRecycler.setVisibility(empty ? View.GONE : View.VISIBLE);
         binding.homeAddRoomFab.setVisibility(empty ? View.GONE : View.VISIBLE);

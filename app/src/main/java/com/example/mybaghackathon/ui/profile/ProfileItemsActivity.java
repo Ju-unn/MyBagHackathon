@@ -141,6 +141,31 @@ public class ProfileItemsActivity extends AppCompatActivity implements ProfileIt
         if (currentFilter == FILTER_ALL || currentFilter == PriorityLevels.LOW) {
             addPrioritySection(sections, PriorityLevels.LOW, getString(R.string.review_priority_low));
         }
+        updateEmptyState(sections.getChildCount() == 0);
+    }
+
+    // 순수 화면 표시용 토글이라 presenter.loadItems()나 defaultItemRepository 쪽 데이터
+    // 흐름과는 무관하다 — allItems는 그대로 유지되고, 체크리스트 "내 목록" 탭이 쓰는
+    // packingRepository/트립별 PackingItem과도 완전히 별개의 데이터 소스다.
+    private void updateEmptyState(boolean noVisibleItems) {
+        binding.profileItemsEmptyState.getRoot().setVisibility(
+                noVisibleItems ? View.VISIBLE : View.GONE);
+        if (!noVisibleItems) {
+            binding.profileItemsHint.setVisibility(View.VISIBLE);
+            binding.profileItemsFilterRow.setVisibility(View.VISIBLE);
+            return;
+        }
+        boolean filteredOut = !allItems.isEmpty();
+        binding.profileItemsEmptyState.emptyStateTitle.setText(filteredOut
+                ? R.string.checklist_filter_empty_title
+                : R.string.profile_items_empty_title);
+        binding.profileItemsEmptyState.emptyStateDesc.setText(filteredOut
+                ? R.string.checklist_filter_empty_desc
+                : R.string.profile_items_empty_desc);
+        binding.profileItemsEmptyState.emptyStateAction.setVisibility(View.GONE);
+        int visibility = filteredOut ? View.VISIBLE : View.GONE;
+        binding.profileItemsHint.setVisibility(visibility);
+        binding.profileItemsFilterRow.setVisibility(visibility);
     }
 
     private List<UserDefaultItem> filterByPriority(int priorityLevel) {

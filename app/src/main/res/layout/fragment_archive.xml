@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:fillViewport="true"
         android:paddingStart="@dimen/screen_margin"
         android:paddingTop="@dimen/screen_margin"
         android:paddingEnd="@dimen/screen_margin"
@@ -17,7 +18,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <include
@@ -54,21 +55,28 @@
                 android:textColor="@color/bag_text_tertiary_safe" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/archiveTripRecycler"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="never" />
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-        <include
-            android:id="@+id/archiveEmptyState"
-            layout="@layout/organism_empty_state"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/empty_state_top_margin"
-            android:visibility="gone" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/archiveTripRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_marginTop="@dimen/space_lg"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never" />
+
+            <include
+                android:id="@+id/archiveEmptyState"
+                layout="@layout/organism_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </FrameLayout>
 
     </LinearLayout>
     </androidx.core.widget.NestedScrollView>
