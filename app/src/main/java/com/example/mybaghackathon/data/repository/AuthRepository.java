@@ -14,4 +14,7 @@ public interface AuthRepository {
 
     // 이 기기의 FCM 토큰을 서버에 등록한다
     AppResult<Void> registerFcmToken(String token, String deviceId, String platform, String appVersion);
+
+    // 회원 탈퇴. 서버 처리가 성공한 경우에만 로컬 토큰을 지운다(실패 시 계정은 그대로 살아있으므로)
+    AppResult<Void> withdraw();
 }

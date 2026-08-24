@@ -181,6 +181,32 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/profileWithdrawRow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target_min"
+            android:background="@drawable/bg_list_row_ripple"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="@dimen/space_md"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_trash"
+                app:tint="@color/bag_status_danger" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/profile_withdraw"
+                android:textAppearance="@style/TextAppearance.Bag.BodyL"
+                android:textColor="@color/bag_status_danger" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/profileVersionRow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target_min"

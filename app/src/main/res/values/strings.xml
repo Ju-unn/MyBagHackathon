@@ -46,6 +46,7 @@
     <string name="trip_delete_dialog_message_format">\'%1$s\' 방을 삭제하시겠어요?\n이 작업은 되돌릴 수 없어요</string>
     <string name="trip_deleted_toast">여행방이 삭제됐어요</string>
     <string name="action_leave">나가기</string>
+    <string name="action_withdraw">탈퇴하기</string>
     <string name="trip_leave_dialog_title">여행방에서 나갈까요?</string>
     <string name="trip_leave_dialog_message_format">\'%1$s\' 방에서 나가시겠어요?\n다시 참여하려면 초대가 필요해요</string>
     <string name="trip_left_toast">여행방에서 나갔어요</string>
@@ -249,6 +250,9 @@
     <string name="profile_logout">로그아웃</string>
     <string name="profile_logout_dialog_title">로그아웃 하시겠어요?</string>
     <string name="profile_logout_dialog_message">다시 이용하려면 카카오 로그인이 필요해요</string>
+    <string name="profile_withdraw">회원 탈퇴</string>
+    <string name="profile_withdraw_dialog_title">정말 탈퇴하시겠어요?</string>
+    <string name="profile_withdraw_dialog_message">방장인 여행방은 즉시 삭제되고, 참여 중인 방은 나가기 처리돼요.\n30일 이내 다시 로그인하면 계정을 복구할 수 있어요</string>
     <string name="profile_version">버전</string>
 
     <!-- S15 내 기본 물품 전체보기 -->

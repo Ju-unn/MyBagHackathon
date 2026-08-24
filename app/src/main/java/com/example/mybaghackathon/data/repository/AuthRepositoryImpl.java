@@ -92,6 +92,24 @@ public class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
+    // 회원 탈퇴 API 호출 → 성공한 경우에만 로컬 토큰/유저 정보를 지운다(실패 시 계정은 그대로 살아있어 세션 유지)
+    @Override
+    public AppResult<Void> withdraw() {
+        try {
+            Response<ApiResponseDto<Object>> response = authApi.withdraw().execute();
+            ApiResponseDto<Object> body = response.body();
+            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
+                return AppResult.failure(toError(response, body));
+            }
+
+            tokenStorage.clearToken();
+            userStorage.clearUser();
+            return AppResult.success(null);
+        } catch (IOException e) {
+            return AppResult.failure(networkError());
+        }
+    }
+
     // 실패 응답에서 상태코드와 메시지를 뽑아 AppError로 변환한다
     private AppError toError(Response<?> response, ApiResponseDto<?> body) {
         String message = body != null ? body.getMessage() : parseErrorMessage(response);
