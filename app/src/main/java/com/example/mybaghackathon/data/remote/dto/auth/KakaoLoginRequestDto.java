@@ -15,9 +15,14 @@ public class KakaoLoginRequestDto {
     @SerializedName("terms_agreed")
     private final boolean termsAgreed;
 
-    public KakaoLoginRequestDto(String accessToken, boolean privacyAgreed, boolean termsAgreed) {
+    // 탈퇴 후 유예기간(30일) 내 계정 복구 확인 다이얼로그를 거쳤는지 여부
+    @SerializedName("restore_confirmed")
+    private final boolean restoreConfirmed;
+
+    public KakaoLoginRequestDto(String accessToken, boolean privacyAgreed, boolean termsAgreed, boolean restoreConfirmed) {
         this.accessToken = accessToken;
         this.privacyAgreed = privacyAgreed;
         this.termsAgreed = termsAgreed;
+        this.restoreConfirmed = restoreConfirmed;
     }
 }

@@ -73,6 +73,20 @@ public class ProfilePresenter implements ProfileContract.Presenter {
     }
 
     @Override
+    public void withdraw() {
+        executor.execute(() -> {
+            AppResult<Void> result = authRepository.withdraw();
+            postToView(() -> {
+                if (result.isSuccess()) {
+                    view.navigateToLogin();
+                } else {
+                    view.showError(result.getError().getMessage());
+                }
+            });
+        });
+    }
+
+    @Override
     public void onDestroy() {
         destroyed = true;
         executor.shutdown();

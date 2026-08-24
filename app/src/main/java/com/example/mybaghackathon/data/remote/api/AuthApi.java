@@ -23,4 +23,8 @@ public interface AuthApi {
     // 이 기기의 FCM 토큰을 서버에 등록/갱신
     @POST("api/auth/fcm-token.php")
     Call<ApiResponseDto<Object>> registerFcmToken(@Body FcmTokenDto body);
+
+    // 회원 탈퇴 — 방장인 트립은 즉시 삭제, 참여 중인 트립은 나가기 처리 후 계정을 소프트 삭제(30일 보존)
+    @POST("api/auth/withdraw.php")
+    Call<ApiResponseDto<Object>> withdraw();
 }

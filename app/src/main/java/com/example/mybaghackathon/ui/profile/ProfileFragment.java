@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -68,6 +70,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                 startActivity(new Intent(getContext(), NotificationSettingsActivity.class)));
 
         binding.profileLogoutRow.setOnClickListener(v -> confirmLogout());
+        binding.profileWithdrawRow.setOnClickListener(v -> confirmWithdraw());
 
         return binding.getRoot();
     }
@@ -82,6 +85,20 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                 .setNegativeButton(R.string.action_cancel, null)
                 .setPositiveButton(R.string.profile_logout, (dialog, which) -> presenter.logout())
                 .show();
+    }
+
+    private void confirmWithdraw() {
+        if (getContext() == null) {
+            return;
+        }
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Bag_ConfirmDialog)
+                .setTitle(R.string.profile_withdraw_dialog_title)
+                .setMessage(R.string.profile_withdraw_dialog_message)
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.action_withdraw, (d, which) -> presenter.withdraw())
+                .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.clay_600));
     }
 
     @Override

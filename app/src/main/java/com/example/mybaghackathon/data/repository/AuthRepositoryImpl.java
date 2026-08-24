@@ -10,6 +10,7 @@ import com.example.mybaghackathon.data.remote.dto.auth.AuthTokenDto;
 import com.example.mybaghackathon.data.remote.dto.auth.KakaoLoginRequestDto;
 import com.example.mybaghackathon.data.remote.dto.common.ApiResponseDto;
 import com.example.mybaghackathon.data.remote.dto.notification.FcmTokenDto;
+import com.example.mybaghackathon.model.LoginOutcome;
 import com.example.mybaghackathon.model.User;
 import com.google.gson.Gson;
 
@@ -30,12 +31,13 @@ public class AuthRepositoryImpl implements AuthRepository {
         this.userStorage = userStorage;
     }
 
-    // 카카오 로그인 API 호출 → 성공 시 JWT 저장 후 User 반환, 실패 시 에러 반환
+    // 카카오 로그인 API 호출 → 정상 로그인이면 JWT 저장 후 성공 반환, 탈퇴 계정 복구 확인이 필요하면
+    // 세션 저장 없이 그 상태를 반환, 실패 시 에러 반환
     @Override
-    public AppResult<User> loginWithKakao(String kakaoAccessToken, boolean privacyAgreed, boolean termsAgreed) {
+    public AppResult<LoginOutcome> loginWithKakao(String kakaoAccessToken, boolean privacyAgreed, boolean termsAgreed, boolean restoreConfirmed) {
         try {
             Response<ApiResponseDto<AuthTokenDto>> response =
-                    authApi.kakaoLogin(new KakaoLoginRequestDto(kakaoAccessToken, privacyAgreed, termsAgreed)).execute();
+                    authApi.kakaoLogin(new KakaoLoginRequestDto(kakaoAccessToken, privacyAgreed, termsAgreed, restoreConfirmed)).execute();
 
             ApiResponseDto<AuthTokenDto> body = response.body();
             if (!response.isSuccessful() || body == null || !body.isSuccess()) {
@@ -43,10 +45,14 @@ public class AuthRepositoryImpl implements AuthRepository {
             }
 
             AuthTokenDto data = body.getData();
+            if (data.isRequiresRestoreConfirmation()) {
+                return AppResult.success(LoginOutcome.needsRestoreConfirmation(data.getWithdrawnAt()));
+            }
+
             tokenStorage.saveToken(data.getToken());
             User user = UserMapper.from(data.getUser());
             userStorage.saveUser(user);
-            return AppResult.success(user);
+            return AppResult.success(LoginOutcome.loggedIn(user));
         } catch (IOException e) {
             return AppResult.failure(networkError());
         }
@@ -86,6 +92,24 @@ public class AuthRepositoryImpl implements AuthRepository {
                 return AppResult.failure(toError(response, body));
             }
 
+            return AppResult.success(null);
+        } catch (IOException e) {
+            return AppResult.failure(networkError());
+        }
+    }
+
+    // 회원 탈퇴 API 호출 → 성공한 경우에만 로컬 토큰/유저 정보를 지운다(실패 시 계정은 그대로 살아있어 세션 유지)
+    @Override
+    public AppResult<Void> withdraw() {
+        try {
+            Response<ApiResponseDto<Object>> response = authApi.withdraw().execute();
+            ApiResponseDto<Object> body = response.body();
+            if (!response.isSuccessful() || body == null || !body.isSuccess()) {
+                return AppResult.failure(toError(response, body));
+            }
+
+            tokenStorage.clearToken();
+            userStorage.clearUser();
             return AppResult.success(null);
         } catch (IOException e) {
             return AppResult.failure(networkError());
