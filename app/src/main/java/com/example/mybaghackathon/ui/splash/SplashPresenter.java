@@ -66,7 +66,7 @@ public class SplashPresenter implements SplashContract.Presenter {
             }
             // 이미 최초 로그인 때 동의한 사용자의 조용한 프로필 갱신 — 동의 값 false로 넘겨
             // 서버가 기존 동의 기록(agreed_at)을 건드리지 않게 함(서버는 true일 때만 기록)
-            executor.execute(() -> authRepository.loginWithKakao(kakaoToken.getAccessToken(), false, false));
+            executor.execute(() -> authRepository.loginWithKakao(kakaoToken.getAccessToken(), false, false, false));
             return Unit.INSTANCE;
         });
     }

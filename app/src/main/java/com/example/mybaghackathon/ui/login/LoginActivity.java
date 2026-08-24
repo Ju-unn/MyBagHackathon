@@ -15,6 +15,7 @@ import com.example.mybaghackathon.data.repository.AuthRepository;
 import com.example.mybaghackathon.databinding.ActivityLoginBinding;
 import com.example.mybaghackathon.ui.EdgeToEdgeUtil;
 import com.example.mybaghackathon.ui.invite.InviteJoinActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.kakao.sdk.auth.model.OAuthToken;
 import com.kakao.sdk.common.model.ClientError;
 import com.kakao.sdk.common.model.ClientErrorCause;
@@ -31,6 +32,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     private ActivityLoginBinding binding;
     private LoginContract.Presenter presenter;
+    // 복구 확인 다이얼로그에서 "복구하기"를 눌렀을 때 같은 토큰으로 재시도하기 위해 보관
+    private String pendingKakaoAccessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +108,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
             }
             return Unit.INSTANCE;
         }
-        presenter.login(token.getAccessToken(), binding.agreePrivacy.isChecked(), binding.agreeTerms.isChecked());
+        pendingKakaoAccessToken = token.getAccessToken();
+        presenter.login(pendingKakaoAccessToken, binding.agreePrivacy.isChecked(), binding.agreeTerms.isChecked(), false);
         return Unit.INSTANCE;
     }
 
@@ -128,6 +132,17 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     @Override
     public void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showRestoreConfirmation(String withdrawnAt) {
+        new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_Bag_ConfirmDialog)
+                .setTitle(R.string.login_restore_dialog_title)
+                .setMessage(R.string.login_restore_dialog_message)
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.login_restore_confirm, (dialog, which) ->
+                        presenter.login(pendingKakaoAccessToken, binding.agreePrivacy.isChecked(), binding.agreeTerms.isChecked(), true))
+                .show();
     }
 
     @Override

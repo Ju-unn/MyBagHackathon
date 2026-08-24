@@ -32,6 +32,9 @@
     <string name="login_agree_terms">[필수] 이용약관 동의</string>
     <string name="login_agree_view">보기</string>
     <string name="login_agree_required">필수 약관에 동의해야 로그인할 수 있습니다.</string>
+    <string name="login_restore_dialog_title">탈퇴한 계정이에요</string>
+    <string name="login_restore_dialog_message">30일 이내에 탈퇴한 계정이에요.\n계정을 복구하고 계속 이용할까요?</string>
+    <string name="login_restore_confirm">복구하기</string>
 
     <!-- S03 홈 -->
     <string name="home_title">내 여행</string>

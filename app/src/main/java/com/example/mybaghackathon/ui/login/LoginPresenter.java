@@ -6,7 +6,7 @@ import android.os.Looper;
 import com.example.mybaghackathon.BuildConfig;
 import com.example.mybaghackathon.common.AppResult;
 import com.example.mybaghackathon.data.repository.AuthRepository;
-import com.example.mybaghackathon.model.User;
+import com.example.mybaghackathon.model.LoginOutcome;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.concurrent.ExecutorService;
@@ -29,19 +29,26 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void login(String kakaoAccessToken, boolean privacyAgreed, boolean termsAgreed) {
+    public void login(String kakaoAccessToken, boolean privacyAgreed, boolean termsAgreed, boolean restoreConfirmed) {
         view.setLoading(true);
         executor.execute(() -> {
-            AppResult<User> result = authRepository.loginWithKakao(kakaoAccessToken, privacyAgreed, termsAgreed);
+            AppResult<LoginOutcome> result = authRepository.loginWithKakao(kakaoAccessToken, privacyAgreed, termsAgreed, restoreConfirmed);
             mainHandler.post(() -> {
                 if (destroyed) return;
                 view.setLoading(false);
-                if (result.isSuccess()) {
-                    registerFcmToken();
-                    view.navigateToMain();
-                } else {
+                if (!result.isSuccess()) {
                     view.showError(result.getError().getMessage());
+                    return;
                 }
+
+                LoginOutcome outcome = result.getData();
+                if (outcome.requiresRestoreConfirmation()) {
+                    view.showRestoreConfirmation(outcome.getWithdrawnAt());
+                    return;
+                }
+
+                registerFcmToken();
+                view.navigateToMain();
             });
         });
     }
