@@ -21,6 +21,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.example.mybaghackathon.BuildConfig;
 import com.example.mybaghackathon.R;
 import com.example.mybaghackathon.databinding.ViewAvatarBinding;
 
@@ -80,7 +81,7 @@ public class AvatarView extends FrameLayout {
     // imageUrl이 없으면 이니셜만 보이고, 있으면 Glide로 원형 크롭해 이니셜 위에 덮어 그린다
     public void setImageUrl(@Nullable String imageUrl) {
         if (imageUrl == null || imageUrl.isEmpty()) {
-            Log.d(TAG, "setImageUrl: 이미지 URL 없음 — 이니셜만 표시");
+            if (BuildConfig.DEBUG) Log.d(TAG, "setImageUrl: 이미지 URL 없음 — 이니셜만 표시");
             binding.avatarImage.setVisibility(GONE);
             Glide.with(binding.avatarImage).clear(binding.avatarImage);
             return;
@@ -93,7 +94,7 @@ public class AvatarView extends FrameLayout {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model,
                                                  @NonNull Target<Drawable> target, boolean isFirstResource) {
-                        Log.e(TAG, "프로필 이미지 로드 실패: " + imageUrl, e);
+                        if (BuildConfig.DEBUG) Log.e(TAG, "프로필 이미지 로드 실패: " + imageUrl, e);
                         return false;
                     }
 
@@ -101,7 +102,7 @@ public class AvatarView extends FrameLayout {
                     public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model,
                                                     Target<Drawable> target, @NonNull DataSource dataSource,
                                                     boolean isFirstResource) {
-                        Log.d(TAG, "프로필 이미지 로드 성공: " + imageUrl);
+                        if (BuildConfig.DEBUG) Log.d(TAG, "프로필 이미지 로드 성공: " + imageUrl);
                         return false;
                     }
                 })
