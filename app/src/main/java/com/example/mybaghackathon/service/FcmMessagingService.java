@@ -1,14 +1,17 @@
 package com.example.mybaghackathon.service;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.mybaghackathon.BuildConfig;
 import com.example.mybaghackathon.MainActivity;
@@ -75,17 +78,20 @@ public class FcmMessagingService extends FirebaseMessagingService {
     }
 
     private void showNotification(String title, String body, String tripId) {
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        if (!notificationManager.areNotificationsEnabled()) {
-            // 사용자가 알림 권한을 거절했거나 시스템 설정에서 알림을 껐으면 그리지 않는다
+        // 사용자가 알림 권한을 거절했거나 시스템 설정에서 알림을 껐으면 그리지 않는다
+        // (API 33 미만에서는 ContextCompat이 알림 on/off 여부로 판단해준다)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
         ensureChannel();
 
         PendingIntent contentIntent = buildContentIntent(tripId);
+        // 상태바 small icon은 알파 채널만 쓰이므로 컬러 런처 아이콘 대신 단색 벡터를 쓴다
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_bell)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)

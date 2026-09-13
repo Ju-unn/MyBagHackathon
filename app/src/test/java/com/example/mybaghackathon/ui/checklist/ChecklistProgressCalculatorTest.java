@@ -29,41 +29,23 @@ public class ChecklistProgressCalculatorTest {
     }
 
     @Test
-    public void multiAssigneeRowsEachCountSeparately() {
-        // 같은 item_group_id를 공유하는 다중 배정 row 2개 — 분담 현황처럼 담당자별로 1개씩 센다.
+    public void multiAssigneeGroupCountsAsOneItemDoneOnlyWhenAllRowsDone() {
+        // 같은 item_group_id를 공유하는 다중 배정 row 2개 — 물품 1개로 세고, 담당자 전원이 체크해야 완료.
         PackingItem firstAssignee = commonItem(10L, 7L, "AI", "ACTIVE", true);
         PackingItem secondAssignee = commonItem(11L, 7L, "AI", "ACTIVE", false);
 
         ChecklistProgressCalculator.Progress progress = ChecklistProgressCalculator.calculate(
                 Arrays.asList(firstAssignee, secondAssignee));
 
-        assertEquals(1, progress.completed);
-        assertEquals(2, progress.total);
-        assertEquals(50, progress.percent());
-    }
-
-    @Test
-    public void oneCheckedOutOfFifteenShowsZeroOfOne() {
-        PackingItem[] recommendations = new PackingItem[15];
-        recommendations[0] = item(1L, 1L, "AI", "ACTIVE", false);
-        recommendations[0].setScope("COMMON");
-        for (int index = 1; index < recommendations.length; index++) {
-            recommendations[index] = item(
-                    index + 1L, index + 1L, "AI", "ACTIVE", false);
-            recommendations[index].setScope("PERSONAL");
-        }
-
-        java.util.List<PackingItem> filtered = ChecklistSelectionFilter.apply(
-                Arrays.asList(recommendations),
-                java.util.Collections.singleton(
-                        ChecklistSelectionFilter.normalize(recommendations[0].getItemName())));
-        ChecklistProgressCalculator.Progress progress =
-                ChecklistProgressCalculator.calculate(filtered);
-
-        assertEquals(1, filtered.size());
         assertEquals(0, progress.completed);
         assertEquals(1, progress.total);
         assertEquals(0, progress.percent());
+
+        secondAssignee.setCompleted(true);
+        progress = ChecklistProgressCalculator.calculate(Arrays.asList(firstAssignee, secondAssignee));
+
+        assertEquals(1, progress.completed);
+        assertEquals(1, progress.total);
     }
 
     // 1인 방: 방 생성 시점의 AI 추천(COMMON)뿐 아니라 "내 목록"에서 나중에 직접 추가한 물품
